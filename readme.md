@@ -21,7 +21,7 @@ Although this app is functional it is primarily a sandbox, a place for trying ou
 * [How Can I Run It?](docs/running.md)
 * [Contributing To This Project](docs/contributing.md)
 * [Code Of Conduct For This Project](docs/code-of-conduct.md)
-* [License](docs/license.md)
+* [License](license.md)
  
 License
 -------
