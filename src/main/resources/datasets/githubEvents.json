@@ -1,0 +1,9 @@
+{
+  "dataset": {
+    "name": "Github Events",
+    "owner": "System",
+    "source": "https://api.github.com/events",
+    "subscriptionControlField": "created_at",
+    "subscriptionControlFieldPattern": "yyyy-MM-dd'T'HH:mm:ss.SSS"
+  }
+}

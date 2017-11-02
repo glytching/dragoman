@@ -1,0 +1,5 @@
+.idea/
+target/
+.vertx/
+*.iml
+todo.md

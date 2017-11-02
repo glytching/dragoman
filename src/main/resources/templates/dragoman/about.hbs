@@ -1,0 +1,28 @@
+{{#partial "scripts" }}
+
+{{/partial}}
+
+{{#partial "content" }}
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="table-wrapper">
+                <h3>Welcome to Dragoman!</h3>
+                <p>Dragoman provides common query and display features over disparate datasources. For example, the following datasources are already canned for you:</p>
+                <p>If you're interested have a look
+                    <a href="https://github.com/aesteve/vertx-feeds">at the GitHub repository</a></p>
+                {{#if userName}}
+                <p>Hello <b>{{userName}}</b>! You can <a href="/dragoman/dataset/dataset.hbs">view your datasets</a>.
+                {{else}}
+                    <p>If you just want to play with the project to understand how it works, feel free to login with
+                        whatever
+                        login/password you want.</p>
+                {{/if}}
+                <p>The project is written in Java 8</p>
+                <p>List of technology used :</p>
+            </div>
+        </div>
+    </div>
+
+{{/partial}}
+{{> templates/dragoman/layout.hbs}}

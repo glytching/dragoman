@@ -1,0 +1,7 @@
+{
+  "dataset": {
+    "name": "This",
+    "owner": "Me",
+    "source": "http://host:1234/some/end/point"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "documents": [
+    {
+      "name": "Name1",
+      "age": 48
+    },
+    {
+      "name": "Name2",
+      "age": 51
+    }
+  ]
+}

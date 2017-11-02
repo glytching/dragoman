@@ -1,0 +1,9 @@
+{
+  "dataset": {
+    "name": "Date Test",
+    "owner": "System",
+    "source": "http://date.jsontest.com",
+    "subscriptionControlField": "milliseconds_since_epoch",
+    "subscriptionControlFieldPattern": "L"
+  }
+}

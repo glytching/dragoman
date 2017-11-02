@@ -1,0 +1,326 @@
+{{#partial "scripts" }}
+    <script type="text/javascript" src="/assets/scripts/ManageDatasetsCtrl.js"></script>
+
+    <link rel="stylesheet" href="/assets/stylesheets/json-formatter.min.css"/>
+{{/partial}}
+
+{{#partial "content" }}
+
+    <div ng-controller="ManageDatasetsCtrl" layout="column" ng-cloak="" class="md-inline-form" ng-app="MyApp" id="controllerElementId">
+        <!-- START: dataset edit view -->
+        <div ng-if="pendingDataset" class="panel panel-default">
+            <div class="panel-body">
+                <form name="editDatasetForm" ng-submit="savePending()" class="form-horizontal">
+                    <div class="col-sm-12">
+                        <h2 class="text-left">
+                            <b>Edit Dataset</b>
+                        </h2>
+                        <hr/>
+                    </div>
+
+                    <div class="form-group ">
+                        <label class="col-xs-2 control-label" for="datasetName">
+                            Name:
+                        </label>
+                        <div class="col-xs-10">
+                            <input ng-if="pendingDataset.id" type="text" id="datasetName" class="form-control"
+                                   placeholder="A unique dataset name"
+                                   ng-model="pendingDataset.name" readonly/>
+                            <input ng-if="!pendingDataset.id" type="text" id="datasetName" class="form-control"
+                                   placeholder="A unique dataset name"
+                                   ng-model="pendingDataset.name" required/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label" for="datasetSource">
+                            Source:
+                        </label>
+                        <div class="col-xs-10">
+                            <input id="datasetSource"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="Source details for this dataset"
+                                   ng-model="pendingDataset.source"
+                                   required/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label" for="subscriptionControlField">
+                            Subscription Control Field:
+                        </label>
+                        <div class="col-xs-10">
+                            <input id="subscriptionControlField"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="(Optional) field to act as a control for subscribing to changes in the dataset contents"
+                                   ng-model="pendingDataset.subscriptionControlField"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label" for="subscriptionControlFieldPattern">
+                            Subscription Control Field Pattern:
+                        </label>
+                        <div class="col-xs-10">
+                            <input id="subscriptionControlFieldPattern"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="(Optional) describes the format of the subscription control field"
+                                   ng-model="pendingDataset.subscriptionControlFieldPattern"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-offset-2 col-xs-10">
+                            <button type="submit" ng-disabled="editDatasetForm.$invalid" class="btn btn-primary">
+                                Save
+                            </button>
+                            <button ng-click="cancelPending()" class="btn btn-primary">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- END: dataset edit view -->
+
+        <!-- START: error view -->
+        <div ng-if="error" class="container">
+            <div class="jumbotron">
+                <h2><span class="label label-danger">{[{error.statusCode}]}</span> Oops, something went wrong ...</h2>
+                <hr/>
+                <h5>When: <span>{[{error.timestamp}]}</span></h5>
+                <h5>Path: <span>{[{error.path}]}</span></h5>
+                <h5>Status: <span>{[{error.statusCode}]} - {[{error.statusMessage}]}</span></h5>
+                <h5>Message: <span>{[{error.message}]}</span></h5>
+                <h5>
+                    Stack Trace:
+                    <a href="#" ng-click="showStackTrace = !showStackTrace">
+                        <span ng-show="!showStackTrace" class="glyphicon glyphicon-collapse-down" title="Show stacktrace"></span>
+
+                        <span ng-show="showStackTrace" class="glyphicon glyphicon-collapse-up" title="Hide stacktrace">
+                            <pre>{[{error.stackTrace}]}</pre>
+                        </span>
+                    </a>
+                </h5>
+                <a href="/about.hbs" class="btn btn-info btn-xs">Home</a>
+                <button ng-click="discardError()" class="btn btn-info btn-xs">Close</button>
+            </div>
+        </div>
+        <!-- END: error view -->
+
+        <!-- START: dataset list view -->
+        <div ng-if="datasets" class="panel panel-default">
+            <div class="panel-body">
+                <div class="table-wrapper">
+                    <div class="table-title">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <h2 class="text-left">
+                                    <b>Datasets</b>
+                                    <button ng-click="addDataset()" class="btn btn-info btn-xs" title="Add">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
+                                </h2>
+                            </div>
+                            <div class="col-sm-4 pull-right">
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <span class="glyphicon glyphicon-filter"></span>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Search datasets ..."
+                                           ng-model="searchTerm">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>
+                                <a href="#" ng-click="sortType = 'name'; sortReverse = !sortReverse">
+                                    Name
+                                    <small>
+                                        <span ng-show="sortType == 'name' && !sortReverse"
+                                              class="glyphicon glyphicon-sort-by-alphabet"></span>
+                                    </small>
+                                    <small>
+                                        <span ng-show="sortType == 'name' && sortReverse"
+                                              class="glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                                    </small>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="sortType = 'owner'; sortReverse = !sortReverse">
+                                    Owner
+                                    <small>
+                                        <span ng-show="sortType == 'owner' && !sortReverse"
+                                              class="glyphicon glyphicon-sort-by-alphabet"></span>
+                                    </small>
+                                    <small>
+                                        <span ng-show="sortType == 'owner' && sortReverse"
+                                              class="glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                                    </small>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="sortType = 'source'; sortReverse = !sortReverse">
+                                    Source
+                                    <small>
+                                        <span ng-show="sortType == 'source' && !sortReverse"
+                                              class="glyphicon glyphicon-sort-by-alphabet"></span>
+                                    </small>
+                                    <small>
+                                        <span ng-show="sortType == 'source' && sortReverse"
+                                              class="glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                                    </small>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="sortType = 'subscriptionControlField'; sortReverse = !sortReverse">
+                                    Subscription Control Field
+                                    <small>
+                                        <span ng-show="sortType == 'subscriptionControlField' && !sortReverse"
+                                              class="glyphicon glyphicon-sort-by-alphabet"></span>
+                                    </small>
+                                    <small>
+                                        <span ng-show="sortType == 'subscriptionControlField' && sortReverse"
+                                              class="glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                                    </small>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="#" ng-click="sortType = 'subscriptionControlFieldPattern'; sortReverse = !sortReverse">
+                                    Subscription Control Field Pattern
+                                    <small>
+                                        <span ng-show="sortType == 'subscriptionControlFieldPattern' && !sortReverse"
+                                              class="glyphicon glyphicon-sort-by-alphabet"></span>
+                                    </small>
+                                    <small>
+                                        <span ng-show="sortType == 'subscriptionControlFieldPattern' && sortReverse"
+                                              class="glyphicon glyphicon-sort-by-alphabet-alt"></span>
+                                    </small>
+                                </a>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="dataset in datasets | orderBy:sortType:sortReverse | filter:searchTerm">
+                            <td ng-bind="dataset.name"></td>
+                            <td ng-bind="dataset.owner"></td>
+                            <td ng-bind="dataset.source"></td>
+                            <td ng-bind="dataset.subscriptionControlField"></td>
+                            <td ng-bind="dataset.subscriptionControlFieldPattern"></td>
+                            <td>
+                                <button ng-click="editDataset(dataset)" class="btn btn-info btn-xs" title="Edit">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                </button>
+                                <button ng-click="delete(dataset)" class="btn btn-warning btn-xs" title="Delete">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                                <button ng-click="sampleContents(dataset)" class="btn btn-info btn-xs" title="Open">
+                                    <span class="glyphicon glyphicon-folder-open"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="clearfix">
+                        <div class="hint-text">
+                            Showing <b>{[{datasets.length}]}</b> datasets
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: dataset list view -->
+
+        <!-- START: content view -->
+        <div ng-if="!pendingDataset && datasetContents.length > 0" class="panel panel-default">
+            <div class="panel-body">
+                <div class="table-wrapper">
+                    <div class="table-title">
+                        <div class="row">
+                            <h2 class="text-left">
+                                <b>{[{criteria.dataset.name}]}</b>
+                                <button ng-click="hideContents()" class="btn btn-info btn-xs" title="Close">
+                                    <span class="glyphicon glyphicon-minus"></span>
+                                </button>
+                                <button ng-click="subscribe()" class="btn btn-info btn-xs">
+                                        <span ng-show="subscribed" class="glyphicon glyphicon-eye-close"
+                                              title="Subscribe"></span>
+                                    <span ng-show="!subscribed" class="glyphicon glyphicon-eye-open"
+                                          title="Cancel subscription"></span>
+                                </button>
+                                <div class="spacer"></div>
+                                <small>
+                                    <p ng-show="lastSubscriptionReceipt">Last Received:
+                                        <b>{[{lastSubscriptionReceipt}]}</b></p>
+                                </small>
+                            </h2>
+                        </div>
+                        <div class="row">
+                            <div class="spacer"></div>
+                        </div>
+                        <div class="row">
+                            <form name="getContentsForm" ng-submit="getContents()" class="form-horizontal">
+                                <div class="form-group ">
+                                    <label class="col-xs-1 control-label-left" for="select">Select:</label>
+                                    <div class="col-xs-11">
+                                        <input type="text" id="select" class="form-control"
+                                               placeholder="Select clause ..."
+                                               ng-model="criteria.select"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-1 control-label-left" for="where">Where:</label>
+                                    <div class="col-xs-11">
+                                            <textarea id="where" class="form-control"
+                                                      placeholder="Where clause ..."
+                                                      rows="3"
+                                                      ng-model="criteria.where"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-1 control-label-left" for="where">Order By:</label>
+                                    <div class="col-xs-11">
+                                        <input type="text" id="orderBy" class="form-control"
+                                               placeholder="Order By clause ..."
+                                               ng-model="criteria.orderBy"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-offset-1 col-xs-11">
+                                        <button ng-disabled="subscribed" type="submit" class="btn btn-primary">
+                                            Run
+                                        </button>
+                                        <button ng-disabled="subscribed" ng-click="resetContents()" class="btn
+                                            btn-primary">
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="dataset-contents">
+                            <json-formatter ng-repeat="d in datasetContents track by $index" json="d" open="1"></json-formatter>
+                        </div>
+                    </div>
+
+                    <div class="hint-text">
+                        Showing <b>{[{datasetContents.length}]}</b> items
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END: content view -->
+
+    </div>
+{{/partial}}
+{{> templates/dragoman/layout.hbs}}

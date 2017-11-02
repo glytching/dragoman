@@ -1,0 +1,35 @@
+{
+  "dataset": {
+    "name": "MongoDB Producer - Size 5",
+    "owner": "System",
+    "source": "dragoman:sample5",
+    "subscriptionControlField": "updatedAt"
+  },
+  "documents": [
+    {
+      "id": "f2bf61ac-bde2-4032-9af0-d2eecd5a38d9",
+      "name": "Name630693",
+      "age": 48
+    },
+    {
+      "id": "4cd44384-439b-42a4-9537-d57b2b15d859",
+      "name": "Name718548",
+      "age": 51
+    },
+    {
+      "id": "498eda64-d4d4-434e-aa4b-0de250fe4975",
+      "name": "Name816045",
+      "age": 60
+    },
+    {
+      "id": "efdcc3db-aeee-466d-ba64-351839fa3153",
+      "name": "Name183366",
+      "age": 61
+    },
+    {
+      "id": "9aee62ec-698c-4dcf-9dad-abfd2d53b2e6",
+      "name": "Name168373",
+      "age": 55
+    }
+  ]
+}

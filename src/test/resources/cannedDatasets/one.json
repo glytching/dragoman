@@ -1,0 +1,18 @@
+{
+  "dataset": {
+    "name": "This",
+    "owner": "Me",
+    "source": "a:b",
+    "subscriptionControlField": "updatedAt"
+  },
+  "documents": [
+    {
+      "name": "Name1",
+      "age": 48
+    },
+    {
+      "name": "Name2",
+      "age": 51
+    }
+  ]
+}

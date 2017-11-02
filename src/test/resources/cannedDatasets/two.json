@@ -1,0 +1,9 @@
+{
+  "dataset": {
+    "name": "That",
+    "owner": "You",
+    "source": "http://host:1234/some/end/point",
+    "subscriptionControlField": "updatedAt",
+    "subscriptionControlFieldPattern": "L"
+  }
+}

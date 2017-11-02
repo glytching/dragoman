@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html ng-app="dragoman">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/stylesheets/dragoman.css"/>
+    <link rel="stylesheet" href="/assets/stylesheets/libs/angular-material.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.11/angular.min.js"></script>
+    <script src="/assets/scripts/libs/angular-animate.min.js"></script>
+    <script src="/assets/scripts/libs/angular-aria.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-messages/1.5.11/angular-messages.min.js"></script>
+    <script src="/assets/scripts/libs/angular-material.min.js"></script>
+    <script src="/assets/scripts/angular-interpolator-shim.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script type="text/javascript" src="/assets/scripts/libs/vertxbus.js"></script>
+    <script type="text/javascript" src="/assets/scripts/json-formatter.min.js"></script>
+
+    <script src="/assets/scripts/LoginCtrl.js"></script>
+    <script src="/assets/scripts/HeaderCtrl.js"></script>
+
+    <title>Dragoman</title>
+
+    {{#block "scripts" }}
+    {{/block}}
+</head>
+
+<body>
+
+<!-- START: navbar -->
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container" style="width: 95%;">
+        <div class="navbar-collapse collapse" id="navbar-main">
+            <div ng-controller="HeaderCtrl">
+                <a class="navbar-brand" href="/dragoman/about.hbs">Dragoman</a>
+                <ul class="nav navbar-nav">
+                    <li ng-class="{ active: isActive('/dragoman/about.hbs')}"><a href="/dragoman/about.hbs">About</a>
+                    </li>
+                    {{#if userName}}
+                        <li ng-class="{ active: isActive('/dragoman/dataset/dataset.hbs')}">
+                            <a href="/dragoman/dataset/dataset.hbs">Datasets</a>
+                        </li>
+                        <li ng-class="{ active: isActive('/dragoman/management.hbs')}">
+                            <a href="/dragoman/management.hbs">Management</a>
+                        </li>
+                    {{/if}}
+                </ul>
+            </div>
+            <div ng-controller="LoginCtrl" ng-app="MyApp">
+                {{#if userName}}
+                    <div class="navbar-form navbar-right">
+                        <span>Logged in as: <b>{{userName}}</b></span>
+                        <button ng-click="logout()" class="btn btn-info btn-sm">
+                            <span class="glyphicon glyphicon-log-out" title="Logout"></span>
+                        </button>
+                    </div>
+                {{else}}
+                    <form name="loginForm" class="navbar-form navbar-right" ng-submit="login(credentials)" novalidate>
+
+                        <div class="form-group">
+                            <input type="text" id="username" class="form-control"
+                                   ng-model="credentials.username" placeholder="Username">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="password" id="password" class="form-control"
+                                   ng-model="credentials.password" placeholder="Password">
+                        </div>
+                        <button type="submit" class="btn btn-info">Login</button>
+
+                        <span ng-if="error" class="label label-warning">{[{error.message}]}</span>
+                    </form>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END: navbar -->
+
+
+<!-- START: content -->
+<div>
+    {{#block "content" }}
+    {{/block}}
+</div>
+<!-- END: content -->
+
+<!-- START: footer -->
+<div class="footer" style="">
+    <div class="row">
+        <div class="col-sm-4">
+            <p class="text-muted">Version: 1.0-SNAPSHOT</p>
+        </div>
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-4 text-right">
+            <a href="https://github.com/glytching/ppr" title="Github Repo">
+                <img src="https://github.com/favicon.ico" style="width: 4%; height: 4%"/>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- END: footer -->
+
+</body>
+</html>

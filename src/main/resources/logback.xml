@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+    <if condition='isDefined("log.dir")'>
+        <then>
+            <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${log.dir:-logs}/${app.name:-dragoman}.log</file>
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                    <fileNamePattern>
+                        ${log.dir:-logs}/${app.name:-dragoman}.%d{yyyy-MM-dd}.%i.log
+                    </fileNamePattern>
+                    <maxHistory>5</maxHistory>
+                    <maxFileSize>10MB</maxFileSize>
+                    <totalSizeCap>50MB</totalSizeCap>
+                </rollingPolicy>
+
+                <encoder>
+                    <pattern>%d{ISO8601}|[%thread]|%level|%logger{36}|%msg%n</pattern>
+                </encoder>
+            </appender>
+
+            <appender name="EMBEDDED_MONGO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${log.dir:-logs}/${app.name:-dragoman}-embedded-mongo.log</file>
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                    <fileNamePattern>
+                        ${log.dir:-logs}/${app.name:-dragoman}-embedded-mongo.%d{yyyy-MM-dd}.%i.log
+                    </fileNamePattern>
+                    <maxHistory>2</maxHistory>
+                    <maxFileSize>10MB</maxFileSize>
+                    <totalSizeCap>20MB</totalSizeCap>
+                </rollingPolicy>
+
+                <encoder>
+                    <pattern>%d{ISO8601}|[%thread]|%level|%logger{36}|%msg%n</pattern>
+                </encoder>
+            </appender>
+
+            <appender name="METRICS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${log.dir:-logs}/${app.name:-dragoman}-metrics.log</file>
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                    <fileNamePattern>
+                        ${log.dir:-logs}/${app.name:-dragoman}-metrics.%d{yyyy-MM-dd}.%i.log
+                    </fileNamePattern>
+                    <maxHistory>2</maxHistory>
+                    <maxFileSize>10MB</maxFileSize>
+                    <totalSizeCap>20MB</totalSizeCap>
+                </rollingPolicy>
+
+                <encoder>
+                    <pattern>%d{ISO8601}|%msg%n</pattern>
+                </encoder>
+            </appender>
+
+            <logger name="metrics-logger" level="INFO">
+                <appender-ref ref="METRICS"/>
+            </logger>
+
+            <logger name="embedded-mongo" level="INFO">
+                <appender-ref ref="EMBEDDED_MONGO"/>
+            </logger>
+
+            <root level="INFO">
+                <appender-ref ref="STDOUT"/>
+                <appender-ref ref="FILE"/>
+            </root>
+        </then>
+        <else>
+            <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>%d{ISO8601}|[%thread]|%level|%logger{36}|%msg%n</pattern>
+                </encoder>
+            </appender>
+
+            <root level="INFO">
+                <appender-ref ref="STDOUT"/>
+            </root>
+        </else>
+    </if>
+
+    <logger name="org.glitch.dragoman.ql.listener.logging.LoggingListener" level="INFO"/>
+    <logger name="io.vertx" level="WARN"/>
+    <logger name="io.netty" level="WARN"/>
+    <logger name="org.mongodb" level="WARN"/>
+    <logger name="com.github.jknack" level="WARN"/>
+
+</configuration>
