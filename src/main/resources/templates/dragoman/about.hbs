@@ -7,19 +7,51 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="table-wrapper">
-                <h3>Welcome to Dragoman!</h3>
-                <p>Dragoman provides common query and display features over disparate datasources. For example, the following datasources are already canned for you:</p>
-                <p>If you're interested have a look
-                    <a href="https://github.com/aesteve/vertx-feeds">at the GitHub repository</a></p>
+                <h3>Summary</h3>
+                <hr/>
+
                 {{#if userName}}
-                <p>Hello <b>{{userName}}</b>! You can <a href="/dragoman/dataset/dataset.hbs">view your datasets</a>.
+                    <!-- display nothing -->
                 {{else}}
-                    <p>If you just want to play with the project to understand how it works, feel free to login with
-                        whatever
-                        login/password you want.</p>
+                    <div class="alert alert-info">
+                        To get started just log in using any combination of username and password and then start creating and using datasets.
+                    </div>
                 {{/if}}
-                <p>The project is written in Java 8</p>
-                <p>List of technology used :</p>
+
+                <p>Dragoman provides a facade which allows the user to ...</p>
+                <ul>
+                    <li>Query datasets, applying projections and predicates to filter and shape the datasets to meet the user's needs</li>
+                    <li>Subscribe for updates, listen to changes in datasets</li>
+                </ul>
+
+                <p>The datasets are, broadly speaking, of two types:</p>
+                <ul>
+                    <li>Local: these are stored within Dragoman</li>
+                    <li>Remote: these are read, on demand, from a remote source over HTTP</li>
+                </ul>
+
+                <p>If you are interested in exploring the code have a look
+                    <a href="https://github.com/glytching/dragoman">at the GitHub repository</a>. </p>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="table-wrapper">
+                <h3>Technologies In Use</h3>
+                <hr/>
+
+                <a class="label label-primary" href="http://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html" target="_blank">Java 8</a>
+                <a class="label label-primary" href="http://www.antlr.org/" target="_blank">ANTLR</a>
+                <a class="label label-primary" href="https://www.mongodb.com/" target="_blank">MongoDB</a>
+                <a class="label label-primary" href="https://mongodb.github.io/mongo-java-driver-rx/" target="_blank">Mongo Rx Java Driver</a>
+                <a class="label label-primary" href="https://flapdoodle-oss.github.io/de.flapdoodle.embed.mongo/" target="_blank">Flapdoodle EmbedMongo</a>
+                <a class="label label-primary" href="http://vertx.io/" target="_blank">Vert.x</a>
+                <a class="label label-primary" href="http://handlebarsjs.com/" target="_blank">Handlebars</a>
+                <a class="label label-primary" href="https://github.com/google/guice" target="_blank">Guice</a>
+                <a class="label label-primary" href="https://square.github.io/okhttp/" target="_blank">OkHttp</a>
+                <a class="label label-primary" href="https://github.com/FasterXML/jackson" target="_blank">Jackson</a>
+                <a class="label label-primary" href="http://constretto.org/" target="_blank">Constretto</a>
             </div>
         </div>
     </div>

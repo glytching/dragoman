@@ -8,7 +8,7 @@ Provides a facade which allows the user to ...
 * Query datasets, applying projections and predicates to filter and shape the datasets to meet the user's needs
 * Subscribe for updates, listen to changes in datasets
 
-The datasets are, broadly speaking, of type types:
+The datasets are, broadly speaking, of two types:
 
 * Local: these are stored within Dragoman
 * Remote: these are read, on demand, from a remote source over HTTP 

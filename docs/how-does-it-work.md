@@ -14,13 +14,17 @@ To implement parsers for user supplied predicate and projection expressions. The
 * For a dataset which is stored in MongoDB, the parsed expressions are turned into `find` call against a `MongoClient` instance provided by MongoDB's Java client
 * For a dataset which is sourced via HTTP the parsed expressions are turned into dynamic Groovy scripts and the HTTP response is passed through these Groovy scripts
 
-#### MongoDB 
+#### [MongoDB](https://www.mongodb.com/) 
 
 To store local datasets. Dragoman uses [flapdoodle](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo) to create an embedded instance of MongoDB and Dragoman uses [The Mongo Rx Java Driver](https://github.com/mongodb/mongo-java-driver-rx) to talk to this MongoDB server.
 
-#### [Vertx](http://vertx.io/) 
+#### [Vert.x](http://vertx.io/) 
 
 To provide the application framework, including the web server.
+
+#### [Handlebars](http://handlebarsjs.com/)
+
+To provide templating for the user interface. 
 
 #### [Guice](https://github.com/google/guice) 
 
