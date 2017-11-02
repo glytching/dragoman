@@ -17,11 +17,47 @@ Although this app is functional it is primarily a sandbox, a place for trying ou
  
 * [What Does It Do?](docs/what-does-it-do.md)
 * [How Does It Work?](docs/how-does-it-work.md)
-* [How Is It Tested?](docs/testing.md)
-* [How Can I Run It?](docs/running.md)
 * [Contributing To This Project](docs/contributing.md)
 * [Code Of Conduct For This Project](docs/code-of-conduct.md)
 * [License](license.md)
+
+Building Dragoman
+-------
+
+To build Dragoman:
+
+```
+$ git clone https://github.com/glytching/dragoman.git
+$ cd dragoman
+$ mvn clean package
+```
+
+This will compile and run all automated tests and create the application distributable. 
+
+Running Dragoman
+-------
+
+The application distributable is an uber JAR, it contains the application's class files and resources alongside the application's dependencies. When run in embedded mode the application will start an in-process instance of MongoDB. When run in non embedded mode the application will epxect to find a Mongo instance at the address defined in the [applicaiton.properties](src/main/resources/application.properties) (specifically the `mongo.host` and `mongo.port` properties).
+
+To run the uber JAR:
+
+#### In Embedded Mode, Logging To Console
+
+```
+$ java -Denv=embedded -jar target/dragoman-1.0-SNAPSHOT-uber.jar
+```
+
+#### In Embedded Mode, Logging To File
+
+```
+$ java -Denv=embedded -Dlog.dir=logs -jar target/dragoman-1.0-SNAPSHOT-uber.jar
+```
+
+#### In Non Embedded Mode, Logging To Console
+
+```
+$ java -jar target/dragoman-1.0-SNAPSHOT-uber.jar
+```
  
 License
 -------

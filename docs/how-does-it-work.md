@@ -22,6 +22,14 @@ To store local datasets. Dragoman uses [flapdoodle](https://github.com/flapdoodl
 
 To provide the application framework, including the web server.
 
+#### [Angular 1.x](https://angularjs.org/)
+
+To provide the UI framework. 
+
+#### [Bootstrap](http://getbootstrap.com/)
+
+For UI style goodies. 
+
 #### [Handlebars](http://handlebarsjs.com/)
 
 To provide templating for the user interface. 
