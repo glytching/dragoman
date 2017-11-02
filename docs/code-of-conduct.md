@@ -1,3 +1,6 @@
+Code Of Conduct
+======
+
 A few simple rules in the event that this becomes more than a single person project ...
 
 - Be friendly and welcoming

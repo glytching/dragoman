@@ -1,3 +1,6 @@
+What Does It Do?
+======
+
 Let's walk through an example.
 
 The data returned from this call to GitHub's public API: https://api.github.com/events look like (abbreviated for readability) ...
