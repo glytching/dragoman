@@ -24,9 +24,11 @@ Although this app is functional it is primarily a sandbox, a place for trying ou
 Building Dragoman
 -------
 
-[![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=master)](https://travis-ci.org/glytching/dragoman)
+Dragoman is on Travis, current branch build statuses are:
 
-To build Dragoman:
+* Master: [![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=master)](https://travis-ci.org/glytching/dragoman)
+
+To build Dragoman locally:
 
 ```
 $ git clone https://github.com/glytching/dragoman.git
