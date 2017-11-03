@@ -24,6 +24,8 @@ Although this app is functional it is primarily a sandbox, a place for trying ou
 Building Dragoman
 -------
 
+[![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=master)](https://travis-ci.org/glytching/dragoman)
+
 To build Dragoman:
 
 ```
