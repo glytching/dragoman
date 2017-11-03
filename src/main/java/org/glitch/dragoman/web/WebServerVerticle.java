@@ -145,13 +145,13 @@ public class WebServerVerticle extends AbstractVerticle {
     private void dynamicPages(Router router) {
         HandlebarsTemplateEngine hbsEngine = new ClasspathAwareHandlebarsTemplateEngine();
 
-        // TODO extract this to app config, should be 0 for dev mode and non-zero otherwise
-        // since zero means no cache i.e. allows hot-reload for templates
-        hbsEngine.setMaxCacheSize(0);
+        hbsEngine.setMaxCacheSize(applicationConfiguration.getViewTemplateCacheSize());
+
         TemplateHandler templateHandler = TemplateHandler.create(hbsEngine);
 
         if (applicationConfiguration.isAuthenticationEnabled()) {
             router.get(withApplicationName("dataset/*")).handler(this::fromSession);
+            router.get(withApplicationName("management/*")).handler(this::fromSession);
         }
 
         router.getWithRegex(".+\\.hbs").handler(context -> {
@@ -159,6 +159,7 @@ public class WebServerVerticle extends AbstractVerticle {
             assignUserToRoutingContext(context);
             context.next();
         });
+
         router.getWithRegex(".+\\.hbs").handler(templateHandler);
     }
 

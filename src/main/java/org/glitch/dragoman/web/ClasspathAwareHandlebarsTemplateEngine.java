@@ -85,7 +85,7 @@ public class ClasspathAwareHandlebarsTemplateEngine extends HandlebarsTemplateEn
         public TemplateSource sourceAt(String location) throws IOException {
             String loc = adjustLocation(location);
 
-            logger.info("Loading template from: {}", loc);
+            logger.debug("Loading template from: {}", loc);
 
             AtomicReference<String> templ = new AtomicReference<>();
 

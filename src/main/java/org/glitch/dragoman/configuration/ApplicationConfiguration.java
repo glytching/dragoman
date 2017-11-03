@@ -58,6 +58,8 @@ public interface ApplicationConfiguration {
 
     boolean isMetricsEnabled();
 
+    int getViewTemplateCacheSize();
+
     long getMaxEventLoopExecutionTime();
 
     long getMaxWorkerExecutionTime();

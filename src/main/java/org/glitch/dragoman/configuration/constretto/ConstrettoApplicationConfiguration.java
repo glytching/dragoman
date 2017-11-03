@@ -131,6 +131,11 @@ public class ConstrettoApplicationConfiguration implements ApplicationConfigurat
     }
 
     @Override
+    public int getViewTemplateCacheSize() {
+        return get(() -> constretto.evaluateToInt("view.template.cache.size"));
+    }
+
+    @Override
     public long getMaxEventLoopExecutionTime() {
         return get(() -> constretto.evaluateToLong("vertx.max.event.loop.execution.time.nanos"));
     }
