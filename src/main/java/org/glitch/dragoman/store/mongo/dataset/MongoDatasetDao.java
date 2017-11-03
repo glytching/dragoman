@@ -69,7 +69,7 @@ public class MongoDatasetDao implements DatasetDao {
                 .find(Filters.eq("id", id))
                 .limit(1);
 
-        return findObservable.first().map(toDataset()).toBlocking().single();
+        return findObservable.first().map(toDataset()).toBlocking().singleOrDefault(null);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class MongoDatasetDao implements DatasetDao {
     public long delete(String id) {
         Observable<Document> deleted = getCollection().findOneAndDelete(Filters.eq("id", id));
 
-        Document document = deleted.toBlocking().single();
+        Document document = deleted.toBlocking().singleOrDefault(null);
 
         return document != null ? 1 : 0;
     }

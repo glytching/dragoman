@@ -35,6 +35,7 @@ import javax.inject.Inject;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
@@ -68,6 +69,33 @@ public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
 
         assertThat(user.getName(), is(name));
         assertThat(user.getHashedPassword(), is(passwordUtil.toHash(password)));
+    }
+
+    @Test
+    public void willReturnNullIfTheRequestedUserDoesNotExist() {
+        String name = RandomValues.aString();
+        String password = "aPassword";
+
+        User user = authenticationDao.getUser(name, password);
+
+        assertThat(user, nullValue());
+    }
+
+    @Test
+    public void existsIfTheAuthenticationStoreContainsARecordForTheGivenUserName() {
+        String name = RandomValues.aString();
+        String password = "aPassword";
+
+        authenticationDao.createUser(name, password);
+
+        assertThat(authenticationDao.exists(name), is(true));
+    }
+
+    @Test
+    public void doesNotExistIfTheAuthenticationStoreDoesNotContainARecordForTheGivenUserName() {
+        String name = RandomValues.aString();
+
+        assertThat(authenticationDao.exists(name), is(false));
     }
 
     @Test

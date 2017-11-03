@@ -66,6 +66,20 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
     }
 
     @Test
+    public void existsIfThereIsADatasetForTheGivenId() {
+        Dataset dataset = aDataset();
+
+        Dataset actual = write(dataset);
+
+        assertThat(datasetDao.exists(actual.getId()), is(true));
+    }
+
+    @Test
+    public void doesNotExistsIfThereIsNoDatasetForTheGivenId() {
+        assertThat(datasetDao.exists(RandomValues.aString()), is(false));
+    }
+
+    @Test
     public void canUpdate() {
         Dataset dataset = aDataset();
 
@@ -98,12 +112,22 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
     }
 
     @Test
+    public void willReturnZeroIfAskedToDeleteADatasetWhichDoesNotExist() {
+        assertThat(datasetDao.delete(RandomValues.aString()), is(0L));
+    }
+
+    @Test
     public void canGet() {
         Dataset incoming = aDataset();
 
         Dataset written = write(incoming);
 
         assertThat(datasetDao.get(written.getId()), is(incoming));
+    }
+
+    @Test
+    public void willReturnNullIfAskedToGetADatasetWhichDoesNotExist() {
+        assertThat(datasetDao.get(RandomValues.aString()), nullValue());
     }
 
     @Test
@@ -123,6 +147,15 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
         assertThat(datasets, hasSize(2));
         assertThat(datasets, hasItem(one));
         assertThat(datasets, hasItem(two));
+    }
+
+    @Test
+    public void canGetAllWhenNoneExist() {
+        Observable<Dataset> all = datasetDao.getAll(RandomValues.aString());
+
+        List<Dataset> datasets = all.toList().toBlocking().single();
+
+        assertThat(datasets, hasSize(0));
     }
 
     private boolean exists(Dataset dataset) {

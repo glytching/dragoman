@@ -76,7 +76,7 @@ public class MongoAuthenticationDao implements AuthenticationDao {
                 .find(filter(userName, passwordUtil.toHash(password)))
                 .limit(1);
 
-        return findObservable.first().map(toUser()).toBlocking().single();
+        return findObservable.first().map(toUser()).toBlocking().singleOrDefault(null);
     }
 
     @Override
