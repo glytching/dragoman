@@ -143,7 +143,6 @@
                             <name>java.net.preferIPv4Stack</name>
                             <value>true</value>
                         </property>
-                        [...]
                     </systemProperties>
                 </configuration>
             </plugin>
