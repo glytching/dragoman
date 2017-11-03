@@ -136,6 +136,11 @@ public class ConstrettoApplicationConfiguration implements ApplicationConfigurat
     }
 
     @Override
+    public boolean isViewStaticAssetsCacheEnabled() {
+        return get(() -> constretto.evaluateToBoolean("view.static.assets.cache.enabled"));
+    }
+
+    @Override
     public long getMaxEventLoopExecutionTime() {
         return get(() -> constretto.evaluateToLong("vertx.max.event.loop.execution.time.nanos"));
     }

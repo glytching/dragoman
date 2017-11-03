@@ -138,7 +138,8 @@ public class WebServerVerticle extends AbstractVerticle {
 
     private void staticHandler(Router router) {
         StaticHandler staticHandler = StaticHandler.create();
-        staticHandler.setCachingEnabled(false);
+        staticHandler.setCachingEnabled(applicationConfiguration.isViewStaticAssetsCacheEnabled());
+        staticHandler.setIndexPage(withApplicationName("about.hbs"));
         router.route("/assets/*").handler(staticHandler);
     }
 

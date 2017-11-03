@@ -60,6 +60,8 @@ public interface ApplicationConfiguration {
 
     int getViewTemplateCacheSize();
 
+    boolean isViewStaticAssetsCacheEnabled();
+
     long getMaxEventLoopExecutionTime();
 
     long getMaxWorkerExecutionTime();

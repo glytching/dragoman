@@ -40,9 +40,9 @@ Running Dragoman
  
 #### Runtime Parameters
 
-The following JVM parameters will chnage aspects for Dragoman's behaviour:
+The following JVM parameters will change aspects of Dragoman's behaviour:
 
-* `env` controls the set of properties to be chosen from [application.properties](src/main/resources/application.properties). The default environment runs against a local MongoDB server and is accessible on a well known HTTP port. The alternative environment is named `embedded`, in this mode the application spins up an embedded MongoDB instance nd makes itself available on a randomly selected port from the free port range. In this mode the applicaiotn is entirely self contained, it makes no assumptions about the host it is running on.
+* `env` controls the set of properties to be chosen from [application.properties](src/main/resources/application.properties). The default environment runs against a local MongoDB server and is accessible on a well known HTTP port. The alternative environment is named `embedded`, in this mode the application spins up an embedded MongoDB instance nd makes itself available on a randomly selected port from the free port range. In this mode the application is entirely self contained, it makes no assumptions about the host it is running on.
 * `log.dir` controls how logs are written. When this parameter is supplied all log output is written to file and these files are stored in the address supplied by this parameter. When this parameter is not supplied all log output is written to console.
 
 #### Running In-IDE
