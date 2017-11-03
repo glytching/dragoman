@@ -10,6 +10,7 @@
     </appender>
 
     <logger name="org.glitch.dragoman.ql.listener.logging.LoggingListener" level="INFO"/>
+    <logger name="org.glitch.dragoman.web.subscription.VertxSubscriptionManager" level="ERROR"/>
     <logger name="io.vertx" level="WARN"/>
     <logger name="io.netty" level="WARN"/>
     <logger name="org.mongo" level="WARN"/>
