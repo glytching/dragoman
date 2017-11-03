@@ -23,6 +23,11 @@ import org.glitch.dragoman.antlr.SQLParserBaseListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * An implementation of {@link SQLParserBaseListener} which logs every callback from ANTLR, very useful when writing the
+ * parsers and when diagnosing issues in the parsers but very verbose so the logging config is expected to mute this
+ * logger except when necessary during development.
+ */
 public class LoggingListener extends SQLParserBaseListener {
     private static final Logger logger = LoggerFactory.getLogger(LoggingListener.class);
 

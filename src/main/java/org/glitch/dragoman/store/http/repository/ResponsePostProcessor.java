@@ -16,7 +16,20 @@
  */
 package org.glitch.dragoman.store.http.repository;
 
+/**
+ * This application expects HTTP sources to emit JSON responses. Where that's not the case, a dataset may registered
+ * with a response post processor. It is the response post processor's job to transform the raw repsonse into something
+ * which this application can hand;e.
+ */
 public interface ResponsePostProcessor {
 
+    /**
+     * Process a raw HTTP response, ensuring that the result meets this application's expectations for HTTP responses,
+     * namely; valid JSON.
+     *
+     * @param content a raw response from a HTTP data source
+     *
+     * @return transformed {@code content}
+     */
     String postProcess(String content);
 }

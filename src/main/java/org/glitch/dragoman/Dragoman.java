@@ -29,6 +29,10 @@ import javax.inject.Inject;
 
 import static io.vertx.core.logging.LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_NAME;
 
+/**
+ * The ignition class for this application. Since {@code Vert.x} is our application framework and {@code Guice} is our
+ * DI mechanism this class is very much aware of those technologies.
+ */
 public class Dragoman {
     private static final Logger logger = LoggerFactory.getLogger(Dragoman.class);
 
@@ -37,7 +41,7 @@ public class Dragoman {
     @Inject
     private DeploymentOptions deploymentOptions;
     @Inject
-    private MainVerticle mainVerticle;
+    private DragomanVerticle dragomanVerticle;
 
     public static void main(String[] args) {
         // establish the bridge from vert.x JUL -> SLF4J -> Logback
@@ -46,13 +50,19 @@ public class Dragoman {
         new Dragoman().start();
     }
 
+    /**
+     * Instances the Guice injector, passing in the main configuration module.
+     */
     private Dragoman() {
         Injector injector = Guice.createInjector(new AppModule());
         injector.injectMembers(this);
     }
 
+    /**
+     * Deploys the main verticle.
+     */
     private void start() {
-        vertx.deployVerticle(mainVerticle, deploymentOptions, stringAsyncResult ->
-                logger.info("Started HTTP server: {}", stringAsyncResult.result()));
+        vertx.deployVerticle(dragomanVerticle, deploymentOptions, stringAsyncResult ->
+                logger.info("Started application: {}", stringAsyncResult.result()));
     }
 }

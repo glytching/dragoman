@@ -67,14 +67,6 @@ public class GlobalExceptionHandler {
         routingContext.response().setStatusCode(error.getInteger("statusCode")).end(encodedError);
     }
 
-    //    public static void error(HttpServerResponse response, JsonObject errorResponse) {
-    //        String encoded = errorResponse.encode();
-    //
-    //        logger.info("Caught exception at the end of the route chain: {}", encoded);
-    //
-    //        response.setStatusCode(errorResponse.getInteger("statusCode")).end(encoded);
-    //    }
-
     private static JsonObject createErrorResponse(RoutingContext routingContext, Throwable exception) {
         // by default ...
         int status = 500;

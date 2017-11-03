@@ -23,6 +23,9 @@ import io.vertx.ext.web.Router;
 import static org.glitch.dragoman.web.WebServerUtils.plainContentType;
 import static org.glitch.dragoman.web.WebServerUtils.withApplicationName;
 
+/**
+ * A simple {@link RestResource} which returns {@code pong} when invoked.
+ */
 public class PingResource implements RestResource {
 
     @Override

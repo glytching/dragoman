@@ -23,6 +23,9 @@ import org.glitch.dragoman.web.exception.InvalidRequestException;
 
 import javax.inject.Inject;
 
+/**
+ * An implementation of {@link Transformer} which deals with transforms to/from view (aka UI) representations.
+ */
 public class ViewTransformer implements Transformer<String> {
 
     private final ObjectMapper objectMapper;

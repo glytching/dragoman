@@ -16,6 +16,10 @@
  */
 package org.glitch.dragoman.transform;
 
+/**
+ * Extends {@link RuntimeException} to provide some identity and traceability for exceptions which arise from our
+ * transformers.
+ */
 public class TransformerException extends RuntimeException {
 
     public TransformerException(String message, Throwable cause) {

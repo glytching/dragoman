@@ -31,6 +31,9 @@ import javax.inject.Inject;
 
 import static org.glitch.dragoman.web.WebServerUtils.*;
 
+/**
+ * A {@link RestResource} which exposes login/logout functionality.
+ */
 public class AuthenticationResource implements RestResource {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationResource.class);
 

@@ -28,6 +28,9 @@ import javax.inject.Inject;
 
 import static org.glitch.dragoman.web.WebServerUtils.withApplicationName;
 
+/**
+ * A {@link RestResource} which provides access to Vert.x's metrics data.
+ */
 public class MetricsResource implements RestResource {
 
     private MetricsFacade metricsFacade;

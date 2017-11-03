@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * A simple wrapper over a {@link Dataset} and (optionally) dataset contents.
+ */
 public class CannedDataset {
     private Dataset dataset;
     private List<Map<String, Object>> documents;

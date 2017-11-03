@@ -20,7 +20,6 @@ import org.glitch.dragoman.dataset.Dataset;
 import org.glitch.dragoman.http.HttpClientAdapter;
 import org.glitch.dragoman.ql.listener.groovy.Filter;
 import org.glitch.dragoman.ql.listener.groovy.GroovyFactory;
-import org.glitch.dragoman.ql.listener.groovy.GroovyFactoryException;
 import org.glitch.dragoman.ql.listener.groovy.Mapper;
 import org.glitch.dragoman.repository.Repository;
 import org.glitch.dragoman.util.UrlUtils;
@@ -31,6 +30,9 @@ import rx.Observable;
 import javax.inject.Inject;
 import java.util.Map;
 
+/**
+ * An implementation of {@link Repository} for HTTP data sources.
+ */
 public class HttpRepository implements Repository<Map<String, Object>> {
     private static final Logger logger = LoggerFactory.getLogger(HttpRepository.class);
 
@@ -48,30 +50,44 @@ public class HttpRepository implements Repository<Map<String, Object>> {
         this.urlUtils = urlUtils;
     }
 
+    /**
+     * Reads data from the source identified by {@link Dataset#source} and applies the projections and predicates
+     * defined by the given {@code select} and {@code where}. This repository cannot apply these projections and
+     * predicates at source since all it knows about the data source is a URL so instead it reads all the data
+     * referenced by that URL and then applies projections and predicates on the client side. Clearly this may present
+     * performance and scaleability issues so it is advisable that {@link Dataset#source} be declared in such a way as
+     * to limit these issues. In time this approach may be revisited to declare more information about the source in the
+     * {@link Dataset} so as to allow smarter usage of the HTTP sources.
+     *
+     * @param dataset the {@link Dataset} to be queried
+     * @param select the projections (if any) to be applied to the data in the requested dataset
+     * @param where the predicates (if any) to be used when filtering the requested dataset
+     * @param orderBy the ordering (if any) to be applied to the data read from the requested dataset
+     * @param maxResults a limit on the number of entries to be read from the requested dataset
+     *
+     * @return
+     */
     @Override
     public Observable<Map<String, Object>> find(Dataset dataset, String select, String where, String orderBy,
                                                 int maxResults) {
-        try {
-            Mapper mapper = groovyFactory.createProjector(select);
-            Filter filter = groovyFactory.createFilter(where);
+        Mapper mapper = groovyFactory.createProjector(select);
 
-            Observable<Map<String, Object>> rawResponse = httpClientAdapter.read(dataset.getSource(),
-                    responsePostProcessorFactory.create(dataset));
+        Filter filter = groovyFactory.createFilter(where);
 
-            logger.info("Start filter and map");
-            Observable<Map<String, Object>> observable = rawResponse.filter(filter::filter);
+        Observable<Map<String, Object>> rawResponse = httpClientAdapter.read(dataset.getSource(),
+                responsePostProcessorFactory.create(dataset));
 
-            // we can only apply maxResults here because if we apply it before we filter we might have nothing to
-            // filter!
-            if (maxResults > 0) {
-                observable = observable.limit(maxResults);
-            }
+        logger.info("Start filter and map");
+        Observable<Map<String, Object>> observable = rawResponse.filter(filter::filter);
 
-            logger.info("Finish filter and map");
-            return observable.map(mapper::map);
-        } catch (GroovyFactoryException ex) {
-            throw new RuntimeException("Failed to be groovy!", ex);
+        // we can only apply maxResults here because if we apply it before we filter we might have nothing to
+        // filter!
+        if (maxResults > 0) {
+            observable = observable.limit(maxResults);
         }
+
+        logger.info("Finish filter and map");
+        return observable.map(mapper::map);
     }
 
     @Override

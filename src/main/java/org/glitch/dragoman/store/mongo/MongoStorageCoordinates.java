@@ -20,6 +20,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+/**
+ * A simple wrapper over a pair od MongoDB database name and collection name.
+ */
 public class MongoStorageCoordinates {
 
     private final String databaseName;

@@ -18,7 +18,17 @@ package org.glitch.dragoman.store.mongo;
 
 import com.mongodb.rx.client.MongoClient;
 
+/**
+ * Provides the lazy instantiation behaviour for the singleton MongoClient instance used by this application. Lazy
+ * instatiation is necessary ebcause when the applicaiotn runs in embedded mode there won't be an MongoDB instance
+ * available to connect to when the <i>normal</i> DI lifecycle is running.
+ */
 public interface MongoProvider {
 
+    /**
+     * Provide (with create-on-first-usage semantics) this application's {@link MongoClient} instance.
+     *
+     * @return
+     */
     MongoClient provide();
 }

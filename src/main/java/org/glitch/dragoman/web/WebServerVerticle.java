@@ -44,6 +44,9 @@ import java.util.Set;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.glitch.dragoman.web.WebServerUtils.*;
 
+/**
+ * A {@link io.vertx.core.Verticle} instance for our embedded web server.
+ */
 public class WebServerVerticle extends AbstractVerticle {
     private static final Logger logger = LoggerFactory.getLogger(WebServerVerticle.class);
 

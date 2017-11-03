@@ -21,6 +21,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A simple wrapper over a raw HTTP response. Layers within the application which are not HTTP-aware can then handle the
+ * response based on its status code, headers, payload etc without having to know about our HTTP integration, without
+ * needing a HTTP client etc.
+ */
 public class HttpResponse {
 
     private final int statusCode;

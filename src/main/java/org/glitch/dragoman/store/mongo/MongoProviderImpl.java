@@ -58,6 +58,11 @@ public class MongoProviderImpl implements MongoProvider {
         return mongoClient;
     }
 
+    /**
+     * Lazily instantiate the {@link MongoClient} instance.
+     *
+     * @return
+     */
     private MongoClient createMongoClient() {
         String host = applicationConfiguration.getMongoHost();
         int port = applicationConfiguration.getMongoPort();

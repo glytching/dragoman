@@ -40,6 +40,10 @@ import java.util.concurrent.Callable;
 import static java.lang.String.format;
 import static org.glitch.dragoman.util.NetworkUtils.getFreePort;
 
+/**
+ * An implementation of {@link ApplicationConfiguration} which uses {@code Constretto} to load properties from the
+ * application's property file.
+ */
 public class ConstrettoApplicationConfiguration implements ApplicationConfiguration {
     private final ConstrettoConfiguration constretto;
 

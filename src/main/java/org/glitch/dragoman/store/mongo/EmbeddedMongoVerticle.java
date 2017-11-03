@@ -38,6 +38,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
+/**
+ * A {@link io.vertx.core.Verticle} which controls the lifecycle of the embedded MongoDB instance.
+ */
 public class EmbeddedMongoVerticle extends AbstractVerticle {
     private static final Logger logger = LoggerFactory.getLogger(MongoModule.class);
     private static final Logger mongoLogger = LoggerFactory.getLogger("embedded-mongo");

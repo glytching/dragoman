@@ -25,8 +25,31 @@ import org.glitch.dragoman.ql.listener.mongo.MongoWhereClauseListener;
 
 import static java.lang.String.format;
 
+/**
+ * An implementation of {@link BaseParser} for {@code where} expressions. Example usage:
+ * <p>
+ * <pre>
+ *     WhereClauseParser parser = new WhereClauseParser();
+ *
+ *     // for use with a MongoDB store
+ *     Bson bson = parser.get(Bson.class, "a = 1");
+ *
+ *     // for use with a HTTP store
+ *     String script = parser.get(String.class, "a = 1");
+ * </pre>
+ */
 public class WhereClauseParser extends BaseParser {
 
+    /**
+     * Get a deserialised form of the given {@code expression}, deserialised into the type {@code T}. See
+     * {@link #getListener(Class)} to understand what target types are supported.
+     *
+     * @param clazz the target type e.g. Bson if you want to apply the {@code expression} to a MongoDB store
+     * @param expression the where expression
+     * @param <T>
+     *
+     * @return a deserialised form of the given {@code expression}, deserialised into the type {@code T}
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> clazz, String expression) {

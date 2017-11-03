@@ -18,6 +18,9 @@ package org.glitch.dragoman.web.exception;
 
 import static java.lang.String.format;
 
+/**
+ * Extends {@link RuntimeException} to provide a specific exception for a HTTP {@code 400}.
+ */
 public class InvalidRequestException extends RuntimeException {
     public static InvalidRequestException missingParameter(String parameterName) {
         return new InvalidRequestException(format("The parameter: %s must be supplied!", parameterName));

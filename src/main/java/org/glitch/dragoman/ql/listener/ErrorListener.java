@@ -26,6 +26,9 @@ import org.glitch.dragoman.ql.SqlParserException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of the ANTLR error listener hook. Gathers and reports failures in a parser call.
+ */
 public class ErrorListener extends BaseErrorListener {
     private final List<String> errorMessages = Lists.newArrayList();
 

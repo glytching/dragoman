@@ -30,6 +30,9 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.concurrent.Callable;
 
+/**
+ * An implementation of {@link HttpClient} which uses {@code OkHttp}.
+ */
 public class OkHttpClient implements HttpClient {
     private static final Logger logger = LoggerFactory.getLogger(OkHttpClient.class);
 

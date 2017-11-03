@@ -24,6 +24,9 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+/**
+ * Class representation of an {@code where} expression.
+ */
 public class Predicate {
 
     private String lhs;

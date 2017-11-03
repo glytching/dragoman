@@ -37,23 +37,23 @@ This will compile and run all automated tests and create the application distrib
 Running Dragoman
 -------
 
-The application distributable is an uber JAR, it contains the application's class files and resources alongside the application's dependencies. When run in embedded mode the application will start an in-process instance of MongoDB. When run in non embedded mode the application will epxect to find a Mongo instance at the address defined in the [applicaiton.properties](src/main/resources/application.properties) (specifically the `mongo.host` and `mongo.port` properties).
+The application distributable is an uber JAR, it contains the application's class files and resources alongside the application's dependencies. When run in embedded mode the application will start an in-process instance of MongoDB. When run in non embedded mode the application will expect to find a Mongo instance at the address defined in the [application.properties](src/main/resources/application.properties) (specifically the `mongo.host` and `mongo.port` properties).
 
 To run the uber JAR:
 
-#### In Embedded Mode, Logging To Console
+##### In Embedded Mode, Logging To Console
 
 ```
 $ java -Denv=embedded -jar target/dragoman-1.0-SNAPSHOT-uber.jar
 ```
 
-#### In Embedded Mode, Logging To File
+##### In Embedded Mode, Logging To File
 
 ```
 $ java -Denv=embedded -Dlog.dir=logs -jar target/dragoman-1.0-SNAPSHOT-uber.jar
 ```
 
-#### In Non Embedded Mode, Logging To Console
+##### In Non Embedded Mode, Logging To Console
 
 ```
 $ java -jar target/dragoman-1.0-SNAPSHOT-uber.jar

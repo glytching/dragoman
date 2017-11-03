@@ -28,8 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainVerticle extends AbstractVerticle {
-    private static final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
+/**
+ * The master {@link Verticle} for this application. This ensures that all other verticles are started.
+ */
+public class DragomanVerticle extends AbstractVerticle {
+    private static final Logger logger = LoggerFactory.getLogger(DragomanVerticle.class);
 
     private List<String> deploymentIds;
 
@@ -39,8 +42,8 @@ public class MainVerticle extends AbstractVerticle {
     private final ApplicationConfiguration configuration;
 
     @Inject
-    public MainVerticle(WebServerVerticle webServerVerticle, EmbeddedMongoVerticle embeddedMongoVerticle,
-                        DeploymentOptions deploymentOptions, ApplicationConfiguration configuration) {
+    public DragomanVerticle(WebServerVerticle webServerVerticle, EmbeddedMongoVerticle embeddedMongoVerticle,
+                            DeploymentOptions deploymentOptions, ApplicationConfiguration configuration) {
         this.webServerVerticle = webServerVerticle;
         this.embeddedMongoVerticle = embeddedMongoVerticle;
         this.deploymentOptions = deploymentOptions;
@@ -50,7 +53,7 @@ public class MainVerticle extends AbstractVerticle {
     @Override
     public void init(Vertx vertx, Context context) {
         super.init(vertx, context);
-        deploymentIds = new ArrayList<>(3);
+        deploymentIds = new ArrayList<>();
     }
 
     @Override
@@ -70,6 +73,11 @@ public class MainVerticle extends AbstractVerticle {
         ).setHandler(future.<CompositeFuture>map(c -> null).completer());
     }
 
+    /**
+     * Starts the in-process MongoDB instance (if application configuration says so).
+     *
+     * @return
+     */
     private Future<String> deployEmbeddedMongo() {
         Future<String> future = Future.future();
         if (configuration.isMongoEmbedded()) {

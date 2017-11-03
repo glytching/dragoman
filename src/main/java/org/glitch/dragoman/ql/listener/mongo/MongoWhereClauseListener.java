@@ -34,6 +34,10 @@ import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
+/**
+ * A Mongo specific implementation of {@link AbstractWhereClauseListener} which turns the domain {@link Predicate}
+ * into a {@link Bson} instance.
+ */
 public class MongoWhereClauseListener extends AbstractWhereClauseListener<Bson> {
     private static final Pattern DATE_PATTERN = Pattern.compile("\\d{4}-\\d\\d-\\d\\d.*");
 

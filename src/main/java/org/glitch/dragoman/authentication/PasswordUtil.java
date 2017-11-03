@@ -20,8 +20,18 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * A utility class for password related operations.
+ */
 public class PasswordUtil {
 
+    /**
+     * A secure one-way hash function for the given {@code password}.
+     *
+     * @param password the given password value
+     *
+     * @return a hash for the given {@code password}
+     */
     public String toHash(String password) {
         try {
             // MessageDigest isn't thread safe so we must create a new one each time we want to hash a password

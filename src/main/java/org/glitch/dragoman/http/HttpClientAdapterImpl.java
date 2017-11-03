@@ -26,6 +26,10 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
+/**
+ * An implementation of {@link HttpClientAdapter} which pairs our {@link HttpClient} with a {@link JsonTransformer} to
+ * adapt HTTP responses into an {@link Observable}.
+ */
 public class HttpClientAdapterImpl implements HttpClientAdapter {
 
     private final HttpClient httpClient;

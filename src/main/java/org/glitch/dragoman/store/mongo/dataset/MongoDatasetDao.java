@@ -37,6 +37,9 @@ import javax.inject.Inject;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+/**
+ * An implementation of {@link DatasetDao} for a MongoDB dataset store.
+ */
 public class MongoDatasetDao implements DatasetDao {
 
     private final MongoProvider mongoProvider;
@@ -53,9 +56,9 @@ public class MongoDatasetDao implements DatasetDao {
     }
 
     @Override
-    public Observable<Dataset> getAll(String user) {
+    public Observable<Dataset> getAll(String userName) {
         FindObservable<Document> findObservable = getCollection()
-                .find(Filters.eq("owner", user));
+                .find(Filters.eq("owner", userName));
 
         return findObservable.toObservable().map(toDataset());
     }

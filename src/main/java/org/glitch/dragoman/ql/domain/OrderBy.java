@@ -19,6 +19,9 @@ package org.glitch.dragoman.ql.domain;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+/**
+ * Class representation of an {@code orderBy} expression.
+ */
 public class OrderBy {
     private final String name;
     private final boolean ascending;

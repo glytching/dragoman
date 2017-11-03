@@ -20,6 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.inject.Inject;
 
+/**
+ * An implementation of {@link Transformer} which deals with transforms to/from JSON.
+ */
 public class JsonTransformer implements Transformer<String> {
 
     private final ObjectMapper objectMapper;

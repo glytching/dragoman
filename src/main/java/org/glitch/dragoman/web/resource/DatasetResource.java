@@ -45,6 +45,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.glitch.dragoman.web.WebServerUtils.*;
 
+/**
+ * A {@link RestResource} which eposes all the dataset management endpoints.
+ */
 public class DatasetResource implements RestResource {
     private static final Logger logger = LoggerFactory.getLogger(DatasetResource.class);
 

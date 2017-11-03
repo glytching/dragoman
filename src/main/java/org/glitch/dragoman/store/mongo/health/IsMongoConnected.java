@@ -25,6 +25,9 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * A {@link HealthCheck} implementation which checks connectivity to the configured MongoDB server.
+ */
 public class IsMongoConnected extends HealthCheck {
 
     private final MongoProvider mongoProvider;
@@ -34,6 +37,12 @@ public class IsMongoConnected extends HealthCheck {
         this.mongoProvider = mongoProvider;
     }
 
+    /**
+     * Check that we can talk to the configured MongoDB instance.
+     *
+     * @return a {@link Result} with details of whether this check was successful or not
+     * @throws Exception not thrown, any failure to perform the check results in a failed {@link Result}
+     */
     @Override
     protected Result check() throws Exception {
         MongoClient mongoClient = mongoProvider.provide();

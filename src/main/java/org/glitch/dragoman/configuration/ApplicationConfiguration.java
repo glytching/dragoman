@@ -16,7 +16,18 @@
  */
 package org.glitch.dragoman.configuration;
 
+/**
+ * Defines the well known configuration properties for this application. Implementations of this interface are expected
+ * to be specific to whatever library/technology is chosen to integrate with the external properties file.
+ */
 public interface ApplicationConfiguration {
+
+    /**
+     * A property which is defined with this value will be replaced by a generated 'free port' value on loading. Once
+     * the {@link ApplicationConfiguration} has been laoded each subsequent call for that property will return the same
+     * value. This is useful when the application nees to assign assign a free port on startup and then use that value
+     * for the life of the application.
+     */
     int RANDOM_PORT_SYMBOLIC = -1;
 
     int getHttpPort();
@@ -61,5 +72,16 @@ public interface ApplicationConfiguration {
 
     String getCannedDatasetsDirectory();
 
+    /**
+     * The non specific form of 'property getter'. Typically, the specific getters (e.g. {@link #isMongoEmbedded()},
+     * {@link #getHttpPort()} etc) are facades over this method.
+     *
+     * @param clazz the expected type of the property value
+     * @param propertyName the name of the property to be retrieved
+     * @param <T>
+     *
+     * @return the value of the given {@code propertyName} coerced to the type {@code T} or an exception if no such
+     * property exists.
+     */
     <T> T getPropertyValue(Class<T> clazz, String propertyName);
 }

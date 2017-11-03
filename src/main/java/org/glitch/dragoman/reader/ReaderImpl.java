@@ -22,6 +22,10 @@ import rx.Observable;
 
 import javax.inject.Inject;
 
+/**
+ * Implements {@link Reader} by choosing the correct {@link org.glitch.dragoman.repository.Repository} instance for the
+ * given {@link Dataset} and delegating to that repository and the mapping the response to a {@link DataEnvelope}.
+ */
 public class ReaderImpl implements Reader {
 
     private final RepositoryRouter repositoryRouter;

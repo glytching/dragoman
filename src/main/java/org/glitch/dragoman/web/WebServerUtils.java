@@ -23,6 +23,9 @@ import io.vertx.ext.web.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A utility class for syntactic sugar over common Vert.x web calls.
+ */
 public class WebServerUtils {
     private static final Logger logger = LoggerFactory.getLogger(WebServerUtils.class);
 

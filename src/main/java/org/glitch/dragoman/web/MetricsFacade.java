@@ -29,6 +29,13 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Provides accessors onto Vert.x's metrics for use by:
+ * <ul>
+ * <li>Interactive querying of the metrics data</li>
+ * <li>The application's dedicated metrics logger </li>
+ * </ul>
+ */
 public class MetricsFacade {
     private static final Logger logger = LoggerFactory.getLogger(MetricsFacade.class);
     private static final Logger metricsLogger = LoggerFactory.getLogger("metrics-logger");
@@ -54,14 +61,33 @@ public class MetricsFacade {
         }));
     }
 
+    /**
+     * Get the current snapshot including <b>all</b> Vert.x metrics data.
+     *
+     * @return the current metrics snapshot in JSON format
+     */
     public JsonObject getAll() {
         return metricsService.getMetricsSnapshot(httpServer);
     }
 
+    /**
+     * Get the current snapshot for the given {@code name} from Vert.x metrics data.
+     *
+     * @param name the name of a metric
+     *
+     * @return the current metrics snapshot for the given metric name, in JSON format
+     */
     public JsonObject getByName(String name) {
         return metricsService.getMetricsSnapshot(httpServer).getJsonObject(name);
     }
 
+    /**
+     * Get the current snapshot for the metrics which match the {@code regex} from Vert.x metrics data.
+     *
+     * @param regex a regex to be used when filtering Vert.x metrics data
+     *
+     * @return the current metrics snapshots for any metrics which match the given regex, in JSON format
+     */
     public JsonObject getByFilter(String regex) {
         final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 

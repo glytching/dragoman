@@ -38,6 +38,9 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+/**
+ * An implementation of {@link CannedDatasetsWriter} for a MongoDB dataset store.
+ */
 public class MongoCannedDatasetsWriter implements CannedDatasetsWriter {
     private static final Logger logger = LoggerFactory.getLogger(MongoCannedDatasetsWriter.class);
 

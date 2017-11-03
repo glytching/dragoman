@@ -16,13 +16,45 @@
  */
 package org.glitch.dragoman.http;
 
+/**
+ * Defines the interaction with HTTP data sources. Implementations of this interface are expected to be specific
+ * to a chosen HTTP client technology e.g. OkHttp, Apache HTTP Client etc.
+ */
 public interface HttpClient {
 
+    /**
+     * Executes a {@code get} against the goven {@code url}.
+     *
+     * @param url the url to be addressed
+     *
+     * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
+     */
     HttpResponse get(String url);
 
+    /**
+     * Executes a {@code delete} against the goven {@code url}.
+     *
+     * @param url the url to be addressed
+     *
+     * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
+     */
     HttpResponse delete(String url);
 
+    /**
+     * Executes a {@code post} against the goven {@code url}.
+     *
+     * @param url the url to be addressed
+     *
+     * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
+     */
     HttpResponse post(String url, String json);
 
+    /**
+     * Executes a {@code put} against the goven {@code url}.
+     *
+     * @param url the url to be addressed
+     *
+     * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
+     */
     HttpResponse put(String url, String json);
 }

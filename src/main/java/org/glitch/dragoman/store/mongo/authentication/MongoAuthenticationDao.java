@@ -37,6 +37,9 @@ import javax.inject.Inject;
 
 import static java.lang.String.format;
 
+/**
+ * An implementation of {@link AuthenticationDao} for a MongoDB authentication store.
+ */
 public class MongoAuthenticationDao implements AuthenticationDao {
 
     private final MongoProvider mongoProvider;
@@ -55,39 +58,39 @@ public class MongoAuthenticationDao implements AuthenticationDao {
     }
 
     @Override
-    public boolean exists(String name) {
-        Observable<Long> count = getCollection().count(Filters.eq("name", name), new CountOptions().limit(1));
+    public boolean exists(String userName) {
+        Observable<Long> count = getCollection().count(Filters.eq("name", userName), new CountOptions().limit(1));
         return count.toBlocking().single() > 0;
     }
 
     @Override
-    public boolean isValid(String name, String password) {
+    public boolean isValid(String userName, String password) {
         Observable<Long> count =
-                getCollection().count(filter(name, passwordUtil.toHash(password)), new CountOptions().limit(1));
+                getCollection().count(filter(userName, passwordUtil.toHash(password)), new CountOptions().limit(1));
         return count.toBlocking().single() > 0;
     }
 
     @Override
-    public User getUser(String name, String password) {
+    public User getUser(String userName, String password) {
         FindObservable<Document> findObservable = getCollection()
-                .find(filter(name, passwordUtil.toHash(password)))
+                .find(filter(userName, passwordUtil.toHash(password)))
                 .limit(1);
 
         return findObservable.first().map(toUser()).toBlocking().single();
     }
 
     @Override
-    public void createUser(String name, String password) {
-        if (exists(name)) {
-            throw new RuntimeException(format("A user already exists for: %s!", name));
+    public void createUser(String userName, String password) {
+        if (exists(userName)) {
+            throw new RuntimeException(format("A user already exists for: %s!", userName));
         } else {
             Observable<Success> successObservable =
-                    getCollection().insertOne(documentTransformer.transform(new User(name, passwordUtil.toHash
+                    getCollection().insertOne(documentTransformer.transform(new User(userName, passwordUtil.toHash
                             (password))));
 
             Success success = successObservable.toBlocking().single();
             if (success != Success.SUCCESS) {
-                throw new RuntimeException(format("Failed to create user for: %s!", name));
+                throw new RuntimeException(format("Failed to create user for: %s!", userName));
             }
         }
     }

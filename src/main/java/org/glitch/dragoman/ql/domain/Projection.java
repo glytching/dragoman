@@ -19,6 +19,9 @@ package org.glitch.dragoman.ql.domain;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+/**
+ * Class representation of an {@code select} expression.
+ */
 public class Projection {
     private String name;
 

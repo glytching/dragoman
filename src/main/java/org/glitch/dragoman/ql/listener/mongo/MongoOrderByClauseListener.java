@@ -24,6 +24,10 @@ import org.glitch.dragoman.ql.listener.AbstractOrderByClauseListener;
 
 import java.util.List;
 
+/**
+ * A Mongo specific implementation of {@link AbstractOrderByClauseListener} which turns the domain {@link OrderBy} into
+ * a {@link Bson} instance.
+ */
 public class MongoOrderByClauseListener extends AbstractOrderByClauseListener<Bson> {
 
     @Override

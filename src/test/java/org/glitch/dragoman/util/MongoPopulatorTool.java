@@ -32,8 +32,12 @@ import rx.Observable;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class MongoPopulator {
-    private static final Logger logger = LoggerFactory.getLogger(MongoPopulator.class);
+/**
+ * A simple tool for inserting into a MongoDB collection, useful for manual testing of the subscription feature for
+ * MongoDB datasets.
+ */
+public class MongoPopulatorTool {
+    private static final Logger logger = LoggerFactory.getLogger(MongoPopulatorTool.class);
 
     //  quick tool which generates data from the simulator and writes it into a named db.coll in MongoDB
     private final String databaseName = "dragoman";

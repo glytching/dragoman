@@ -16,6 +16,9 @@
  */
 package org.glitch.dragoman.web.exception;
 
+/**
+ * Extends {@link RuntimeException} to provide a specific exception for a HTTP {@code 403}.
+ */
 public class AccessDeniedException extends RuntimeException {
     public AccessDeniedException() {
         super("There is no user currently logged in!");

@@ -23,6 +23,9 @@ import org.glitch.dragoman.transform.TransformerException;
 
 import javax.inject.Inject;
 
+/**
+ * An implementation of {@link Transformer} which deals with transforms to/from MongoDB {@link Document}.
+ */
 public class DocumentTransformer implements Transformer<Document> {
 
     private final ObjectMapper objectMapper;

@@ -29,6 +29,9 @@ import java.util.Set;
 
 import static org.glitch.dragoman.web.WebServerUtils.withApplicationName;
 
+/**
+ * A {@link RestResource} which runs all configured {@link HealthCheck} instances and returns the results in JSON format.
+ */
 public class HealthCheckResource implements RestResource {
 
     private final HealthCheckRegistry healthCheckRegistry;
@@ -43,6 +46,7 @@ public class HealthCheckResource implements RestResource {
 
     @Override
     public void configure(Vertx vertx, HttpServer httpServer, Router router) {
+        // using blockingHandler since we cannot be sure that all health cheks are non-blocking
         router.get(withApplicationName("healthcheck")).blockingHandler(routingContext -> {
             Map<String, HealthCheck.Result> results = healthCheckRegistry.runHealthChecks();
 

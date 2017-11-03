@@ -34,6 +34,9 @@ import rx.Observable;
 
 import javax.inject.Inject;
 
+/**
+ * An implementation of {@link Repository} for MongoDB data sources.
+ */
 public class MongoRepository implements Repository<Document> {
     private static final Logger logger = LoggerFactory.getLogger(MongoRepository.class);
 

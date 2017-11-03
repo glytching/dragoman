@@ -16,6 +16,9 @@
  */
 package org.glitch.dragoman.web.exception;
 
+/**
+ * Extends {@link RuntimeException} to provide a specific exception for a HTTP {@code 401}.
+ */
 public class InvalidCredentialsException extends RuntimeException {
 
     public InvalidCredentialsException() {
