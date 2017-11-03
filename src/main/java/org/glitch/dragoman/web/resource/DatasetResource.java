@@ -69,7 +69,17 @@ public class DatasetResource implements RestResource {
 
     @Override
     public void configure(Vertx vertx, HttpServer httpServer, Router router) {
-        router.get(withApplicationName("datasets")).blockingHandler(this::getAll);
+        //
+        // getAll returns an observable to which we subscribe and write the observed stream into the HTTP response so
+        // this can use a non blocking handler
+        //
+        router.get(withApplicationName("datasets")).handler(this::getAll);
+
+        //
+        // the remaining endpoints may be blocking (e.g. any reads from HTTP sources) or are simple, quick calls to a
+        // Dao and the additional illegibility of exposing Observables is deemed not worth the bother so these all use
+        // blocking handlers
+        //
 
         router.get(withApplicationName("dataset/:id")).blockingHandler(this::getOne);
 
