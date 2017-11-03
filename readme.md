@@ -36,7 +36,6 @@ This will compile and run all automated tests and create the application distrib
 
 Running Dragoman
 -------
-
  
 #### Runtime Parameters
 
