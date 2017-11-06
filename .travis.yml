@@ -1,6 +1,6 @@
 language: java
 sudo: false
-script: mvn verify jacoco:report coveralls:report -DrepoToken=dplZ1J1AfjFK3hHAj0OV8IRneKprs4Glb -Dtest=\!*ResourceTest,\!MongoPopulatorTool
+script: mvn verify jacoco:report coveralls:report -DrepoToken=dplZ1J1AfjFK3hHAj0OV8IRneKprs4Glb -Dtest=\!MongoPopulatorTool
 
 #deploy:
 #  provider: pages
