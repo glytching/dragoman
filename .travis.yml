@@ -1,6 +1,6 @@
 language: java
 sudo: false
-script: mvn test javadoc:javadoc -Dtest=\!*ResourceTest,\!MongoPopulatorTool
+script: mvn verify jacoco:report coveralls:report -DrepoToken=dplZ1J1AfjFK3hHAj0OV8IRneKprs4Glb -Dtest=\!*ResourceTest,\!MongoPopulatorTool
 
 #deploy:
 #  provider: pages
@@ -8,9 +8,6 @@ script: mvn test javadoc:javadoc -Dtest=\!*ResourceTest,\!MongoPopulatorTool
 #  local_dir: target/site/apidocs
 #  on:
 #    branch: master
-
-after_success:
-  - mvn clean cobertura:cobertura coveralls:report -DrepoToken=dplZ1J1AfjFK3hHAj0OV8IRneKprs4Glb
 
 notifications:
   email:
