@@ -19,7 +19,7 @@ Although this app is functional it is primarily a sandbox, a place for trying ou
 * [How Does It Work?](docs/how-does-it-work.md)
 * [Contributing To This Project](.github/CONTRIBUTING.md)
 * [Code Of Conduct For This Project](.github/CODE_OF_CONDUCT.md)
-* [License](LICENSE.md)
+* [License](.github/LICENSE.md)
 
 Building Dragoman
 -------
