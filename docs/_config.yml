@@ -7,3 +7,14 @@ plugins:
    - jekyll-redirect-from
    - jekyll-sitemap
    - jekyll-feed
+
+title: Dragoman
+description: Dragoman is a ...
+baseurl: ""
+
+defaults:
+  -
+    scope:
+      path: "" # an empty string here means all files in the project
+    values:
+layout: "default"

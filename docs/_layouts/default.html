@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<body id="top">
+{% include header.html %}
+<main role="main">
+    <div class="layout-container">
+        <article id="content">
+            {{ content }}
+        </article>
+
+        <aside id="sidebar">
+            <h2>More info</h2>
+            {% include sidebar.html %}
+        </aside>
+    </div>
+</main>
+{% include footer.html %}
+</body>
+</html>
