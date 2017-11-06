@@ -1,19 +1,7 @@
-<!DOCTYPE html>
-<html class="no-js" lang="en">
-<body id="top">
-{% include header.html %}
-<main role="main">
-    <div class="layout-container">
-        <article id="content">
-            {{ content }}
-        </article>
+{% include head.html %}
 
-        <aside id="sidebar">
-            <h2>More info</h2>
-            {% include sidebar.html %}
-        </aside>
-    </div>
-</main>
-{% include footer.html %}
-</body>
-</html>
+<h1>{{ page.title }}</h1>
+
+{{ content }}
+
+{% include foot.html %}

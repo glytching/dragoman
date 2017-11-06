@@ -1,7 +1,6 @@
-
 ---
 layout: default
-title: Dragoman -  A ...
+title: Home
 ---
 
 * [What Does It Do?](what-does-it-do.md)
