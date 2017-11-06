@@ -17,9 +17,9 @@ Although this app is functional it is primarily a sandbox, a place for trying ou
  
 * [What Does It Do?](docs/what-does-it-do.md)
 * [How Does It Work?](docs/how-does-it-work.md)
-* [Contributing To This Project](docs/contributing.md)
-* [Code Of Conduct For This Project](docs/code-of-conduct.md)
-* [License](license.md)
+* [Contributing To This Project](.github/CONTRIBUTING.md)
+* [Code Of Conduct For This Project](.github/CODE_OF_CONDUCT.md)
+* [License](.github/LICENSE.txt)
 
 Building Dragoman
 -------
@@ -87,7 +87,7 @@ When the server is running the web application will be available at:
 
 Where:
 
-* `<host>` is the host on whihc the server is running
+* `<host>` is the host on which the server is running
 * `<port>` is defined by the `http.port` value in [application.properties](src/main/resources/application.properties). By default, this is `31000` but if the server is running in embedded mode then this port will be assigned from the free port range. To see what port has been assigned look for a log message like this:
 
 > o.g.dragoman.web.WebServerVerticle|Starting HTTP server on port: ... 
