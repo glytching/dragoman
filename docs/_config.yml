@@ -1,1 +1,9 @@
 theme: jekyll-theme-tactile
+
+plugins:
+   - jekyll-mentions
+   - jemoji
+   - jekyll-avatar
+   - jekyll-redirect-from
+   - jekyll-sitemap
+   - jekyll-feed

@@ -24,8 +24,6 @@ Although this app is functional it is primarily a sandbox, a place for trying ou
 Building Dragoman
 -------
 
-Dragoman is on Travis, current branch build statuses are:
-
 | Branch  | Status | Coverage |
 | --------| ------ | -------- |
 | Master  | [![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=master)](https://travis-ci.org/glytching/dragoman)  | [![Coverage Status](https://coveralls.io/repos/github/glytching/dragoman/badge.svg?branch=master)](https://coveralls.io/github/glytching/dragoman?branch=master) |
