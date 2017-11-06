@@ -26,9 +26,9 @@ Building Dragoman
 
 Dragoman is on Travis, current branch build statuses are:
 
-| Branch  | Status |
-| --------| ------ |
-| Master  | [![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=master)](https://travis-ci.org/glytching/dragoman)  |
+| Branch  | Status | Coverage |
+| --------| ------ | -------- |
+| Master  | [![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=master)](https://travis-ci.org/glytching/dragoman)  | [![Coverage Status](https://coveralls.io/repos/github/glytching/dragoman/badge.svg?branch=master)](https://coveralls.io/github/glytching/dragoman?branch=master) |
 
 
 To build Dragoman locally:

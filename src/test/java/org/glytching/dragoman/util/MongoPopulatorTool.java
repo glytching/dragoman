@@ -50,7 +50,7 @@ public class MongoPopulatorTool {
 
         Observable<Document> simulate = documentSimulator.simulate(1);
 
-        MongoClient mongoClient = MongoClients.create("mongodb://localhost:54161");
+        MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
 
         MongoDatabase database = mongoClient.getDatabase(databaseName);
         MongoCollection<Document> collection = database.getCollection(sample);

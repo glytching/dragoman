@@ -1,3 +1,18 @@
 language: java
 sudo: false
-script: mvn test -Dtest=\!*ResourceTest,\!MongoPopulatorTool
+script: mvn test javadoc:javadoc -Dtest=\!*ResourceTest,\!MongoPopulatorTool
+
+#deploy:
+#  provider: pages
+#  skip_cleanup: true
+#  local_dir: target/site/apidocs
+#  on:
+#    branch: master
+
+after_success:
+  - mvn clean cobertura:cobertura coveralls:report -DrepoToken=dplZ1J1AfjFK3hHAj0OV8IRneKprs4Glb
+
+notifications:
+  email:
+    on_sucess: never
+    on_failure: always
