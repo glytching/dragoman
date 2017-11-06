@@ -53,7 +53,7 @@ The following JVM parameters will change aspects of Dragoman's behaviour:
 
 #### Running In-IDE
 
-Just run the `org.glitch.dragoman.Dragoman` class, it has a main method.
+Just run the `org.glytching.dragoman.Dragoman` class, it has a main method.
 
 #### Running As A Standalone Process
 
