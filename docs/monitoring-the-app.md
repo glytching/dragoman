@@ -43,3 +43,15 @@ JVisualVM (and JConsole) provide some rudimentary visualisation of numeric metri
 In addition, JVisualVM provides a useful Monitor view showing CPU, heap and thread usage. For example:
 
 ![](https://github.com/glytching/dragoman/blob/master/docs/assets/images/jvisualvm-monitor.png)
+
+This
+<img src="https://github.com/glytching/dragoman/blob/master/docs/assets/images/jvisualvm-monitor.png" alt="" class="inline"/>
+
+That
+<img src="/assets/images/jvisualvm-monitor.png" alt="" class="inline"/>
+
+The other
+<img src="assets/images/jvisualvm-monitor.png" alt="" class="inline"/>
+
+And more of the other
+[![JVisualVM Monitor](https://github.com/glytching/dragoman/blob/master/docs/assets/images/jvisualvm-monitor.png)]
