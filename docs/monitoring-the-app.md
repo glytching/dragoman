@@ -1,6 +1,12 @@
 Monitoring Dragoman
 ======
 
+Dragoman is JMX aware, so you can connect to it using [JVisualVM](https://visualvm.github.io/). This tool provides a useful Monitor view showing CPU, heap and thread usage. For example:
+
+<img src="assets/images/jvisualvm-monitor.png" alt="JVisualVM Monitor"/>
+
+#### Metrics
+
 Dragoman uses [Vert.x DropWizard Metrics](http://vertx.io/docs/vertx-dropwizard-metrics/java/) to gather and emit metrics. 
 
 These metrics include size and throughput values for:
@@ -11,7 +17,7 @@ These metrics include size and throughput values for:
 
 The metrics output is available in several flavours ...
 
-#### Logs
+##### Logs
  
 The `MetricsFacade` wraps Vert.x's `MetricsService` and, using a Vert.x timer, it periodically writes the latest metrics snapshot to the logger: `metrics-logger`. The periodicity is controller by the application property: `metrics.publication.period.in.millis`. 
 
@@ -21,7 +27,7 @@ Although the metrics output is written in JSON, it is quite verbose so not easil
 * Each metrics log is written in JSON (for ease of programmatic interrogation) and is accompanied by a timestamp (to help with visualisations-over-time)
   
 
-#### HTTP endpoint
+##### HTTP endpoint
 
 The `metrics` endpoint exposes a JSON representation of the lastest metrics snapshot. By default, this emits the entire snapshot but the response can be qualified by:
 
@@ -30,17 +36,15 @@ The `metrics` endpoint exposes a JSON representation of the lastest metrics snap
 * Passing a regular expression as a query parameter, the regex will be applied to metric names and only those metrics whose name matches the regex will be returned. For example:   
   * `/metrics?regex=responses.*` will return only those metrics having a name which starts with `responses`
     
-#### JMX
+##### JMX
 
-Each metric is exposed via a JMX MBean, all of these MBeans are available in a MBean domain named: `dragoman`. Here's a screenshot showing some of these MBeans viewed in JVisualVM:
+Each metric is exposed via a JMX MBean, all of these MBeans are available in a MBean domain named: `dragoman`. These MBeans can be accessed using any JMX client. Here's a screenshot showing some of these MBeans viewed in JVisualVM (after installing the [MBeans Browser](https://visualvm.github.io/plugins.html) plugin):
 
 <img src="assets/images/jvisualvm-metrics.png" alt="JVisualVM Metrics Browser"/>
 
-JVisualVM (and JConsole) provide some rudimentary visualisation of numeric metrics. If you double click on a numeric value in the attributes tab then a graph will appear, this will be updated as the underlying value changes. For example:
+JVisualVM provides some rudimentary visualisation of numeric metrics. If you double click on a numeric value in the attributes tab then a graph will appear, this will be updated as the underlying value changes. For example:
 
 <img src="assets/images/jvisualvm-metrics-chart.png" alt="JVisualVM Metrics Chart"/>
 
-In addition, JVisualVM provides a useful Monitor view showing CPU, heap and thread usage. For example:
 
-<img src="assets/images/jvisualvm-monitor.png" alt="JVisualVM Monitor"/>
 
