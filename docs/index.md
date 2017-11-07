@@ -66,7 +66,7 @@ This screenshot shows the landing page, since no one has logged in at this stage
 
 <img src="assets/images/dragoman-about.png" alt="Dragoman About"/>
 
-Once someone logs in, the next two views become available ...
+Once someone logs in, the remaining views (`Datasets` and `Management`) become available ...
 
 ##### Datasets
 
