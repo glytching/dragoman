@@ -20,7 +20,7 @@ To store local datasets.
 
 Dragoman uses [The Mongo Rx Java Driver](https://github.com/mongodb/mongo-java-driver-rx) to talk to MongoDB.
 
-Dragoman uses [flapdoodle](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo) to create an embedded instance of MongoDB. 
+Dragoman uses [flapdoodle](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo) to create an embedded instance of MongoDB. This is used when running in `embedded` mode and for creating an in-process MongoDB instance in test cases.
 
 #### [Vert.x](http://vertx.io/) 
 
