@@ -16,7 +16,11 @@ To implement parsers for user supplied predicate and projection expressions. The
 
 #### [MongoDB](https://www.mongodb.com/) 
 
-To store local datasets. Dragoman uses [flapdoodle](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo) to create an embedded instance of MongoDB and Dragoman uses [The Mongo Rx Java Driver](https://github.com/mongodb/mongo-java-driver-rx) to talk to this MongoDB server.
+To store local datasets. 
+
+Dragoman uses [The Mongo Rx Java Driver](https://github.com/mongodb/mongo-java-driver-rx) to talk to MongoDB.
+
+Dragoman uses [flapdoodle](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo) to create an embedded instance of MongoDB. 
 
 #### [Vert.x](http://vertx.io/) 
 

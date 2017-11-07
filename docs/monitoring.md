@@ -1,7 +1,7 @@
 Monitoring Dragoman
 ======
 
-### Health Checks
+#### Health Checks
 
 Dragoman uses [Dropwizard's Health Checks](https://dropwizard.github.io/metrics/3.1.0/manual/healthchecks/. The configured healthchecks are available at the `/healthcheck` HTTP endpoint. Here's an example of the output:
 
@@ -19,17 +19,17 @@ Dragoman uses [Dropwizard's Health Checks](https://dropwizard.github.io/metrics/
 
 If all of the configured health checks are _healthy_ this endpoint will return a `200` status, otherwise it will return a `500` status.
 
-### Using JVisualVM
+#### Using JVisualVM
 
 Dragoman is JMX aware, so you can connect to it using [JVisualVM](https://visualvm.github.io/). This tool provides a useful Monitor view showing CPU, heap and thread usage. For example:
 
 <img src="assets/images/jvisualvm-monitor.png" alt="JVisualVM Monitor"/>
 
-### Using Jolokia and Hawtio
+#### Using Jolokia and Hawtio
 
 [Jolokia](https://jolokia.org/) is a JMX-HTTP bridge giving an alternative to JSR-160 JMX clients. [Hawtio](http://hawt.io/) is a modular web console which can consume data exposed by Jolokia. 
 
-Dragoman embeds a Jolokia agent running on the port defined by the `jolokia.port` property in [application.properties](../src/main/resources/application.properties). If the `jolokia.enabled` property is `true' (that is its default value) then this agent will be started when Dragoman is started.  
+Dragoman embeds a Jolokia agent running on the port defined by the `jolokia.port` property in `application.properties`. If the `jolokia.enabled` property is `true' (this is its default value) then this agent will be started when Dragoman is started.  
 
 You can confirm that this agent is running by:
 
