@@ -1,4 +1,4 @@
-How Does It Work?
+Technologies
 ======
 
 The technologies used by Dragoman are described below. These technology choices are typically hidden behind facades which (should :) allow for later substitution with little or no changes to the rest of the code base. For example:

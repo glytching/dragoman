@@ -23,7 +23,7 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.TestContext;
 import org.glytching.dragoman.configuration.ApplicationConfiguration;
-import org.glytching.dragoman.configuration.guice.AppModule;
+import org.glytching.dragoman.configuration.guice.DragomanModule;
 import org.glytching.dragoman.http.HttpClient;
 import org.glytching.dragoman.http.HttpResponse;
 import org.glytching.dragoman.reader.Reader;
@@ -72,7 +72,8 @@ public abstract class AbstractResourceTest {
     @Before
     @SuppressWarnings("unchecked")
     public void start(TestContext context) {
-        Injector injector = Guice.createInjector(Modules.override(new AppModule()).with(new RestOverridesModule()));
+        Injector injector =
+                Guice.createInjector(Modules.override(new DragomanModule()).with(new RestOverridesModule()));
         injector.injectMembers(this);
 
         startHttpServer(context);

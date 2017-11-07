@@ -23,20 +23,22 @@
 
         <!-- side bar links -->
 
-        <p><a href="how-does-it-work">How Does It Work?</a></p>
-        <p><a href="what-does-it-do">What Does It Do?</a></p>
-        <p><a href="subscribing-for-updates">Subscribing For Updates</a></p>
-        <p><a href="monitoring-the-app">Monitoring The App</a></p>
-
-        <!-- side bar links -->
+        <p><a href="querying">Querying Datasets</a></p>
+        <p><a href="subscribing">Subscribing To Datasets</a></p>
 
         <hr/>
 
-        <p class="view">
-            <a href="{{ site.github.repository_url }}">
-                <small>GitHub Project</small>
-            </a>
-        </p>
+        <p><a href="monitoring">Monitoring</a></p>
+        <p><a href="metrics">Metrics</a></p>
+        <p><a href="logging">Logging</a></p>
+
+        <hr/>
+
+        <p><a href="technology-list">Technology List</a></p>
+        <p><a href="snaglist">Snag List</a></p>
+
+        <!-- side bar links -->
+
     </header>
     <section>
 
@@ -45,7 +47,9 @@
     </section>
     <footer>
         <p>
-            <small>Hosted on GitHub Pages by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a>.
+            <small><a href="{{ site.github.repository_url }}">
+                <small>GitHub Project</small>
+            </a> by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a>.
             </small>
         </p>
     </footer>
@@ -61,6 +65,7 @@
         })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
         ga('create', '{{ site.google_analytics }}', 'auto');
         ga('send', 'pageview');
+
 
 
 

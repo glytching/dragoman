@@ -58,6 +58,16 @@ public interface ApplicationConfiguration {
 
     boolean isMetricsEnabled();
 
+    boolean isJmxEnabled();
+
+    String getJmxDomainName();
+
+    boolean isJolokiaEnabled();
+
+    int getJolokiaPort();
+
+    boolean isJolokiaDebugEnabled();
+
     int getViewTemplateCacheSize();
 
     boolean isViewStaticAssetsCacheEnabled();

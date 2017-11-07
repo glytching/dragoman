@@ -16,6 +16,7 @@
  */
 package org.glytching.dragoman.web;
 
+import com.google.common.collect.Maps;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.http.HttpMethod;
@@ -34,11 +35,14 @@ import io.vertx.ext.web.templ.HandlebarsTemplateEngine;
 import org.glytching.dragoman.configuration.ApplicationConfiguration;
 import org.glytching.dragoman.web.exception.AccessDeniedException;
 import org.glytching.dragoman.web.resource.RestResource;
+import org.jolokia.jvmagent.JolokiaServer;
+import org.jolokia.jvmagent.JolokiaServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -53,6 +57,7 @@ public class WebServerVerticle extends AbstractVerticle {
     private final Set<RestResource> restResources;
     private final ApplicationConfiguration applicationConfiguration;
     private HttpServer httpServer;
+    private JolokiaServer jolokiaServer;
 
     @Inject
     public WebServerVerticle(Set<RestResource> restResources, ApplicationConfiguration applicationConfiguration) {
@@ -69,11 +74,40 @@ public class WebServerVerticle extends AbstractVerticle {
         httpServer.requestHandler(router::accept);
         httpServer.listen(result -> {
             if (result.succeeded()) {
+                if (applicationConfiguration.isJolokiaEnabled()) {
+                    startJolokia();
+                }
                 future.complete();
             } else {
                 future.fail(result.cause());
             }
         });
+    }
+
+    @Override
+    public void stop(Future<Void> future) {
+        if (jolokiaServer != null) {
+            jolokiaServer.stop();
+        }
+
+        if (httpServer == null) {
+            future.complete();
+            return;
+        }
+        httpServer.close(future.completer());
+    }
+
+    private void startJolokia() {
+        try {
+            logger.info("Starting Jolokia agent on port: {}", applicationConfiguration.getJolokiaPort());
+            Map<String, String> config = Maps.newHashMap();
+            config.put("port", "" + applicationConfiguration.getJolokiaPort());
+            config.put("debug", "" + applicationConfiguration.isJolokiaDebugEnabled());
+            jolokiaServer = new JolokiaServer(new JolokiaServerConfig(config), true);
+            jolokiaServer.start();
+        } catch (Exception ex) {
+            logger.warn("Failed to start Jolokia agent!", ex);
+        }
     }
 
     private Router router() {
@@ -190,15 +224,6 @@ public class WebServerVerticle extends AbstractVerticle {
         }
 
         return router;
-    }
-
-    @Override
-    public void stop(Future<Void> future) {
-        if (httpServer == null) {
-            future.complete();
-            return;
-        }
-        httpServer.close(future.completer());
     }
 
     private HttpServerOptions createOptions() {

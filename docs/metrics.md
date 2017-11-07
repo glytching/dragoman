@@ -1,11 +1,5 @@
-Monitoring Dragoman
+Metrics
 ======
-
-Dragoman is JMX aware, so you can connect to it using [JVisualVM](https://visualvm.github.io/). This tool provides a useful Monitor view showing CPU, heap and thread usage. For example:
-
-<img src="assets/images/jvisualvm-monitor.png" alt="JVisualVM Monitor"/>
-
-#### Metrics
 
 Dragoman uses [Vert.x DropWizard Metrics](http://vertx.io/docs/vertx-dropwizard-metrics/java/) to gather and emit metrics. 
 
@@ -45,6 +39,3 @@ Each metric is exposed via a JMX MBean, all of these MBeans are available in a M
 JVisualVM provides some rudimentary visualisation of numeric metrics. If you double click on a numeric value in the attributes tab then a graph will appear, this will be updated as the underlying value changes. For example:
 
 <img src="assets/images/jvisualvm-metrics-chart.png" alt="JVisualVM Metrics Chart"/>
-
-
-

@@ -21,7 +21,7 @@ import com.google.inject.Injector;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.logging.SLF4JLogDelegateFactory;
-import org.glytching.dragoman.configuration.guice.AppModule;
+import org.glytching.dragoman.configuration.guice.DragomanModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ public class Dragoman {
      * Instances the Guice injector, passing in the main configuration module.
      */
     private Dragoman() {
-        Injector injector = Guice.createInjector(new AppModule());
+        Injector injector = Guice.createInjector(new DragomanModule());
         injector.injectMembers(this);
     }
 

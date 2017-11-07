@@ -127,7 +127,32 @@ public class ConstrettoApplicationConfiguration implements ApplicationConfigurat
 
     @Override
     public boolean isMetricsEnabled() {
-        return get(() -> constretto.evaluateToBoolean("vertx.metrics.enabled"));
+        return get(() -> constretto.evaluateToBoolean("metrics.enabled"));
+    }
+
+    @Override
+    public boolean isJmxEnabled() {
+        return get(() -> constretto.evaluateToBoolean("jmx.enabled"));
+    }
+
+    @Override
+    public String getJmxDomainName() {
+        return get(() -> constretto.evaluateToString("jmx.domain.name"));
+    }
+
+    @Override
+    public boolean isJolokiaEnabled() {
+        return get(() -> constretto.evaluateToBoolean("jolokia.enabled"));
+    }
+
+    @Override
+    public int getJolokiaPort() {
+        return get(() -> constretto.evaluateToInt("jolokia.port"));
+    }
+
+    @Override
+    public boolean isJolokiaDebugEnabled() {
+        return get(() -> constretto.evaluateToBoolean("jolokia.debug.enabled"));
     }
 
     @Override
