@@ -49,6 +49,7 @@ public class ConstrettoApplicationConfiguration implements ApplicationConfigurat
 
     private Integer httpPort;
     private Integer mongoPort;
+    private Integer jolokiaPort;
 
     public ConstrettoApplicationConfiguration(ConstrettoConfiguration constretto) {
         this.constretto = constretto;
@@ -147,7 +148,10 @@ public class ConstrettoApplicationConfiguration implements ApplicationConfigurat
 
     @Override
     public int getJolokiaPort() {
-        return get(() -> constretto.evaluateToInt("jolokia.port"));
+        if (jolokiaPort == null) {
+            jolokiaPort = getOrDefault("jolokia.port");
+        }
+        return jolokiaPort;
     }
 
     @Override

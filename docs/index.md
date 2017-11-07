@@ -5,6 +5,10 @@ layout: default
 Introdution
 ======
 
+#### Caveat
+
+> Although this application is functional, its primary purpose is to provide a sandbox, a place for trying out technologies. Rather than attempting to do so in the context of something simplistic (another chat application or a calculator, perhaps) this application is intended to provide sufficient depth and breath to make any experimentation meaningful and useful. 
+
 Dragoman provides a facade which allows the user to ...
         
 * Query datasets, applying projections and predicates to filter and shape the datasets to meet the user's needs
@@ -14,10 +18,6 @@ The datasets are, broadly speaking, of two types:
 
 * Local: these are stored within Dragoman
 * Remote: these are read, on demand, from a remote source over HTTP 
-
-#### Caveat
-
-> Although this application is functional, its primary purpose is to provide a sandbox, a place for trying out technologies. Rather than attempting to do so in the context of something simplistic (another chat application or a calculator, perhaps) this application is intended to provide sufficient depth and breath to make any experimentation meaningful and useful. 
 
 #### Datatsets
 
