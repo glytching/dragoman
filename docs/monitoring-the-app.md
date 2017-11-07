@@ -1,3 +1,6 @@
+Monitoring Dragoman
+======
+
 Dragoman uses [Vert.x DropWizard Metrics](http://vertx.io/docs/vertx-dropwizard-metrics/java/) to gather and emit metrics. 
 
 These metrics include size and throughput values for:
@@ -31,8 +34,12 @@ The `metrics` endpoint exposes a JSON representation of the lastest metrics snap
 
 Each metric is exposed via a JMX MBean, all of these MBeans are available in a MBean domain named: `dragoman`. Here's a screenshot showing some of these MBeans viewed in JVisualVM:
 
-![Metrics MBean Browser](/assets/images/jvisualvm-metrics.png?raw=true)
+![](https://github.com/glytching/dragoman/blob/master/docs/assets/images/jvisualvm-metrics-chart.png)
 
 JVisualVM (and JConsole) provide some rudimentary visualisation of numeric metrics. If you double click on a numeric value in the attributes tab then a graph will appear, this will be updated as the underlying value changes. For example:
 
-![Metrics MBean Chart](/assets/images/jvisualvm-metrics-chart.png?raw=true)
+![](https://github.com/glytching/dragoman/blob/master/docs/assets/images/jvisualvm-metrics-chart.png)
+
+In addition, JVisualVM provides a useful Monitor view showing CPU, heap and thread usage. For example:
+
+![](https://github.com/glytching/dragoman/blob/master/docs/assets/images/jvisualvm-monitor.png)
