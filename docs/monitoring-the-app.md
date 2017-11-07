@@ -34,13 +34,13 @@ The `metrics` endpoint exposes a JSON representation of the lastest metrics snap
 
 Each metric is exposed via a JMX MBean, all of these MBeans are available in a MBean domain named: `dragoman`. Here's a screenshot showing some of these MBeans viewed in JVisualVM:
 
-<img src="assets/images/jvisualvm-metrics.png" alt="JVisualVM Metrics Browser" class="screenshot"/>
+<img src="assets/images/jvisualvm-metrics.png" alt="JVisualVM Metrics Browser"/>
 
 JVisualVM (and JConsole) provide some rudimentary visualisation of numeric metrics. If you double click on a numeric value in the attributes tab then a graph will appear, this will be updated as the underlying value changes. For example:
 
-<img src="assets/images/jvisualvm-metrics-chart.png" alt="JVisualVM Metrics Chart" class="screenshot"/>
+<img src="assets/images/jvisualvm-metrics-chart.png" alt="JVisualVM Metrics Chart"/>
 
 In addition, JVisualVM provides a useful Monitor view showing CPU, heap and thread usage. For example:
 
-<img src="assets/images/jvisualvm-monitor.png" alt="JVisualVM Monitor" class="screenshot"/>
+<img src="assets/images/jvisualvm-monitor.png" alt="JVisualVM Monitor"/>
 
