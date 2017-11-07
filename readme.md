@@ -15,7 +15,7 @@ The datasets are, broadly speaking, of two types:
 
 Although this app is functional it is primarily a sandbox, a place for trying out technologies. Bearing that caveat in mind, feel free to dig deeper ...
  
-* [Read The Docs](https://github.com/glytching/dragoman/wiki)
+* [Read The Docs](https://glytching.github.io/dragoman/)
 * [Contributing To This Project](.github/CONTRIBUTING.md)
 * [Code Of Conduct For This Project](.github/CODE_OF_CONDUCT.md)
 * [License](LICENSE)
