@@ -18,7 +18,7 @@
         <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
         <maven.shade.plugin.version>3.1.0</maven.shade.plugin.version>
         <maven.enforcer.plugin.version>3.0.0-M1</maven.enforcer.plugin.version>
-        <maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
         <maven.coveralls.plugin.version>4.3.0</maven.coveralls.plugin.version>
         <maven.jacoco.plugin.version>0.7.9</maven.jacoco.plugin.version>
         <antlr.version>4.5</antlr.version>
@@ -39,7 +39,9 @@
         <commons.io.version>2.6</commons.io.version>
         <groovy.version>2.4.12</groovy.version>
         <janino.version>3.0.7</janino.version>
-        <junit.version>4.12</junit.version>
+        <junit.jupiter.version>5.0.1</junit.jupiter.version>
+        <junit.platform.version>1.0.1</junit.platform.version>
+        <junit.vintage.version>4.12.1</junit.vintage.version>
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>2.10.0</mockito.version>
         <awaitility.version>1.7.0</awaitility.version>
@@ -146,6 +148,31 @@
                         <exclude>**/MongoPopulatorTool.java</exclude>
                     </excludes>
                 </configuration>
+                <dependencies>
+                    <!-- integrates JUnit5 with surefire -->
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>${junit.platform.version}</version>
+                    </dependency>
+
+                    <!-- ensure that a JUnit5-aware test engine is available on the classpath when running Surefire -->
+
+                    <!-- if we want to run JUnit4 tests -->
+                    <dependency>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                        <version>${junit.vintage.version}</version>
+                    </dependency>
+                    <!-- if we want to run only JUnit5 tests -->
+                    <!--
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>${junit.jupiter.version}</version>
+                    </dependency>
+                    -->
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -419,12 +446,45 @@
             <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!--
+            The many, many JUnit5 dependencies:
+             * junit-jupiter-api: for writing JUnit5 tests
+             * junit-jupiter-engine: for running JUnit5 tests
+             * junit-vintage-engine: for running JUnit4 tests
+             * junit-platform-xxx: the foundation for JUnit5
+        -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit.vintage.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>${junit.platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <version>${junit.platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
