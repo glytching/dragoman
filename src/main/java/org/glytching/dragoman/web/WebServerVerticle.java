@@ -87,7 +87,11 @@ public class WebServerVerticle extends AbstractVerticle {
     @Override
     public void stop(Future<Void> future) {
         if (jolokiaServer != null) {
-            jolokiaServer.stop();
+            try {
+                jolokiaServer.stop();
+            } catch (Exception ex) {
+                // nop-op: noisy and redundant
+            }
         }
 
         if (httpServer == null) {
