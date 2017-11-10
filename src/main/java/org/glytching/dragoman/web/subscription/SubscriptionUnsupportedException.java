@@ -26,8 +26,20 @@ import static java.lang.String.format;
  */
 public class SubscriptionUnsupportedException extends RuntimeException {
 
-    public SubscriptionUnsupportedException(Dataset dataset) {
-        super(format("The dataset: %s has is not subscribable, it has no subscriptionControlField!", dataset.getName
-                ()));
+    public static SubscriptionUnsupportedException createUnsubscribable(Dataset dataset) {
+        return new SubscriptionUnsupportedException(
+                format("The dataset: %s is not subscribable, it has no subscriptionControlField!", dataset.getName())
+        );
+    }
+
+    public static SubscriptionUnsupportedException createConcurrentSubscription(Dataset dataset) {
+        return new SubscriptionUnsupportedException(
+                format("The dataset: %s already has an active subscription, you cannot have more than one subscription " +
+                        "to a given dataset at any given time!", dataset.getName())
+        );
+    }
+
+    private SubscriptionUnsupportedException(String message) {
+        super(message);
     }
 }

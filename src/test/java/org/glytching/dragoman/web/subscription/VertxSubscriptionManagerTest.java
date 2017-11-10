@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.String.format;
 import static org.glytching.dragoman.util.TestFixture.aPersistedDataset;
 import static org.glytching.dragoman.util.TestFixture.anyDataEnvelope;
 import static org.glytching.dragoman.web.subscription.SubscriptionEvent.SubscriptionEventType;
@@ -116,6 +117,21 @@ public class VertxSubscriptionManagerTest {
         assertThat(consumed, hasItem(new JsonObject(one.getPayload())));
         assertThat(consumed, hasItem(new JsonObject(two.getPayload())));
         assertThat(consumed, hasItem(new JsonObject(three.getPayload())));
+    }
+
+    @Test
+    public void willNotAllowMoreThanOneConcurrentSubscriptionToAnyGivenDataset() {
+        when(datasetDao.exists(dataset.getId())).thenReturn(true);
+
+        // subscribe
+        subscriptionManager.start(dataset, Optional.empty(), LocalDateTime.now(), select, where);
+
+        // subscribe again ... and boom!
+        SubscriptionUnsupportedException actual =
+                assertThrows(SubscriptionUnsupportedException.class,
+                        () -> subscriptionManager.start(dataset, Optional.empty(), LocalDateTime.now(), select, where));
+        assertThat(actual.getMessage(), is(format("The dataset: %s already has an active subscription, you cannot have " +
+                "more than one subscription to a given dataset at any given time!", dataset.getName())));
     }
 
     @Test

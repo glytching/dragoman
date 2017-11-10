@@ -119,17 +119,16 @@ public class DatasetResource implements RestResource {
 
         logger.info("Getting content for dataset: {}", dataset);
 
-        LocalDateTime startTime = LocalDateTime.now(ZoneId.of("UTC"));
-        writeDatasetContents(routingContext, reader.read(dataset, select, where, orderBy, -1));
-
         if (Boolean.valueOf(subscriptionFlag)) {
             Optional<Long> refreshPeriod = Optional.empty();
             if (routingContext.request().params().contains("subscriptionInterval")) {
                 refreshPeriod = Optional.of(Long.valueOf(routingContext.request().getParam("subscriptionInterval")));
             }
 
-            subscriptionManager.start(dataset, refreshPeriod, startTime, select, where);
+            subscriptionManager.start(dataset, refreshPeriod, LocalDateTime.now(ZoneId.of("UTC")), select, where);
         }
+
+        writeDatasetContents(routingContext, reader.read(dataset, select, where, orderBy, -1));
     }
 
     private void getSample(RoutingContext routingContext) {

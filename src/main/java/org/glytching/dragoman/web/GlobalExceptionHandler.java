@@ -22,6 +22,7 @@ import io.vertx.ext.web.RoutingContext;
 import org.glytching.dragoman.web.exception.AccessDeniedException;
 import org.glytching.dragoman.web.exception.InvalidCredentialsException;
 import org.glytching.dragoman.web.exception.InvalidRequestException;
+import org.glytching.dragoman.web.subscription.SubscriptionUnsupportedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +73,8 @@ public class GlobalExceptionHandler {
         int status = 500;
 
         // intercept specific exception types and assign the relevant HTTP status code
-        if (InvalidRequestException.class.isAssignableFrom(exception.getClass())) {
+        if (InvalidRequestException.class.isAssignableFrom(exception.getClass()) ||
+                SubscriptionUnsupportedException.class.isAssignableFrom(exception.getClass())) {
             status = HttpResponseStatus.BAD_REQUEST.code();
         } else if (InvalidCredentialsException.class.isAssignableFrom(exception.getClass())) {
             status = HttpResponseStatus.UNAUTHORIZED.code();

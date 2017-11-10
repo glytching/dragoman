@@ -124,6 +124,10 @@ dragoman.controller('ManageDatasetsCtrl', ['$scope', '$http', '$location', funct
             .error(function(error) {
                 console.error('Failed to get dataset contents, due to: ' + JSON.stringify(error));
                 $scope.error = error;
+
+                if ($scope.subscribed) {
+                    $scope.subscribed = false;
+                }
             });
 	};
 

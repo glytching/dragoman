@@ -68,7 +68,6 @@ public class VertxSubscriptionManager implements SubscriptionManager {
 
         long refreshPeriod = refreshPeriodInMillis.orElse(DEFAULT_REFRESH_PERIOD);
 
-        if (!subscriptions.containsKey(subscriptionKey)) {
             logger.info("Creating a subscription for key: {} and period: {}", subscriptionKey, refreshPeriod);
 
             // use a blocking handler to ensure that the publication work does *not* occur on an event loop thread
@@ -79,7 +78,6 @@ public class VertxSubscriptionManager implements SubscriptionManager {
 
             subscriptions.put(subscriptionKey, new SubscriptionContext(timerId, asOfFactory.create(dataset
                     .getSubscriptionControlField(), dataset.getSubscriptionControlFieldPattern(), startTime)));
-        }
     }
 
     @Override
@@ -141,7 +139,10 @@ public class VertxSubscriptionManager implements SubscriptionManager {
 
     private void validateForSubscription(Dataset dataset) {
         if (isBlank(dataset.getSubscriptionControlField())) {
-            throw new SubscriptionUnsupportedException(dataset);
+            throw SubscriptionUnsupportedException.createUnsubscribable(dataset);
+        }
+        if (subscriptions.containsKey(dataset.getId())) {
+            throw SubscriptionUnsupportedException.createConcurrentSubscription(dataset);
         }
     }
 }
