@@ -65,7 +65,7 @@ public class AsOfTest {
 
         String actual = asOf.applyAsOf("x > 1");
 
-        assertThat(actual, is("x > 1 and updatedAt > '" + DateTimeFormatter.ISO_DATE_TIME.format(lastRead) + "'"));
+        assertThat(actual, is("x > 1 and updatedAt > '" + DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(lastRead) + "'"));
     }
 
     @Test

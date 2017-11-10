@@ -54,4 +54,9 @@ To transform data between serialised and non serialised representations. Dragoma
 
 To externalise application configuration to properties file. This file (`application.properties`) is discovered from the classpath and supports type safe property values, property value transformers and environment specific property values.
 
+#### Testing
+
+* [JUnit5](http://junit.org/junit5/) 
+* [Hamcrest](http://hamcrest.org/)
+* [Mockito](http://site.mockito.org/)
 
