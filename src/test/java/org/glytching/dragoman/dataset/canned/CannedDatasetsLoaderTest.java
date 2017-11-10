@@ -19,30 +19,29 @@ package org.glytching.dragoman.dataset.canned;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.transform.JsonTransformer;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CannedDatasetsLoaderTest {
 
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
+    //    @Rule
+    //    public final ExpectedException expectedException = ExpectedException.none();
 
     @SuppressWarnings("FieldCanBeLocal")
     private final ObjectMapper mapper = new ObjectMapper();
 
     private CannedDatasetsLoaderImpl loader;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         loader = new CannedDatasetsLoaderImpl(new JsonTransformer(mapper));
     }
@@ -113,17 +112,15 @@ public class CannedDatasetsLoaderTest {
 
     @Test
     public void cannotReadDodgyDescriptor() {
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Failed to read files from");
-
-        loader.load("/cannedDatasetWithDodgyContent");
+        RuntimeException actual =
+                assertThrows(RuntimeException.class, () -> loader.load("/cannedDatasetWithDodgyContent"));
+        assertThat(actual.getMessage(), startsWith("Failed to read files from"));
     }
 
     @Test
     public void cannotReadADatasetWhichContainsDocumentsButNoDescriptor() {
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Failed to read files from");
-
-        loader.load("/cannedDatasetWithDocumentsButNoDescriptor");
+        RuntimeException actual =
+                assertThrows(RuntimeException.class, () -> loader.load("/cannedDatasetWithDocumentsButNoDescriptor"));
+        assertThat(actual.getMessage(), startsWith("Failed to read files from"));
     }
 }

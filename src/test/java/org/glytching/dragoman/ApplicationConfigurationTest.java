@@ -20,14 +20,12 @@ import org.constretto.ConstrettoBuilder;
 import org.constretto.model.ClassPathResource;
 import org.glytching.dragoman.configuration.ApplicationConfiguration;
 import org.glytching.dragoman.configuration.constretto.ConstrettoApplicationConfiguration;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ApplicationConfigurationTest {
 
@@ -35,12 +33,9 @@ public class ApplicationConfigurationTest {
         System.setProperty("env", "test");
     }
 
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
-
     private ApplicationConfiguration configuration;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         configuration = new ConstrettoApplicationConfiguration(new ConstrettoBuilder()
                 .addCurrentTag(System.getProperty("env", ""))
@@ -80,9 +75,8 @@ public class ApplicationConfigurationTest {
 
     @Test
     public void cannotReadANonExistentProperty() {
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Failed to read configuration property: Expression [foo] not found");
-
-        configuration.getPropertyValue(String.class, "foo");
+        RuntimeException actual =
+                assertThrows(RuntimeException.class, () -> configuration.getPropertyValue(String.class, "foo"));
+        assertThat(actual.getMessage(), startsWith("Failed to read configuration property: Expression [foo] not found"));
     }
 }

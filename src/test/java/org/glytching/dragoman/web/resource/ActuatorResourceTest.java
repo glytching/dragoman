@@ -16,18 +16,15 @@
  */
 package org.glytching.dragoman.web.resource;
 
-import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.glytching.dragoman.http.HttpResponse;
 import org.glytching.dragoman.store.mongo.health.IsMongoConnected;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
-@RunWith(VertxUnitRunner.class)
 public class ActuatorResourceTest extends AbstractResourceTest {
 
     @Test

@@ -22,18 +22,13 @@ import org.bson.codecs.BsonValueCodecProvider;
 import org.bson.codecs.ValueCodecProvider;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.conversions.Bson;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WhereClauseParserTest {
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     private final WhereClauseParser parser = new WhereClauseParser();
 
@@ -63,10 +58,9 @@ public class WhereClauseParserTest {
 
     @Test
     public void cannotParseToAnUnsupportedType() {
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Type: 'Object' is not supported, the supported types are: [String, Bson]");
-
-        parser.get(Object.class, "a, b");
+        IllegalArgumentException actual =
+                assertThrows(IllegalArgumentException.class, () -> parser.get(Object.class, "a, b"));
+        assertThat(actual.getMessage(), containsString("Type: 'Object' is not supported, the supported types are: [String, Bson]"));
     }
 
     private BsonDocument toBsonDocument(Bson bson) {

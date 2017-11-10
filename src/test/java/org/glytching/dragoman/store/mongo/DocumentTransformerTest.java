@@ -19,15 +19,15 @@ package org.glytching.dragoman.store.mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.Document;
 import org.glytching.dragoman.dataset.Dataset;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static org.glytching.dragoman.util.TestFixture.aPersistedDataset;
 import static org.glytching.dragoman.util.TestFixture.anyMap;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 public class DocumentTransformerTest {
 
@@ -35,7 +35,7 @@ public class DocumentTransformerTest {
 
     private DocumentTransformer documentTransformer;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         documentTransformer = new DocumentTransformer(objectMapper);
     }

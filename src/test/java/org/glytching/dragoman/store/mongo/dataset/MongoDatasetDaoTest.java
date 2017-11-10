@@ -27,8 +27,8 @@ import org.glytching.dragoman.store.mongo.AbstractMongoDBTest;
 import org.glytching.dragoman.store.mongo.MongoProvider;
 import org.glytching.dragoman.store.mongo.repository.MongoOverrideModule;
 import org.glytching.dragoman.util.RandomValues;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import rx.Observable;
 
 import javax.inject.Inject;
@@ -36,8 +36,8 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static org.glytching.dragoman.util.TestFixture.anyDataset;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 public class MongoDatasetDaoTest extends AbstractMongoDBTest {
@@ -47,7 +47,7 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
     @Inject
     private MongoProvider mongoProvider;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Injector injector =
                 Guice.createInjector(Modules.override(new DatasetModule(), new ConfigurationModule()).with(new MongoOverrideModule()));

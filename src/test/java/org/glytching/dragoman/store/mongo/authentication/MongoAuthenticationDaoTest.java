@@ -28,16 +28,16 @@ import org.glytching.dragoman.store.mongo.AbstractMongoDBTest;
 import org.glytching.dragoman.store.mongo.MongoProvider;
 import org.glytching.dragoman.store.mongo.repository.MongoOverrideModule;
 import org.glytching.dragoman.util.RandomValues;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
 import static java.lang.String.format;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
@@ -49,7 +49,7 @@ public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
     @Inject
     private PasswordUtil passwordUtil;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Injector injector =
                 Guice.createInjector(Modules.override(new AuthenticationModule(), new ConfigurationModule()).with(new MongoOverrideModule()));
