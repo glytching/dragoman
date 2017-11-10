@@ -20,11 +20,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.Document;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.store.mongo.DocumentTransformer;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 import rx.Observable;
 
 import java.util.List;
@@ -32,13 +31,12 @@ import java.util.Map;
 
 import static org.glytching.dragoman.util.TestFixture.anyDataset;
 import static org.glytching.dragoman.util.TestFixture.anyDocument;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("FieldCanBeLocal")
-@RunWith(MockitoJUnitRunner.class)
 public class DecoratingMongoRepositoryTest {
 
     @Mock
@@ -55,8 +53,10 @@ public class DecoratingMongoRepositoryTest {
     private DocumentTransformer documentTransformer;
     private DecoratingMongoRepository repository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
+
         dataset = anyDataset();
 
         documentTransformer = new DocumentTransformer(objectMapper);

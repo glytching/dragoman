@@ -23,9 +23,7 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.conversions.Bson;
 import org.glytching.dragoman.ql.SqlParserException;
 import org.glytching.dragoman.ql.parser.WhereClauseParser;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,12 +32,11 @@ import java.time.format.DateTimeFormatter;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoWhereClauseListenerTest {
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     private final WhereClauseParser sqlParser = new WhereClauseParser();
 
@@ -273,27 +270,22 @@ public class MongoWhereClauseListenerTest {
 
     @Test
     public void testUnsupportedDateLiteralValues() {
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage(containsString("Failed to parse date/time literal"));
-
-        parse("a = '2017-10-27 10:05:45'");
+        RuntimeException actual = assertThrows(RuntimeException.class, () -> parse("a = '2017-10-27 10:05:45'"));
+        assertThat(actual.getMessage(), containsString("Failed to parse date/time literal"));
     }
 
     @Test
     public void testInvalidPredicate() {
-        expectedException.expect(SqlParserException.class);
-        expectedException.expectMessage("Line: 1, Position: 4: no viable alternative at input '<EOF>'");
-
-        sqlParser.get(Bson.class, "a = ");
+        SqlParserException actual = assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a = "));
+        assertThat(actual.getMessage(), containsString("Line: 1, Position: 4: no viable alternative at input '<EOF>'"));
     }
 
     @Test
     public void testCombinationOfValidAndInvalidPredicates() {
-        expectedException.expect(SqlParserException.class);
-        expectedException.expectMessage("Line: 1, Position: 16: no viable alternative at input 'bnottrue', " +
-                "Line: 1, Position: 28: no viable alternative at input '<EOF>'");
-
-        sqlParser.get(Bson.class, "a = 1 and b not true and c =");
+        SqlParserException actual =
+                assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a = 1 and b not true and c ="));
+        assertThat(actual.getMessage(), containsString("Line: 1, Position: 16: no viable alternative at input 'bnottrue', " +
+                "Line: 1, Position: 28: no viable alternative at input '<EOF>'"));
     }
 
     private BsonDocument parse(String where) {

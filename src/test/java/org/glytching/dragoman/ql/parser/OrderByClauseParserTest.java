@@ -21,18 +21,13 @@ import org.bson.BsonInt32;
 import org.bson.codecs.BsonValueCodecProvider;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.conversions.Bson;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OrderByClauseParserTest {
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     private final OrderByClauseParser parser = new OrderByClauseParser();
 
@@ -48,10 +43,9 @@ public class OrderByClauseParserTest {
 
     @Test
     public void cannotParseToAnUnsupportedType() {
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Type: 'String' is not supported, the supported types are: [Bson]");
-
-        parser.get(String.class, "a, b");
+        IllegalArgumentException actual =
+                assertThrows(IllegalArgumentException.class, () -> parser.get(String.class, "a, b"));
+        assertThat(actual.getMessage(), containsString("Type: 'String' is not supported, the supported types are: [Bson]"));
     }
 
     private BsonDocument toBsonDocument(Bson bson) {

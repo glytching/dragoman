@@ -21,26 +21,28 @@ import groovy.lang.GroovyClassLoader;
 import org.glytching.dragoman.ql.parser.SelectClauseParser;
 import org.glytching.dragoman.ql.parser.WhereClauseParser;
 import org.glytching.dragoman.util.MapMaker;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 public class GroovyWhereClauseListenerTest {
     private static final Logger logger = LoggerFactory.getLogger(GroovyWhereClauseListenerTest.class);
 
-    private final GroovyFactory filterFactory = new GroovyFactory(new GroovyClassLoader(), new SelectClauseParser(), new WhereClauseParser());
+    private final GroovyFactory filterFactory = new GroovyFactory(new GroovyClassLoader(), new SelectClauseParser(),
+            new WhereClauseParser());
 
     @Test
     public void testEquals() throws Exception {
         String where = "a = 1 and b = 'hello' and c = 2.2 and d = '2017-09-12'";
 
-        Map<String, Object> document = MapMaker.makeMap(MapMaker.makeEntry("a", 1), MapMaker.makeEntry("b", "hello"), MapMaker.makeEntry("c", 2.2), MapMaker.makeEntry
-                ("d", "2017-09-12"));
+        Map<String, Object> document =
+                MapMaker.makeMap(MapMaker.makeEntry("a", 1), MapMaker.makeEntry("b", "hello"), MapMaker.makeEntry("c", 2.2), MapMaker.makeEntry
+                        ("d", "2017-09-12"));
 
         assertThat(filter(where, document), is(true));
 
@@ -53,8 +55,9 @@ public class GroovyWhereClauseListenerTest {
     public void testNotEquals() throws Exception {
         String where = "a != 1 and b != 'hello' and c != 2.2 and d != '2017-09-12'";
 
-        Map<String, Object> document = MapMaker.makeMap(MapMaker.makeEntry("a", 2), MapMaker.makeEntry("b", "goodbye"), MapMaker.makeEntry("c", 3.3), MapMaker.makeEntry
-                ("d", "2017-09-11"));
+        Map<String, Object> document =
+                MapMaker.makeMap(MapMaker.makeEntry("a", 2), MapMaker.makeEntry("b", "goodbye"), MapMaker.makeEntry("c", 3.3), MapMaker.makeEntry
+                        ("d", "2017-09-11"));
 
         assertThat(filter(where, document), is(true));
     }

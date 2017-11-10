@@ -39,8 +39,8 @@ import org.glytching.dragoman.store.mongo.MongoProvider;
 import org.glytching.dragoman.store.mongo.MongoStorageCoordinates;
 import org.glytching.dragoman.store.mongo.repository.MongoOverrideModule;
 import org.glytching.dragoman.util.RandomValues;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.inject.Inject;
@@ -50,9 +50,9 @@ import java.util.Map;
 
 import static org.glytching.dragoman.util.TestFixture.anyDataset;
 import static org.glytching.dragoman.util.TestFixture.anyDocument;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 public class MongoCannedDatasetsWriterTest extends AbstractMongoDBTest {
@@ -68,7 +68,7 @@ public class MongoCannedDatasetsWriterTest extends AbstractMongoDBTest {
     @Inject
     private DocumentTransformer documentTransformer;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Injector injector = Guice.createInjector(Modules.override(new DatasetModule(), new CannedDatasetsModule(),
                 new ConfigurationModule()).with(new MongoOverrideModule(), new AbstractModule() {

@@ -19,30 +19,20 @@ package org.glytching.dragoman.repository.router;
 import com.google.common.collect.Sets;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.repository.Repository;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Map;
 
 import static org.glytching.dragoman.util.TestFixture.anyDataset;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-// we walk over the router's injected repositories and return-on-first-match but in our test case we have to be certain
-// that only a specific repository is matched so we set expectations on all injected repositories
-// of course, since we return-on-first-match some of these repositories may never be checked
-// this causes Mockito to issue a warning which is (in this case) unnecessary, the Silent mode squashes that behaviour
-@RunWith(MockitoJUnitRunner.Silent.class)
 public class RepositoryRouterTest {
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     @Mock
     private Repository<Map<String, Object>> repositoryA;
@@ -51,8 +41,10 @@ public class RepositoryRouterTest {
 
     private RepositoryRouter router;
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
+
         router = new RepositoryRouterImpl(Sets.newHashSet(repositoryA, repositoryB));
     }
 
@@ -71,12 +63,11 @@ public class RepositoryRouterTest {
     public void willFailIfNoRepositoryExistsForTheGivenDataset() {
         Dataset dataset = anyDataset();
 
-        expectedException.expect(NoRepositoryAvailableException.class);
-        expectedException.expectMessage(is("No repository exists for dataset: " + dataset.getId()));
-
         when(repositoryA.appliesTo(dataset)).thenReturn(false);
         when(repositoryB.appliesTo(dataset)).thenReturn(false);
 
-        router.get(dataset);
+        NoRepositoryAvailableException actual = assertThrows(NoRepositoryAvailableException.class,
+                () -> router.get(dataset));
+        assertThat(actual.getMessage(), is("No repository exists for dataset: " + dataset.getId()));
     }
 }

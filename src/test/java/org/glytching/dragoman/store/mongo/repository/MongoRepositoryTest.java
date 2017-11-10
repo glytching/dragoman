@@ -28,9 +28,9 @@ import org.glytching.dragoman.store.mongo.AbstractMongoDBTest;
 import org.glytching.dragoman.store.mongo.MongoProvider;
 import org.glytching.dragoman.store.mongo.MongoStorageCoordinates;
 import org.glytching.dragoman.util.StopWatch;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -42,9 +42,9 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static org.glytching.dragoman.util.TestFixture.anyDataset;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,7 +61,7 @@ public class MongoRepositoryTest extends AbstractMongoDBTest {
     private MongoStorageCoordinates storageCoordinates;
     private Dataset dataset;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Injector injector =
                 Guice.createInjector(Modules.override(new MongoModule(), new ConfigurationModule()).with(new
@@ -97,7 +97,7 @@ public class MongoRepositoryTest extends AbstractMongoDBTest {
         when(mongoProvider.provide()).thenReturn(getMongoClient());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         StopWatch stopWatch = StopWatch.start();
         getMongoClient().getDatabase(storageCoordinates.getDatabaseName()).drop()

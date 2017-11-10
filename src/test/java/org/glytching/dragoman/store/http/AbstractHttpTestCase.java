@@ -19,20 +19,18 @@ package org.glytching.dragoman.store.http;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.CountDownLatch;
 
 import static java.lang.String.format;
 import static org.glytching.dragoman.store.http.HttpServerSimulatorVerticle.QUERY_ADDRESS;
 import static org.glytching.dragoman.util.NetworkUtils.getFreePort;
 import static org.mockito.Mockito.mock;
 
-@RunWith(VertxUnitRunner.class)
 public abstract class AbstractHttpTestCase {
     private static final Logger logger = LoggerFactory.getLogger(AbstractHttpTestCase.class);
     private static Vertx vertx;
@@ -40,8 +38,8 @@ public abstract class AbstractHttpTestCase {
     protected static int port;
     protected static HttpDataProvider httpDataProvider;
 
-    @BeforeClass
-    public static void start(TestContext context) {
+    @BeforeAll
+    public static void start() {
         port = getFreePort();
 
         httpDataProvider = mock(HttpDataProvider.class);
@@ -50,15 +48,23 @@ public abstract class AbstractHttpTestCase {
         DeploymentOptions options = new DeploymentOptions()
                 .setConfig(new JsonObject().put("http.port", port))
                 .setInstances(1);
-        vertx.deployVerticle(new HttpServerSimulatorVerticle(httpDataProvider), options, context.asyncAssertSuccess());
-        logger.info("Started embedded HTTP server");
+
+        CountDownLatch latch = new CountDownLatch(1);
+        vertx.deployVerticle(new HttpServerSimulatorVerticle(httpDataProvider), options, result -> {
+            logger.info("Started embedded HTTP server with result: {}", result);
+            latch.countDown();
+        });
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            logger.warn("Failed to wait for the embedded HTTP server to start!");
+        }
     }
 
-    @AfterClass
-    public static void stop(TestContext context) {
+    @AfterAll
+    public static void stop() {
         logger.info("Stopping embedded HTTP server");
-        vertx.close(context.asyncAssertSuccess());
-        logger.info("Stopped embedded HTTP server");
     }
 
     protected String getUrl() {

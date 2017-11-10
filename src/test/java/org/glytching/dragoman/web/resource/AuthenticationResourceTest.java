@@ -18,22 +18,19 @@ package org.glytching.dragoman.web.resource;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.glytching.dragoman.authentication.AuthenticationDao;
 import org.glytching.dragoman.http.HttpResponse;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
 import static org.glytching.dragoman.web.WebServerUtils.withApplicationName;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(VertxUnitRunner.class)
 public class AuthenticationResourceTest extends AbstractResourceTest {
 
     @Inject
@@ -113,7 +110,7 @@ public class AuthenticationResourceTest extends AbstractResourceTest {
         verify(authenticationDao, never()).createUser(anyString(), anyString());
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void canLogout() {
         HttpResponse response = post("logout", null);
