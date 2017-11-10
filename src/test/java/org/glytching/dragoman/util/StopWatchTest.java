@@ -16,12 +16,13 @@
  */
 package org.glytching.dragoman.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StopWatchTest {
     private static final Logger logger = LoggerFactory.getLogger(StopWatchTest.class);
@@ -54,11 +55,11 @@ public class StopWatchTest {
         assertThat(total, greaterThanOrEqualTo(splitOne + splitTwo));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void cannotTimeWithSplitsIfTheStopWatchIsNotConfiguredToSpli() {
         StopWatch stopWatch = StopWatch.start();
 
-        stopWatch.split();
+        assertThrows(IllegalStateException.class, () -> stopWatch.split());
     }
 
     private void sleep(int pauseInMs) {
@@ -68,5 +69,4 @@ public class StopWatchTest {
             logger.warn("Failed to pause!", ex);
         }
     }
-
 }

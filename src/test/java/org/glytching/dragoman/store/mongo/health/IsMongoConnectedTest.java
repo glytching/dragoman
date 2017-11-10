@@ -22,18 +22,16 @@ import com.mongodb.async.client.MongoClientSettings;
 import com.mongodb.connection.ClusterSettings;
 import com.mongodb.rx.client.MongoClient;
 import org.glytching.dragoman.store.mongo.MongoProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class IsMongoConnectedTest {
 
     @Mock
@@ -46,8 +44,10 @@ public class IsMongoConnectedTest {
 
     private IsMongoConnected isMongoConnected;
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
+
         isMongoConnected = new IsMongoConnected(mongoProvider);
 
         host = "ahost";

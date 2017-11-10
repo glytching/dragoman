@@ -26,8 +26,8 @@ import org.bson.Document;
 import org.glytching.dragoman.configuration.guice.HttpModule;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.store.http.AbstractHttpTestCase;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import rx.Observable;
 
 import java.time.LocalDateTime;
@@ -35,9 +35,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.glytching.dragoman.util.TestFixture.anyDataset;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +51,7 @@ public class HttpRepositoryTest extends AbstractHttpTestCase {
     private Map<String, Object> bill;
     private Map<String, Object> martin;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Injector injector = Guice.createInjector(Modules.override(new HttpModule()).with(new HttpOverrideModule()));
         injector.injectMembers(this);

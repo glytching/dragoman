@@ -23,18 +23,13 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.conversions.Bson;
 import org.glytching.dragoman.ql.SqlParserException;
 import org.glytching.dragoman.ql.parser.SelectClauseParser;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoSelectClauseListenerTest {
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     private final SelectClauseParser sqlParser = new SelectClauseParser();
 
@@ -86,10 +81,8 @@ public class MongoSelectClauseListenerTest {
 
     @Test
     public void testInvalidProjection() {
-        expectedException.expect(SqlParserException.class);
-        expectedException.expectMessage("Line: 1, Position: 3: no viable alternative at input '<EOF>'");
-
-        sqlParser.get(Bson.class, "a, ");
+        SqlParserException actual = assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a, "));
+        assertThat(actual.getMessage(), containsString("Line: 1, Position: 3: no viable alternative at input '<EOF>'"));
     }
 
     private BsonDocument parse(String select) {

@@ -21,19 +21,21 @@ import groovy.lang.GroovyClassLoader;
 import org.glytching.dragoman.ql.SqlParserException;
 import org.glytching.dragoman.ql.parser.SelectClauseParser;
 import org.glytching.dragoman.ql.parser.WhereClauseParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static org.glytching.dragoman.util.MapMaker.makeEntry;
 import static org.glytching.dragoman.util.MapMaker.makeMap;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GroovySelectClauseListenerTest {
 
-    private final GroovyFactory factory = new GroovyFactory(new GroovyClassLoader(), new SelectClauseParser(), new WhereClauseParser());
+    private final GroovyFactory factory = new GroovyFactory(new GroovyClassLoader(), new SelectClauseParser(),
+            new WhereClauseParser());
 
     @Test
     public void testSingleProjection() throws Exception {
@@ -118,11 +120,11 @@ public class GroovySelectClauseListenerTest {
         assertThat(actual, is(document));
     }
 
-    @Test(expected = SqlParserException.class)
+    @Test
     public void testInvalidProjection() throws Exception {
-        Map<String, Object> document = Maps.newHashMap();
-
-        project("a, ", document);
+        assertThrows(SqlParserException.class, () -> {
+            project("a, ", Maps.newHashMap());
+        });
     }
 
     private Map<String, Object> project(String select, Map<String, Object> document) throws Exception {

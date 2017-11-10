@@ -19,11 +19,10 @@ package org.glytching.dragoman.reader;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.repository.Repository;
 import org.glytching.dragoman.repository.router.RepositoryRouter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 import rx.Observable;
 
 import java.util.List;
@@ -31,13 +30,12 @@ import java.util.Map;
 
 import static org.glytching.dragoman.util.TestFixture.anyDataset;
 import static org.glytching.dragoman.util.TestFixture.anyMap;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("FieldCanBeLocal")
-@RunWith(MockitoJUnitRunner.class)
 public class HttpReaderTest {
 
     @Mock
@@ -53,8 +51,9 @@ public class HttpReaderTest {
     private final String where = "aWhere";
     private final String orderBy = "anOrderBy";
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         dataset = anyDataset();
 
         when(repositoryRouter.get(dataset)).thenReturn(repository);

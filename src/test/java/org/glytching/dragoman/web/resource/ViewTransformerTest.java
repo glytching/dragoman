@@ -19,26 +19,22 @@ package org.glytching.dragoman.web.resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.web.exception.InvalidRequestException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.glytching.dragoman.util.TestFixture.anyDataset;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ViewTransformerTest {
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private ViewTransformer documentTransformer;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         documentTransformer = new ViewTransformer(objectMapper);
     }
@@ -56,11 +52,10 @@ public class ViewTransformerTest {
 
     @Test
     public void willThrowAnInvalidRequestExceptionIfTheGivenJsonCannotBeDeserialised() {
-        expectedException.expect(InvalidRequestException.class);
-        expectedException.expectMessage(startsWith("Failed to deserialise request body"));
-
         String json = "{\"a\": \"b\", \"c\": 1}";
 
-        documentTransformer.transform(Dataset.class, json);
+        InvalidRequestException actual =
+                assertThrows(InvalidRequestException.class, () -> documentTransformer.transform(Dataset.class, json));
+        assertThat(actual.getMessage(), startsWith("Failed to deserialise request body"));
     }
 }

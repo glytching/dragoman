@@ -16,12 +16,12 @@
  */
 package org.glytching.dragoman.authentication;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
 
 /**
  * The util provides a secure one-way hash function so we cannot reverse it therefore we assert that:
@@ -34,7 +34,7 @@ public class PasswordUtilTest {
 
     private PasswordUtil passwordUtil;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         passwordUtil = new PasswordUtil();
     }

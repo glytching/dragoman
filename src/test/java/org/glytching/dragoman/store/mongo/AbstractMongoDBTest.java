@@ -33,8 +33,8 @@ import de.flapdoodle.embed.process.config.io.ProcessOutput;
 import de.flapdoodle.embed.process.runtime.Network;
 import org.bson.Document;
 import org.glytching.dragoman.util.StopWatch;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +45,8 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 public abstract class AbstractMongoDBTest {
     private static final Logger logger = LoggerFactory.getLogger(AbstractMongoDBTest.class);
@@ -72,7 +72,7 @@ public abstract class AbstractMongoDBTest {
     // _per test_
     //
 
-    @BeforeClass
+    @BeforeAll
     public static void start() throws Exception {
         StopWatch stopWatch = StopWatch.startForSplits();
         port = Network.getFreeServerPort();
@@ -87,7 +87,7 @@ public abstract class AbstractMongoDBTest {
                 stopWatch.stop(), prepareElapsedTime, startElapsedTime);
     }
 
-    @AfterClass
+    @AfterAll
     public static void stop() {
         StopWatch stopWatch = StopWatch.startForSplits();
         try {
@@ -113,7 +113,8 @@ public abstract class AbstractMongoDBTest {
     protected MongoStorageCoordinates seed(Document... documents) {
         String databaseName = createDatabaseName();
         String collectionName = createCollectionName();
-        MongoCollection<Document> mongoCollection = getMongoClient().getDatabase(databaseName).getCollection(collectionName);
+        MongoCollection<Document> mongoCollection =
+                getMongoClient().getDatabase(databaseName).getCollection(collectionName);
 
         mongoCollection.insertMany(Lists.newArrayList(documents)).timeout(10, SECONDS).toBlocking().single();
 

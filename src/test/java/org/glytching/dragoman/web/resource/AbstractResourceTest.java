@@ -21,19 +21,18 @@ import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
-import io.vertx.ext.unit.TestContext;
 import org.glytching.dragoman.configuration.ApplicationConfiguration;
 import org.glytching.dragoman.configuration.guice.DragomanModule;
 import org.glytching.dragoman.http.HttpClient;
 import org.glytching.dragoman.http.HttpResponse;
 import org.glytching.dragoman.reader.Reader;
 import org.glytching.dragoman.repository.router.RepositoryRouter;
-import org.glytching.dragoman.util.SystemPropertyRule;
+import org.glytching.dragoman.util.EmbeddedEnvironmentExtension;
 import org.glytching.dragoman.web.RestOverridesModule;
 import org.glytching.dragoman.web.WebServerVerticle;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,14 +40,13 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 import static java.lang.String.format;
 
+@ExtendWith(EmbeddedEnvironmentExtension.class)
 public abstract class AbstractResourceTest {
     private static final Logger logger = LoggerFactory.getLogger(AbstractResourceTest.class);
-
-    @ClassRule
-    public static final SystemPropertyRule systemPropertyRule = new SystemPropertyRule("env", "embedded");
 
     @Inject
     protected Vertx vertx;
@@ -69,17 +67,17 @@ public abstract class AbstractResourceTest {
 
     protected int port;
 
-    @Before
+    @BeforeEach
     @SuppressWarnings("unchecked")
-    public void start(TestContext context) {
+    public void start() {
         Injector injector =
                 Guice.createInjector(Modules.override(new DragomanModule()).with(new RestOverridesModule()));
         injector.injectMembers(this);
 
-        startHttpServer(context);
+        startHttpServer();
     }
 
-    @After
+    @AfterEach
     public void stop() {
         if (vertx != null) {
             logger.info("Stopping embedded HTTP server");
@@ -131,13 +129,19 @@ public abstract class AbstractResourceTest {
         return format("http://localhost:%s/dragoman/%s", port, endpointAddress);
     }
 
-    private void startHttpServer(TestContext context) {
+    private void startHttpServer() {
         port = configuration.getHttpPort();
         logger.info("Starting embedded HTTP server on port: {}", port);
+        CountDownLatch latch = new CountDownLatch(1);
+        vertx.deployVerticle(new WebServerVerticle(restResources, configuration), deploymentOptions, result -> {
+            logger.info("Started embedded HTTP server with result: {}", result);
+            latch.countDown();
+        });
 
-        vertx.deployVerticle(new WebServerVerticle(restResources, configuration), deploymentOptions, context
-                .asyncAssertSuccess());
-
-        logger.info("Started embedded HTTP server");
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            logger.warn("Failed to wait for the embedded HTTP server to start!");
+        }
     }
 }

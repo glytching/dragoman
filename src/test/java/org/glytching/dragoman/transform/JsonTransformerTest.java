@@ -17,15 +17,15 @@
 package org.glytching.dragoman.transform;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 public class JsonTransformerTest {
 
@@ -33,7 +33,7 @@ public class JsonTransformerTest {
 
     private JsonTransformer documentTransformer;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         documentTransformer = new JsonTransformer(objectMapper);
     }

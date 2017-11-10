@@ -26,11 +26,10 @@ import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.dataset.DatasetDao;
 import org.glytching.dragoman.reader.DataEnvelope;
 import org.glytching.dragoman.reader.Reader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -43,12 +42,12 @@ import java.util.concurrent.TimeUnit;
 import static org.glytching.dragoman.util.TestFixture.aPersistedDataset;
 import static org.glytching.dragoman.util.TestFixture.anyDataEnvelope;
 import static org.glytching.dragoman.web.subscription.SubscriptionEvent.SubscriptionEventType;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class VertxSubscriptionManagerTest {
     private static final Logger logger = LoggerFactory.getLogger(VertxSubscriptionManagerTest.class);
 
@@ -67,8 +66,10 @@ public class VertxSubscriptionManagerTest {
 
     private VertxSubscriptionManager subscriptionManager;
 
-    @Before
+    @BeforeEach
     public void prepare() {
+        MockitoAnnotations.initMocks(this);
+
         vertx = Vertx.vertx();
 
         dataset = aPersistedDataset();
@@ -171,11 +172,12 @@ public class VertxSubscriptionManagerTest {
         verify(reader, never()).read(any(Dataset.class), anyString(), anyString(), anyString(), anyInt());
     }
 
-    @Test(expected = SubscriptionUnsupportedException.class)
+    @Test
     public void cannotSubscribeIfTheDatasetDoesNotSupportSubscriptions() {
         dataset.setSubscriptionControlField(null);
 
-        subscriptionManager.start(dataset, Optional.of(10L), LocalDateTime.now(), select, where);
+        assertThrows(SubscriptionUnsupportedException.class,
+                () -> subscriptionManager.start(dataset, Optional.of(10L), LocalDateTime.now(), select, where));
     }
 
     private class Subscriber {

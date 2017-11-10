@@ -24,15 +24,13 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.glytching.dragoman.configuration.ApplicationConfiguration;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.dataset.DatasetDao;
 import org.glytching.dragoman.http.HttpResponse;
 import org.glytching.dragoman.reader.DataEnvelope;
 import org.glytching.dragoman.reader.Reader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,13 +48,12 @@ import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static org.glytching.dragoman.util.TestFixture.*;
 import static org.glytching.dragoman.web.WebServerUtils.withApplicationName;
 import static org.glytching.dragoman.web.subscription.SubscriptionEvent.SubscriptionEventType;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(VertxUnitRunner.class)
 public class DatasetResourceTest extends AbstractResourceTest {
     private static final Logger logger = LoggerFactory.getLogger(DatasetResourceTest.class);
 

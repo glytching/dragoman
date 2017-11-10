@@ -21,13 +21,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import org.glytching.dragoman.store.http.repository.NoOpResponsePostProcessor;
 import org.glytching.dragoman.transform.JsonTransformer;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 import rx.Observable;
 
 import java.util.HashMap;
@@ -35,15 +32,12 @@ import java.util.List;
 import java.util.Map;
 
 import static org.glytching.dragoman.util.TestFixture.anyMap;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class HttpClientAdapterTest {
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     @Mock
     private HttpClient httpClient;
@@ -54,8 +48,10 @@ public class HttpClientAdapterTest {
 
     private HttpClientAdapter httpClientAdapter;
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
+
         httpClientAdapter = new HttpClientAdapterImpl(httpClient, new JsonTransformer(objectMapper));
     }
 
@@ -77,13 +73,15 @@ public class HttpClientAdapterTest {
     @Test
     public void canHandleFailedResponse() {
         String httpExceptionMessage = "boom!";
-        expectedException.expect(HttpClientException.class);
-        expectedException.expectMessage(startsWith("Failed to read response from: " + url));
-        expectedException.expectMessage(containsString(httpExceptionMessage));
 
         when(httpClient.get(url)).thenReturn(failedResponse(httpExceptionMessage));
 
-        httpClientAdapter.read(url, responsePostProcessor);
+        HttpClientException actual = assertThrows(HttpClientException.class, () -> {
+            httpClientAdapter.read(url, responsePostProcessor);
+        });
+
+        assertThat(actual.getMessage(), startsWith("Failed to read response from: " + url));
+        assertThat(actual.getMessage(), containsString(httpExceptionMessage));
     }
 
     @SafeVarargs

@@ -19,27 +19,21 @@ package org.glytching.dragoman.http.okhttp;
 import okhttp3.*;
 import org.glytching.dragoman.http.HttpClientException;
 import org.glytching.dragoman.http.HttpResponse;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class OkHttpClientTest {
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     @Mock
     private okhttp3.OkHttpClient _httpClient;
@@ -50,8 +44,9 @@ public class OkHttpClientTest {
 
     private OkHttpClient okHttpClient;
 
-    @Before
+    @BeforeEach
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         okHttpClient = new OkHttpClient(_httpClient);
     }
 
@@ -129,14 +124,15 @@ public class OkHttpClientTest {
     @Test
     public void canHandleFailure() throws IOException {
         IOException exception = new IOException("boom!");
-        expectedException.expect(HttpClientException.class);
-        expectedException.expectMessage(containsString("Failed to read from: " + url + ", caused by: " + exception.getMessage()));
 
-        Call call = mock(Call.class);
-        when(_httpClient.newCall(any(Request.class))).thenReturn(call);
-        when(call.execute()).thenThrow(exception);
+        HttpClientException actual = assertThrows(HttpClientException.class, () -> {
+            Call call = mock(Call.class);
+            when(_httpClient.newCall(any(Request.class))).thenReturn(call);
+            when(call.execute()).thenThrow(exception);
 
-        okHttpClient.get(url);
+            okHttpClient.get(url);
+        });
+        assertThat(actual.getMessage(), containsString("Failed to read from: " + url + ", caused by: " + exception.getMessage()));
     }
 
     private void expectOkHttpClientRequest(Response response) throws IOException {
@@ -180,6 +176,4 @@ public class OkHttpClientTest {
                 .body(ResponseBody.create(MediaType.parse("application/json; charset=utf-8"), payload))
                 .build();
     }
-
-
 }

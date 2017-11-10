@@ -16,28 +16,24 @@
  */
 package org.glytching.dragoman.web.subscription;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AsOfTest {
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     private AsOfFormatter asOfFormatter;
     private LocalDateTime lastRead;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         asOfFormatter = new AsOfFormatter();
 
@@ -74,11 +70,8 @@ public class AsOfTest {
 
     @Test
     public void willFailIfGivenAnUnsupportedPattern() {
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("Cannot format AsOf for an unsupported pattern: foo!");
-
-        AsOf asOf = new AsOf("updatedAt", "foo", lastRead, asOfFormatter);
-
-        asOf.applyAsOf("x > 1");
+        RuntimeException actual = assertThrows(RuntimeException.class,
+                () -> new AsOf("updatedAt", "foo", lastRead, asOfFormatter));
+        assertThat(actual.getMessage(), is("Cannot format AsOf for an unsupported pattern: foo!"));
     }
 }
