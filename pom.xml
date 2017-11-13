@@ -9,7 +9,22 @@
 
     <name>Dragoman</name>
     <description>A sort-of translator binding enquirers to disparate datasets</description>
-    <url></url>
+    <url>https://github.com/glytching/dragoman</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:git://github.com/glytching/dragoman.git</connection>
+        <developerConnection>
+            scm:git:git@github.com:glytching/dragoman.git
+        </developerConnection>
+        <url>http://github.com/glytching/dragoman</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
