@@ -27,13 +27,13 @@ import org.glytching.dragoman.configuration.guice.ConfigurationModule;
 import org.glytching.dragoman.store.mongo.AbstractMongoDBTest;
 import org.glytching.dragoman.store.mongo.MongoProvider;
 import org.glytching.dragoman.store.mongo.repository.MongoOverrideModule;
-import org.glytching.dragoman.util.RandomValues;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
 import static java.lang.String.format;
+import static org.glytching.dragoman.util.TestFixture.aString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -60,7 +60,7 @@ public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void canCreateAndGetAUser() {
-        String name = RandomValues.aString();
+        String name = aString();
         String password = "aPassword";
 
         authenticationDao.createUser(name, password);
@@ -73,7 +73,7 @@ public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void willReturnNullIfTheRequestedUserDoesNotExist() {
-        String name = RandomValues.aString();
+        String name = aString();
         String password = "aPassword";
 
         User user = authenticationDao.getUser(name, password);
@@ -83,7 +83,7 @@ public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void existsIfTheAuthenticationStoreContainsARecordForTheGivenUserName() {
-        String name = RandomValues.aString();
+        String name = aString();
         String password = "aPassword";
 
         authenticationDao.createUser(name, password);
@@ -93,14 +93,14 @@ public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void doesNotExistIfTheAuthenticationStoreDoesNotContainARecordForTheGivenUserName() {
-        String name = RandomValues.aString();
+        String name = aString();
 
         assertThat(authenticationDao.exists(name), is(false));
     }
 
     @Test
     public void isValidIfUsernameAndPasswordMatch() {
-        String name = RandomValues.aString();
+        String name = aString();
         String password = "aPassword";
 
         authenticationDao.createUser(name, password);
@@ -110,7 +110,7 @@ public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void isInvalidIfUsernameAndPasswordDoNotMatch() {
-        String name = RandomValues.aString();
+        String name = aString();
         String password = "aPassword";
 
         authenticationDao.createUser(name, password);
@@ -120,7 +120,7 @@ public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void cannotCreateAUserIfTheUserNameIsAlreadyTaken() {
-        String name = RandomValues.aString();
+        String name = aString();
         String password = "aPassword";
 
         authenticationDao.createUser(name, password);

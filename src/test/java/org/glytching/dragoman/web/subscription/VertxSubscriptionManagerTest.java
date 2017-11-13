@@ -148,7 +148,7 @@ public class VertxSubscriptionManagerTest {
         subscriptionManager.start(dataset, Optional.of(subscriptionInterval), LocalDateTime.now(), select, where);
 
         // have to wait for the async call to came through ...
-        Awaitility.await().atMost((subscriptionInterval + 500), TimeUnit.MILLISECONDS)
+        Awaitility.await().atMost((subscriptionInterval + 1000), TimeUnit.MILLISECONDS)
                 .until(subscriber::isFailed);
 
         assertThat(subscriber.getPayloads().isEmpty(), is(true));

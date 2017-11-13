@@ -16,7 +16,6 @@
  */
 package org.glytching.dragoman.store.mongo.canned;
 
-import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -38,18 +37,17 @@ import org.glytching.dragoman.store.mongo.DocumentTransformer;
 import org.glytching.dragoman.store.mongo.MongoProvider;
 import org.glytching.dragoman.store.mongo.MongoStorageCoordinates;
 import org.glytching.dragoman.store.mongo.repository.MongoOverrideModule;
-import org.glytching.dragoman.util.RandomValues;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import javax.inject.Inject;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.glytching.dragoman.util.TestFixture.anyDataset;
-import static org.glytching.dragoman.util.TestFixture.anyDocument;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
+import static org.glytching.dragoman.util.TestFixture.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -84,13 +82,12 @@ public class MongoCannedDatasetsWriterTest extends AbstractMongoDBTest {
 
     @Test
     public void canWriteCannedDatasets() {
-        CannedDataset one =
-                new CannedDataset(anyDataset(new MongoStorageCoordinates("a:b")), Lists.newArrayList(anyDocument(),
-                        anyDocument()));
+        CannedDataset one = new CannedDataset(anyDataset(new MongoStorageCoordinates("a:b")),
+                newArrayList(anyDocument(), anyDocument()));
         CannedDataset two =
-                new CannedDataset(new Dataset(RandomValues.aString(), RandomValues.aString(), "http://host:1234/some/end/point"), null);
-        when(cannedDatasetsLoader.load(configuration.getCannedDatasetsDirectory())).thenReturn(Lists.newArrayList
-                (one, two));
+                new CannedDataset(new Dataset(aString(), aString(), "http://host:1234/some/end/point"), null);
+        when(cannedDatasetsLoader.load(configuration.getCannedDatasetsDirectory()))
+                .thenReturn(newArrayList(one, two));
 
         int writeCount = cannedDatasetsWriter.write();
 
@@ -106,7 +103,7 @@ public class MongoCannedDatasetsWriterTest extends AbstractMongoDBTest {
 
     @Test
     public void canHandleNoCannedDatasets() {
-        when(cannedDatasetsLoader.load(configuration.getCannedDatasetsDirectory())).thenReturn(Collections.emptyList());
+        when(cannedDatasetsLoader.load(configuration.getCannedDatasetsDirectory())).thenReturn(emptyList());
 
         int writeCount = cannedDatasetsWriter.write();
 

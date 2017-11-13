@@ -90,7 +90,7 @@ Where:
 
 > o.g.dragoman.web.WebServerVerticle|Starting HTTP server on port: ... 
 
-###### Browser Compatability
+###### Browser Compatibility
 
 The web app has been tested and verified for the following browsers:
 

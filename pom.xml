@@ -34,7 +34,6 @@
         <slf4j.version>1.7.25</slf4j.version>
         <rxmongo.version>1.5.0</rxmongo.version>
         <commons.lang.version>3.6</commons.lang.version>
-        <commons.text.version>1.1</commons.text.version>
         <commons.validator.version>1.6</commons.validator.version>
         <commons.io.version>2.6</commons.io.version>
         <groovy.version>2.4.12</groovy.version>
@@ -48,6 +47,7 @@
         <flapdoodle.version>2.0.0</flapdoodle.version>
         <constretto.version>2.2.3</constretto.version>
         <janino.version>3.0.7</janino.version>
+        <random.beans.version>3.7.0</random.beans.version>
 
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
@@ -418,18 +418,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>${commons.text.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-unit</artifactId>
             <version>${vertx.version}</version>
@@ -484,6 +472,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.benas</groupId>
+            <artifactId>random-beans</artifactId>
+            <version>${random.beans.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

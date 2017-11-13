@@ -25,30 +25,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static io.github.benas.randombeans.api.EnhancedRandom.random;
+
 public class TestFixture {
 
     public static Dataset anyDataset() {
-        return new Dataset(RandomValues.aString(), RandomValues.aString(), RandomValues.aString(),
-                "aSubscriptionControlField", "");
+        return random(Dataset.class);
     }
 
     public static Dataset anyDataset(String user) {
-        return new Dataset(user, RandomValues.aString(), RandomValues.aString());
+        Dataset dataset = random(Dataset.class, "user");
+        dataset.setOwner(user);
+        return dataset;
     }
 
     public static Dataset anyDataset(MongoStorageCoordinates storageCoordinates) {
-        return new Dataset(RandomValues.aString(), RandomValues.aString(), storageCoordinates.getDatabaseName() + ":" +
-                storageCoordinates.getCollectionName(), "aSubscriptionControlField", "");
+        Dataset dataset = random(Dataset.class, "source");
+        dataset.setSource(storageCoordinates.getDatabaseName() + ":" + storageCoordinates.getCollectionName());
+        return dataset;
     }
 
     public static Dataset aPersistedDataset() {
-        Dataset dataset = anyDataset();
+        Dataset dataset = new Dataset(aString(), aString(), aString(), "aSubscriptionControlField", "");
         dataset.setId(UUID.randomUUID().toString());
         return dataset;
     }
 
     public static DataEnvelope anyDataEnvelope() {
-        return new DataEnvelope("aSource", anyMap());
+        return new DataEnvelope(aString(), anyMap());
     }
 
     public static Document anyDocument() {
@@ -58,8 +62,12 @@ public class TestFixture {
     public static Map<String, Object> anyMap() {
         return new HashMap<String, Object>() {
             {
-                put("aKey", RandomValues.aString());
+                put("aKey", aString());
             }
         };
+    }
+
+    public static String aString() {
+        return random(String.class);
     }
 }

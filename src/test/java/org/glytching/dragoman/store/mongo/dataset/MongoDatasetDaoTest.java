@@ -26,7 +26,6 @@ import org.glytching.dragoman.dataset.DatasetDao;
 import org.glytching.dragoman.store.mongo.AbstractMongoDBTest;
 import org.glytching.dragoman.store.mongo.MongoProvider;
 import org.glytching.dragoman.store.mongo.repository.MongoOverrideModule;
-import org.glytching.dragoman.util.RandomValues;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import rx.Observable;
@@ -35,6 +34,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 import static java.lang.String.format;
+import static org.glytching.dragoman.util.TestFixture.aString;
 import static org.glytching.dragoman.util.TestFixture.anyDataset;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -76,7 +76,7 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void doesNotExistsIfThereIsNoDatasetForTheGivenId() {
-        assertThat(datasetDao.exists(RandomValues.aString()), is(false));
+        assertThat(datasetDao.exists(aString()), is(false));
     }
 
     @Test
@@ -113,7 +113,7 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void willReturnZeroIfAskedToDeleteADatasetWhichDoesNotExist() {
-        assertThat(datasetDao.delete(RandomValues.aString()), is(0L));
+        assertThat(datasetDao.delete(aString()), is(0L));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void willReturnNullIfAskedToGetADatasetWhichDoesNotExist() {
-        assertThat(datasetDao.get(RandomValues.aString()), nullValue());
+        assertThat(datasetDao.get(aString()), nullValue());
     }
 
     @Test
@@ -151,7 +151,7 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void canGetAllWhenNoneExist() {
-        Observable<Dataset> all = datasetDao.getAll(RandomValues.aString());
+        Observable<Dataset> all = datasetDao.getAll(aString());
 
         List<Dataset> datasets = all.toList().toBlocking().single();
 
@@ -180,6 +180,6 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
     }
 
     private Dataset aDataset() {
-        return anyDataset(RandomValues.aString());
+        return anyDataset(aString());
     }
 }
