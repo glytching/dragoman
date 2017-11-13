@@ -18,17 +18,23 @@ package org.glytching.dragoman.web.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glytching.dragoman.dataset.Dataset;
+import org.glytching.dragoman.util.extension.Random;
+import org.glytching.dragoman.util.extension.RandomBeansExtension;
 import org.glytching.dragoman.web.exception.InvalidRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.glytching.dragoman.util.TestFixture.anyDataset;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(RandomBeansExtension.class)
 public class ViewTransformerTest {
+
+    @Random
+    private Dataset dataset;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -41,8 +47,6 @@ public class ViewTransformerTest {
 
     @Test
     public void canPerformTwoWayTransform() {
-        Dataset dataset = anyDataset();
-
         String json = documentTransformer.transform(dataset);
 
         Dataset actual = documentTransformer.transform(Dataset.class, json);

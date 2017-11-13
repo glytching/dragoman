@@ -1,4 +1,4 @@
-package org.glytching.dragoman.util;
+package org.glytching.dragoman.util.extension;
 
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;

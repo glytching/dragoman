@@ -19,25 +19,30 @@ package org.glytching.dragoman.repository.router;
 import com.google.common.collect.Sets;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.repository.Repository;
+import org.glytching.dragoman.util.extension.Random;
+import org.glytching.dragoman.util.extension.RandomBeansExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Map;
 
-import static org.glytching.dragoman.util.TestFixture.anyDataset;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(RandomBeansExtension.class)
 public class RepositoryRouterTest {
 
     @Mock
     private Repository<Map<String, Object>> repositoryA;
     @Mock
     private Repository<Map<String, Object>> repositoryB;
+    @Random
+    private Dataset dataset;
 
     private RepositoryRouter router;
 
@@ -50,7 +55,6 @@ public class RepositoryRouterTest {
 
     @Test
     public void canRouteADatasetToARepository() {
-        Dataset dataset = anyDataset();
         when(repositoryA.appliesTo(dataset)).thenReturn(true);
         when(repositoryB.appliesTo(dataset)).thenReturn(false);
 
@@ -61,8 +65,6 @@ public class RepositoryRouterTest {
 
     @Test
     public void willFailIfNoRepositoryExistsForTheGivenDataset() {
-        Dataset dataset = anyDataset();
-
         when(repositoryA.appliesTo(dataset)).thenReturn(false);
         when(repositoryB.appliesTo(dataset)).thenReturn(false);
 

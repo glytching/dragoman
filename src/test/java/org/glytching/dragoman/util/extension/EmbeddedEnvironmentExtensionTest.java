@@ -1,4 +1,4 @@
-package org.glytching.dragoman.util;
+package org.glytching.dragoman.util.extension;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;

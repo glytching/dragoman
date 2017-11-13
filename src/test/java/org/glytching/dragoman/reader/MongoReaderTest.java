@@ -19,8 +19,11 @@ package org.glytching.dragoman.reader;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.repository.Repository;
 import org.glytching.dragoman.repository.router.RepositoryRouter;
+import org.glytching.dragoman.util.extension.Random;
+import org.glytching.dragoman.util.extension.RandomBeansExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import rx.Observable;
@@ -28,7 +31,6 @@ import rx.Observable;
 import java.util.List;
 import java.util.Map;
 
-import static org.glytching.dragoman.util.TestFixture.anyDataset;
 import static org.glytching.dragoman.util.TestFixture.anyMap;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -36,16 +38,17 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("FieldCanBeLocal")
+@ExtendWith(RandomBeansExtension.class)
 public class MongoReaderTest {
 
     @Mock
     private RepositoryRouter repositoryRouter;
     @Mock
     private Repository<Map<String, Object>> repository;
+    @Random
+    private Dataset dataset;
 
     private Reader reader;
-
-    private Dataset dataset;
 
     private final String select = "aSelect";
     private final String where = "aWhere";
@@ -54,7 +57,6 @@ public class MongoReaderTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        dataset = anyDataset();
 
         when(repositoryRouter.get(dataset)).thenReturn(repository);
 

@@ -26,8 +26,11 @@ import org.glytching.dragoman.dataset.DatasetDao;
 import org.glytching.dragoman.store.mongo.AbstractMongoDBTest;
 import org.glytching.dragoman.store.mongo.MongoProvider;
 import org.glytching.dragoman.store.mongo.repository.MongoOverrideModule;
+import org.glytching.dragoman.util.extension.Random;
+import org.glytching.dragoman.util.extension.RandomBeansExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import rx.Observable;
 
 import javax.inject.Inject;
@@ -40,12 +43,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(RandomBeansExtension.class)
 public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
     @Inject
     private DatasetDao datasetDao;
     @Inject
     private MongoProvider mongoProvider;
+    @Random
+    private Dataset dataset;
 
     @BeforeEach
     public void setUp() {
@@ -58,8 +64,6 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void canCreate() {
-        Dataset dataset = aDataset();
-
         Dataset actual = write(dataset);
 
         assertThat(actual, is(dataset));
@@ -67,8 +71,6 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void existsIfThereIsADatasetForTheGivenId() {
-        Dataset dataset = aDataset();
-
         Dataset actual = write(dataset);
 
         assertThat(datasetDao.exists(actual.getId()), is(true));
@@ -81,8 +83,6 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void canUpdate() {
-        Dataset dataset = aDataset();
-
         // write it
         Dataset written = write(dataset);
 
@@ -101,8 +101,6 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void canDelete() {
-        Dataset dataset = aDataset();
-
         write(dataset);
 
         long deleteCount = datasetDao.delete(dataset.getId());
@@ -118,11 +116,9 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
     @Test
     public void canGet() {
-        Dataset incoming = aDataset();
+        Dataset written = write(dataset);
 
-        Dataset written = write(incoming);
-
-        assertThat(datasetDao.get(written.getId()), is(incoming));
+        assertThat(datasetDao.get(written.getId()), is(dataset));
     }
 
     @Test
@@ -135,10 +131,9 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
         String user = "aUser";
         Dataset one = anyDataset(user);
         Dataset two = anyDataset(user);
-        Dataset three = aDataset();
 
         // write them
-        write(one, two, three);
+        write(one, two, dataset);
 
         Observable<Dataset> all = datasetDao.getAll(one.getOwner());
 
@@ -177,9 +172,5 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
         assertThat(format("Failed to write dataset: %s", dataset), exists(written), is(true));
 
         return datasetDao.get(written.getId());
-    }
-
-    private Dataset aDataset() {
-        return anyDataset(aString());
     }
 }

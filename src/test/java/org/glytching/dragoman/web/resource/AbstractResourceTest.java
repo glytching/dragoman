@@ -27,7 +27,7 @@ import org.glytching.dragoman.http.HttpClient;
 import org.glytching.dragoman.http.HttpResponse;
 import org.glytching.dragoman.reader.Reader;
 import org.glytching.dragoman.repository.router.RepositoryRouter;
-import org.glytching.dragoman.util.EmbeddedEnvironmentExtension;
+import org.glytching.dragoman.util.extension.EmbeddedEnvironmentExtension;
 import org.glytching.dragoman.web.RestOverridesModule;
 import org.glytching.dragoman.web.WebServerVerticle;
 import org.junit.jupiter.api.AfterEach;

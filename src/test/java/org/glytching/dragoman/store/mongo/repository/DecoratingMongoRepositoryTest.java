@@ -20,8 +20,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.Document;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.store.mongo.DocumentTransformer;
+import org.glytching.dragoman.util.extension.Random;
+import org.glytching.dragoman.util.extension.RandomBeansExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import rx.Observable;
@@ -29,18 +32,23 @@ import rx.Observable;
 import java.util.List;
 import java.util.Map;
 
-import static org.glytching.dragoman.util.TestFixture.anyDataset;
-import static org.glytching.dragoman.util.TestFixture.anyDocument;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("FieldCanBeLocal")
+@ExtendWith(RandomBeansExtension.class)
 public class DecoratingMongoRepositoryTest {
 
     @Mock
     private MongoRepository delegate;
+    @Random
+    private Dataset dataset;
+    @Random
+    private Document one;
+    @Random
+    private Document two;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -49,15 +57,12 @@ public class DecoratingMongoRepositoryTest {
     private final String orderBy = "nOrderBy";
     private final int maxResults = 50;
 
-    private Dataset dataset;
     private DocumentTransformer documentTransformer;
     private DecoratingMongoRepository repository;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        dataset = anyDataset();
 
         documentTransformer = new DocumentTransformer(objectMapper);
 
@@ -66,8 +71,6 @@ public class DecoratingMongoRepositoryTest {
 
     @Test
     public void appliesToWhateverTheDelegateAppliesTo() {
-        Dataset dataset = anyDataset();
-
         when(delegate.appliesTo(dataset)).thenReturn(true);
         assertThat(repository.appliesTo(dataset), is(true));
 
@@ -77,9 +80,6 @@ public class DecoratingMongoRepositoryTest {
 
     @Test
     public void willDelegateThenTransformTheResponse() {
-        Document one = anyDocument();
-        Document two = anyDocument();
-
         when(delegate.find(dataset, select, where, orderBy, maxResults)).thenReturn(Observable.just(one, two));
 
         List<Map<String, Object>> results = toList(repository.find(dataset, select, where, orderBy, maxResults));

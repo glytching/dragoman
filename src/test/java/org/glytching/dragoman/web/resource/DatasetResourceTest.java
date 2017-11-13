@@ -30,7 +30,10 @@ import org.glytching.dragoman.dataset.DatasetDao;
 import org.glytching.dragoman.http.HttpResponse;
 import org.glytching.dragoman.reader.DataEnvelope;
 import org.glytching.dragoman.reader.Reader;
+import org.glytching.dragoman.util.extension.Random;
+import org.glytching.dragoman.util.extension.RandomBeansExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +48,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
-import static org.glytching.dragoman.util.TestFixture.*;
+import static org.glytching.dragoman.util.TestFixture.aPersistedDataset;
+import static org.glytching.dragoman.util.TestFixture.anyDataEnvelope;
 import static org.glytching.dragoman.web.WebServerUtils.withApplicationName;
 import static org.glytching.dragoman.web.subscription.SubscriptionEvent.SubscriptionEventType;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(RandomBeansExtension.class)
 public class DatasetResourceTest extends AbstractResourceTest {
     private static final Logger logger = LoggerFactory.getLogger(DatasetResourceTest.class);
 
@@ -65,11 +70,15 @@ public class DatasetResourceTest extends AbstractResourceTest {
     private Vertx vertx;
     @Inject
     private ApplicationConfiguration applicationConfiguration;
+    @Random
+    private Dataset one;
+    @Random
+    private Dataset two;
 
     @Test
     public void canGetAllDatasets() throws IOException {
-        Dataset one = anyDataset();
-        Dataset two = anyDataset();
+        //        Dataset one = anyDataset();
+        //        Dataset two = anyDataset();
 
         when(datasetDao.getAll(anyString())).thenReturn(Observable.just(one, two));
 
@@ -135,14 +144,14 @@ public class DatasetResourceTest extends AbstractResourceTest {
 
     @Test
     public void canCreateDataset() {
-        Dataset dataset = anyDataset();
+        //        Dataset dataset = anyDataset();
 
         String name = "aName";
         String source = "aSource";
         String subscriptionControlField = "aSubscriptionControlField";
         String subscriptionControlFieldPattern = "aSubscriptionControlFieldPattern";
 
-        when(datasetDao.write(any(Dataset.class))).thenReturn(dataset);
+        when(datasetDao.write(any(Dataset.class))).thenReturn(one);
 
         String payload =
                 "{ \"name\": \"" + name + "\", \"source\": \"" + source + "\", " +
@@ -154,7 +163,7 @@ public class DatasetResourceTest extends AbstractResourceTest {
         assertThat(response.getStatusMessage(), is(HttpResponseStatus.OK.reasonPhrase()));
 
         Dataset actual = viewTransformer.transform(Dataset.class, response.getPayload());
-        assertThat(actual, is(dataset));
+        assertThat(actual, is(one));
 
         ArgumentCaptor<Dataset> datasetCaptor = ArgumentCaptor.forClass(Dataset.class);
         verify(datasetDao).write(datasetCaptor.capture());
@@ -202,12 +211,12 @@ public class DatasetResourceTest extends AbstractResourceTest {
 
     @Test
     public void canUpdateDataset() {
-        Dataset dataset = anyDataset();
+        //        Dataset dataset = anyDataset();
 
         String name = "aName";
         String source = "aSource";
 
-        when(datasetDao.write(any(Dataset.class))).thenReturn(dataset);
+        when(datasetDao.write(any(Dataset.class))).thenReturn(one);
 
         String payload =
                 "{ \"name\": \"" + name + "\", \"source\": \"" + source + "\" }";
@@ -217,7 +226,7 @@ public class DatasetResourceTest extends AbstractResourceTest {
         assertThat(response.getStatusMessage(), is(OK.reasonPhrase()));
 
         Dataset actual = viewTransformer.transform(Dataset.class, response.getPayload());
-        assertThat(actual, is(dataset));
+        assertThat(actual, is(one));
 
         ArgumentCaptor<Dataset> datasetCaptor = ArgumentCaptor.forClass(Dataset.class);
         verify(datasetDao).write(datasetCaptor.capture());
