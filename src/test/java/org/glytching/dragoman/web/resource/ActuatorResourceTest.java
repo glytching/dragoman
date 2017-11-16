@@ -16,6 +16,7 @@
  */
 package org.glytching.dragoman.web.resource;
 
+import io.github.glytching.junit.extension.system.SystemProperty;
 import org.glytching.dragoman.http.HttpResponse;
 import org.glytching.dragoman.store.mongo.health.IsMongoConnected;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+@SystemProperty(name = "env", value = "embedded")
 public class ActuatorResourceTest extends AbstractResourceTest {
 
     @Test

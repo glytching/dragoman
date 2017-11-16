@@ -16,6 +16,7 @@
  */
 package org.glytching.dragoman.web.resource;
 
+import io.github.glytching.junit.extension.system.SystemProperty;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.JsonObject;
 import org.glytching.dragoman.authentication.AuthenticationDao;
@@ -31,6 +32,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
+@SystemProperty(name = "env", value = "embedded")
 public class AuthenticationResourceTest extends AbstractResourceTest {
 
     @Inject

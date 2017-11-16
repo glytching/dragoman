@@ -27,12 +27,10 @@ import org.glytching.dragoman.http.HttpClient;
 import org.glytching.dragoman.http.HttpResponse;
 import org.glytching.dragoman.reader.Reader;
 import org.glytching.dragoman.repository.router.RepositoryRouter;
-import org.glytching.dragoman.util.extension.EmbeddedEnvironmentExtension;
 import org.glytching.dragoman.web.RestOverridesModule;
 import org.glytching.dragoman.web.WebServerVerticle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +42,6 @@ import java.util.concurrent.CountDownLatch;
 
 import static java.lang.String.format;
 
-@ExtendWith(EmbeddedEnvironmentExtension.class)
 public abstract class AbstractResourceTest {
     private static final Logger logger = LoggerFactory.getLogger(AbstractResourceTest.class);
 

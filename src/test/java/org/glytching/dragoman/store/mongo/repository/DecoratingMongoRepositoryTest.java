@@ -17,11 +17,11 @@
 package org.glytching.dragoman.store.mongo.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.glytching.junit.extension.random.Random;
+import io.github.glytching.junit.extension.random.RandomBeansExtension;
 import org.bson.Document;
 import org.glytching.dragoman.dataset.Dataset;
 import org.glytching.dragoman.store.mongo.DocumentTransformer;
-import org.glytching.dragoman.util.extension.Random;
-import org.glytching.dragoman.util.extension.RandomBeansExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
