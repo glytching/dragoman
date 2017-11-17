@@ -53,9 +53,15 @@ public class CannedDatasetsLoaderTest {
         assertThat(actual.size(), is(2));
 
         Map<String, CannedDataset> byName =
-                actual.stream().collect(Collectors.toMap(cannedDataset -> cannedDataset.getDataset() != null ?
-                                cannedDataset.getDataset().getName() : "UNKNOWN",
-                        Function.identity()));
+                actual
+                        .stream()
+                        .collect(
+                                Collectors.toMap(
+                                        cannedDataset ->
+                                                cannedDataset.getDataset() != null
+                                                        ? cannedDataset.getDataset().getName()
+                                                        : "UNKNOWN",
+                                        Function.identity()));
 
         assertThat(byName, hasKey("This"));
         Dataset thisDataset = byName.get("This").getDataset();
@@ -98,9 +104,15 @@ public class CannedDatasetsLoaderTest {
         assertThat(actual.size(), is(1));
 
         Map<String, CannedDataset> byName =
-                actual.stream().collect(Collectors.toMap(cannedDataset -> cannedDataset.getDataset() != null ?
-                                cannedDataset.getDataset().getName() : "UNKNOWN",
-                        Function.identity()));
+                actual
+                        .stream()
+                        .collect(
+                                Collectors.toMap(
+                                        cannedDataset ->
+                                                cannedDataset.getDataset() != null
+                                                        ? cannedDataset.getDataset().getName()
+                                                        : "UNKNOWN",
+                                        Function.identity()));
 
         assertThat(byName, hasKey("This"));
         Dataset thisDataset = byName.get("This").getDataset();
@@ -120,7 +132,9 @@ public class CannedDatasetsLoaderTest {
     @Test
     public void cannotReadADatasetWhichContainsDocumentsButNoDescriptor() {
         RuntimeException actual =
-                assertThrows(RuntimeException.class, () -> loader.load("/cannedDatasetWithDocumentsButNoDescriptor"));
+                assertThrows(
+                        RuntimeException.class,
+                        () -> loader.load("/cannedDatasetWithDocumentsButNoDescriptor"));
         assertThat(actual.getMessage(), startsWith("Failed to read files from"));
     }
 }

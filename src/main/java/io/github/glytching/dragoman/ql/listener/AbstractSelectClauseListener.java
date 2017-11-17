@@ -27,21 +27,21 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * ANTLR hook for {@code where} expressions. Transforms a {@code select} expression into a collection of
- * {@link Projection}. This should not be used directly, instead use a
- * {@link SelectClauseParser}. Note: this is stateful so we one of these per {@code where}
- * expression but as long as the pattern of using a {@link SelectClauseParser} is adhered
- * to this statefulness issue is handled.
+ * ANTLR hook for {@code where} expressions. Transforms a {@code select} expression into a
+ * collection of {@link Projection}. This should not be used directly, instead use a {@link
+ * SelectClauseParser}. Note: this is stateful so we one of these per {@code where} expression but
+ * as long as the pattern of using a {@link SelectClauseParser} is adhered to this statefulness
+ * issue is handled.
  *
- * @param <T> the target type, typically either Bson for a MongoDB source or String for a HTTP source
+ * @param <T> the target type, typically either Bson for a MongoDB source or String for a HTTP
+ *     source
  */
 public abstract class AbstractSelectClauseListener<T> extends LoggingListener {
 
-    // intermediate state
-    private Optional<Projection> currentProjection;
-
     // final state
     private final List<Projection> projections;
+    // intermediate state
+    private Optional<Projection> currentProjection;
 
     public AbstractSelectClauseListener() {
         this.projections = Lists.newArrayList();

@@ -29,7 +29,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A {@link RestResource} which runs all configured {@link HealthCheck} instances and returns the results in JSON format.
+ * A {@link RestResource} which runs all configured {@link HealthCheck} instances and returns the
+ * results in JSON format.
  */
 public class HealthCheckResource implements RestResource {
 
@@ -46,10 +47,13 @@ public class HealthCheckResource implements RestResource {
     @Override
     public void configure(Vertx vertx, HttpServer httpServer, Router router) {
         // using blockingHandler since we cannot be sure that all health cheks are non-blocking
-        router.get(WebServerUtils.withApplicationName("healthcheck")).blockingHandler(routingContext -> {
-            Map<String, HealthCheck.Result> results = healthCheckRegistry.runHealthChecks();
+        router
+                .get(WebServerUtils.withApplicationName("healthcheck"))
+                .blockingHandler(
+                        routingContext -> {
+                            Map<String, HealthCheck.Result> results = healthCheckRegistry.runHealthChecks();
 
-            routingContext.response().end(Json.encodePrettily(results));
-        });
+                            routingContext.response().end(Json.encodePrettily(results));
+                        });
     }
 }

@@ -26,7 +26,9 @@ import static java.lang.String.format;
 
 /**
  * An implementation of {@link BaseParser} for {@code orderBy} expressions. Example usage:
+ *
  * <p>
+ *
  * <pre>
  *     OrderByClauseParser parser = new OrderByClauseParser();
  *     Bson bson = parser.get(Bson.class, "a, b");
@@ -35,14 +37,16 @@ import static java.lang.String.format;
 public class OrderByClauseParser extends BaseParser {
 
     /**
-     * Get a deserialised form of the given {@code expression}, deserialised into the type {@code T}. See
-     * {@link #getListener(Class)} to understand what target types are supported.
+     * Get a deserialised form of the given {@code expression}, deserialised into the type {@code T}.
+     * See {@link #getListener(Class)} to understand what target types are supported.
      *
-     * @param clazz the target type e.g. Bson if you want to apply the {@code expression} to a MongoDB store
+     * @param clazz the target type e.g. Bson if you want to apply the {@code expression} to a MongoDB
+     * store
      * @param expression the order by expression
      * @param <T>
      *
-     * @return a deserialised form of the given {@code expression}, deserialised into the type {@code T}
+     * @return a deserialised form of the given {@code expression}, deserialised into the type {@code
+     * T}
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -64,8 +68,10 @@ public class OrderByClauseParser extends BaseParser {
         if (Bson.class == clazz) {
             return new MongoOrderByClauseListener();
         } else {
-            throw new IllegalArgumentException(format("Type: '%s' is not supported, the supported types are: [%s]",
-                    clazz.getSimpleName(), Bson.class.getSimpleName()));
+            throw new IllegalArgumentException(
+                    format(
+                            "Type: '%s' is not supported, the supported types are: [%s]",
+                            clazz.getSimpleName(), Bson.class.getSimpleName()));
         }
     }
 }

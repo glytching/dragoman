@@ -19,8 +19,8 @@ package io.github.glytching.dragoman.http;
 import static java.lang.String.format;
 
 /**
- * Extends {@link RuntimeException} to provide some identity and traceability for exceptions which arise from the HTTP
- * integration layer.
+ * Extends {@link RuntimeException} to provide some identity and traceability for exceptions which
+ * arise from the HTTP integration layer.
  */
 public class HttpClientException extends RuntimeException {
 

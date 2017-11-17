@@ -17,8 +17,8 @@
 package io.github.glytching.dragoman.ql;
 
 /**
- * Extends {@link RuntimeException} to provide some identity and traceability for exceptions which arise when parsing
- * SQL expressions.
+ * Extends {@link RuntimeException} to provide some identity and traceability for exceptions which
+ * arise when parsing SQL expressions.
  */
 public class SqlParserException extends RuntimeException {
     public SqlParserException(String message) {

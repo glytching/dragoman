@@ -41,8 +41,8 @@ import static io.github.glytching.dragoman.util.NetworkUtils.getFreePort;
 import static java.lang.String.format;
 
 /**
- * An implementation of {@link ApplicationConfiguration} which uses {@code Constretto} to load properties from the
- * application's property file.
+ * An implementation of {@link ApplicationConfiguration} which uses {@code Constretto} to load
+ * properties from the application's property file.
  */
 public class ConstrettoApplicationConfiguration implements ApplicationConfiguration {
     private final ConstrettoConfiguration constretto;
@@ -213,7 +213,8 @@ public class ConstrettoApplicationConfiguration implements ApplicationConfigurat
         try {
             return c.call();
         } catch (Exception ex) {
-            throw new RuntimeException(format("Failed to read configuration property: %s!", ex.getMessage()));
+            throw new RuntimeException(
+                    format("Failed to read configuration property: %s!", ex.getMessage()));
         }
     }
 
@@ -226,6 +227,7 @@ public class ConstrettoApplicationConfiguration implements ApplicationConfigurat
     }
 
     private boolean isRandomPortSymbolic(String propertyName) {
-        return !constretto.hasValue(propertyName) || constretto.evaluateToInt(propertyName) == RANDOM_PORT_SYMBOLIC;
+        return !constretto.hasValue(propertyName)
+                || constretto.evaluateToInt(propertyName) == RANDOM_PORT_SYMBOLIC;
     }
 }

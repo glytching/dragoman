@@ -35,13 +35,11 @@ import static org.mockito.Mockito.*;
 
 public class OkHttpClientTest {
 
-    @Mock
-    private okhttp3.OkHttpClient _httpClient;
-
     private final String url = "http://host:1234/some/end/point";
     private final String payload = "aPayload";
     private final String json = "{\"a\": \"b\"}";
-
+    @Mock
+    private okhttp3.OkHttpClient _httpClient;
     private io.github.glytching.dragoman.http.okhttp.OkHttpClient okHttpClient;
 
     @BeforeEach
@@ -52,9 +50,7 @@ public class OkHttpClientTest {
 
     @Test
     public void canGet() throws IOException {
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        Request request = new Request.Builder().url(url).build();
 
         Response response = aSuccessfulResponse(request, payload);
 
@@ -69,10 +65,7 @@ public class OkHttpClientTest {
 
     @Test
     public void canDelete() throws IOException {
-        Request request = new Request.Builder()
-                .url(url)
-                .delete()
-                .build();
+        Request request = new Request.Builder().url(url).delete().build();
 
         Response response = aSuccessfulResponse(request, payload);
 
@@ -87,10 +80,11 @@ public class OkHttpClientTest {
 
     @Test
     public void canPost() throws IOException {
-        Request request = new Request.Builder()
-                .url(url)
-                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json))
-                .build();
+        Request request =
+                new Request.Builder()
+                        .url(url)
+                        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json))
+                        .build();
 
         Response response = aSuccessfulResponse(request, payload);
 
@@ -105,10 +99,11 @@ public class OkHttpClientTest {
 
     @Test
     public void canPut() throws IOException {
-        Request request = new Request.Builder()
-                .url(url)
-                .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json))
-                .build();
+        Request request =
+                new Request.Builder()
+                        .url(url)
+                        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json))
+                        .build();
 
         Response response = aSuccessfulResponse(request, payload);
 
@@ -125,14 +120,19 @@ public class OkHttpClientTest {
     public void canHandleFailure() throws IOException {
         IOException exception = new IOException("boom!");
 
-        HttpClientException actual = assertThrows(HttpClientException.class, () -> {
-            Call call = mock(Call.class);
-            when(_httpClient.newCall(any(Request.class))).thenReturn(call);
-            when(call.execute()).thenThrow(exception);
+        HttpClientException actual =
+                assertThrows(
+                        HttpClientException.class,
+                        () -> {
+                            Call call = mock(Call.class);
+                            when(_httpClient.newCall(any(Request.class))).thenReturn(call);
+                            when(call.execute()).thenThrow(exception);
 
-            okHttpClient.get(url);
-        });
-        assertThat(actual.getMessage(), containsString("Failed to read from: " + url + ", caused by: " + exception.getMessage()));
+                            okHttpClient.get(url);
+                        });
+        assertThat(
+                actual.getMessage(),
+                containsString("Failed to read from: " + url + ", caused by: " + exception.getMessage()));
     }
 
     private void expectOkHttpClientRequest(Response response) throws IOException {
@@ -146,8 +146,8 @@ public class OkHttpClientTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void assertThatResponseIsCorrect(HttpResponse actual, Response expected, boolean successful,
-                                             String payload) {
+    private void assertThatResponseIsCorrect(
+            HttpResponse actual, Response expected, boolean successful, String payload) {
         assertThat(actual.isSuccessful(), is(successful));
         assertThat(actual.getStatusCode(), is(expected.code()));
         assertThat(actual.getStatusMessage(), is(expected.message()));
@@ -156,7 +156,8 @@ public class OkHttpClientTest {
         assertThat(actual.getPayload(), is(payload));
     }
 
-    private void assertThatCorrectRequestIsSubmitted(okhttp3.OkHttpClient httpClient, String url, String method) {
+    private void assertThatCorrectRequestIsSubmitted(
+            okhttp3.OkHttpClient httpClient, String url, String method) {
         ArgumentCaptor<Request> argumentCaptor = ArgumentCaptor.forClass(Request.class);
 
         verify(httpClient, times(1)).newCall(argumentCaptor.capture());

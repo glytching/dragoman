@@ -17,10 +17,12 @@
 package io.github.glytching.dragoman.transform;
 
 /**
- * Defines the interaction with our transformer layer. Implementations of this interface are expected to be:
+ * Defines the interaction with our transformer layer. Implementations of this interface are
+ * expected to be:
+ *
  * <ul>
- * <li>Specific to a chosen transformer technology e.g. Jackson, Gson etc</li>
- * <li>Specific to a purpose e.g. transforming for the view layer, transforming MongoDB BSON etc</li>
+ *   <li>Specific to a chosen transformer technology e.g. Jackson, Gson etc
+ *   <li>Specific to a purpose e.g. transforming for the view layer, transforming MongoDB BSON etc
  * </ul>
  */
 public interface Transformer<F> {

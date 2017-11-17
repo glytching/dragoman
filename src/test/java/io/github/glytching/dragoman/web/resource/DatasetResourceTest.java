@@ -101,10 +101,11 @@ public class DatasetResourceTest extends AbstractResourceTest {
         String endpoint = "datasets";
         HttpResponse response = read(endpoint);
         assertThat(response.getStatusCode(), is(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()));
-        assertThat(response.getStatusMessage(), is(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase()));
+        assertThat(
+                response.getStatusMessage(), is(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase()));
 
-        assertThatErrorResponseIsCorrect(response.getPayload(), exception.getMessage(), endpoint,
-                INTERNAL_SERVER_ERROR);
+        assertThatErrorResponseIsCorrect(
+                response.getPayload(), exception.getMessage(), endpoint, INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -133,10 +134,11 @@ public class DatasetResourceTest extends AbstractResourceTest {
         HttpResponse response = read(endpoint);
 
         assertThat(response.getStatusCode(), is(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()));
-        assertThat(response.getStatusMessage(), is(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase()));
+        assertThat(
+                response.getStatusMessage(), is(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase()));
 
-        assertThatErrorResponseIsCorrect(response.getPayload(), exception.getMessage(), endpoint,
-                INTERNAL_SERVER_ERROR);
+        assertThatErrorResponseIsCorrect(
+                response.getPayload(), exception.getMessage(), endpoint, INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -149,9 +151,17 @@ public class DatasetResourceTest extends AbstractResourceTest {
         when(datasetDao.write(any(Dataset.class))).thenReturn(dataset);
 
         String payload =
-                "{ \"name\": \"" + name + "\", \"source\": \"" + source + "\", " +
-                        "\"subscriptionControlField\": \"" + subscriptionControlField + "\", " +
-                        "\"subscriptionControlFieldPattern\": \"" + subscriptionControlFieldPattern + "\" }";
+                "{ \"name\": \""
+                        + name
+                        + "\", \"source\": \""
+                        + source
+                        + "\", "
+                        + "\"subscriptionControlField\": \""
+                        + subscriptionControlField
+                        + "\", "
+                        + "\"subscriptionControlFieldPattern\": \""
+                        + subscriptionControlFieldPattern
+                        + "\" }";
 
         HttpResponse response = post("dataset", payload);
         assertThat(response.getStatusCode(), is(HttpResponseStatus.OK.code()));
@@ -168,7 +178,8 @@ public class DatasetResourceTest extends AbstractResourceTest {
         assertThat(submittedDataset.getOwner(), is(applicationConfiguration.getCannedUserName()));
         assertThat(submittedDataset.getSource(), is(source));
         assertThat(submittedDataset.getSubscriptionControlField(), is(subscriptionControlField));
-        assertThat(submittedDataset.getSubscriptionControlFieldPattern(), is(subscriptionControlFieldPattern));
+        assertThat(
+                submittedDataset.getSubscriptionControlFieldPattern(), is(subscriptionControlFieldPattern));
     }
 
     @Test
@@ -179,16 +190,16 @@ public class DatasetResourceTest extends AbstractResourceTest {
         Exception exception = new RuntimeException("boom!");
         when(datasetDao.write(any(Dataset.class))).thenThrow(exception);
 
-        String payload =
-                "{ \"name\": \"" + name + "\", \"source\": \"" + source + "\" }";
+        String payload = "{ \"name\": \"" + name + "\", \"source\": \"" + source + "\" }";
 
         String endpoint = "dataset";
         HttpResponse response = post(endpoint, payload);
         assertThat(response.getStatusCode(), is(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()));
-        assertThat(response.getStatusMessage(), is(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase()));
+        assertThat(
+                response.getStatusMessage(), is(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase()));
 
-        assertThatErrorResponseIsCorrect(response.getPayload(), exception.getMessage(), endpoint,
-                INTERNAL_SERVER_ERROR);
+        assertThatErrorResponseIsCorrect(
+                response.getPayload(), exception.getMessage(), endpoint, INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -198,8 +209,8 @@ public class DatasetResourceTest extends AbstractResourceTest {
         assertThat(response.getStatusCode(), is(HttpResponseStatus.BAD_REQUEST.code()));
         assertThat(response.getStatusMessage(), is(HttpResponseStatus.BAD_REQUEST.reasonPhrase()));
 
-        assertThatErrorResponseIsCorrect(response.getPayload(), "Failed to deserialise request body", endpoint,
-                BAD_REQUEST);
+        assertThatErrorResponseIsCorrect(
+                response.getPayload(), "Failed to deserialise request body", endpoint, BAD_REQUEST);
 
         verify(datasetDao, never()).write(any(Dataset.class));
     }
@@ -211,8 +222,7 @@ public class DatasetResourceTest extends AbstractResourceTest {
 
         when(datasetDao.write(any(Dataset.class))).thenReturn(dataset);
 
-        String payload =
-                "{ \"name\": \"" + name + "\", \"source\": \"" + source + "\" }";
+        String payload = "{ \"name\": \"" + name + "\", \"source\": \"" + source + "\" }";
 
         HttpResponse response = put("dataset", payload);
         assertThat(response.getStatusCode(), is(OK.code()));
@@ -236,8 +246,8 @@ public class DatasetResourceTest extends AbstractResourceTest {
         assertThat(response.getStatusCode(), is(HttpResponseStatus.BAD_REQUEST.code()));
         assertThat(response.getStatusMessage(), is(HttpResponseStatus.BAD_REQUEST.reasonPhrase()));
 
-        assertThatErrorResponseIsCorrect(response.getPayload(), "Failed to deserialise request body", endpoint,
-                BAD_REQUEST);
+        assertThatErrorResponseIsCorrect(
+                response.getPayload(), "Failed to deserialise request body", endpoint, BAD_REQUEST);
 
         verify(datasetDao, never()).write(any(Dataset.class));
     }
@@ -266,8 +276,8 @@ public class DatasetResourceTest extends AbstractResourceTest {
         assertThat(response.getStatusCode(), is(INTERNAL_SERVER_ERROR.code()));
         assertThat(response.getStatusMessage(), is(INTERNAL_SERVER_ERROR.reasonPhrase()));
 
-        assertThatErrorResponseIsCorrect(response.getPayload(), exception.getMessage(), endpoint,
-                INTERNAL_SERVER_ERROR);
+        assertThatErrorResponseIsCorrect(
+                response.getPayload(), exception.getMessage(), endpoint, INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -302,8 +312,8 @@ public class DatasetResourceTest extends AbstractResourceTest {
         assertThat(response.getStatusCode(), is(INTERNAL_SERVER_ERROR.code()));
         assertThat(response.getStatusMessage(), is(INTERNAL_SERVER_ERROR.reasonPhrase()));
 
-        assertThatErrorResponseIsCorrect(response.getPayload(), exception.getMessage(), endpoint,
-                INTERNAL_SERVER_ERROR);
+        assertThatErrorResponseIsCorrect(
+                response.getPayload(), exception.getMessage(), endpoint, INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -322,7 +332,15 @@ public class DatasetResourceTest extends AbstractResourceTest {
         when(reader.read(dataset, select, where, orderBy, -1)).thenReturn(Observable.just(one, two));
 
         List<Map<String, Object>> response =
-                readList("dataset/" + dataset.getId() + "/content?select=" + select + "&where=" + where + "&orderBy=" + orderBy);
+                readList(
+                        "dataset/"
+                                + dataset.getId()
+                                + "/content?select="
+                                + select
+                                + "&where="
+                                + where
+                                + "&orderBy="
+                                + orderBy);
 
         assertThat(response.size(), is(2));
         assertThat(response, hasItem(one.getPayload()));
@@ -340,11 +358,14 @@ public class DatasetResourceTest extends AbstractResourceTest {
         assertThat(response.getStatusCode(), is(BAD_REQUEST.code()));
         assertThat(response.getStatusMessage(), is(BAD_REQUEST.reasonPhrase()));
 
-        assertThatErrorResponseIsCorrect(response.getPayload(), "Invalid value: abc for parameter: subscribe, valid " +
-                "values are: " +
-                "true|false!", endpoint, BAD_REQUEST);
+        assertThatErrorResponseIsCorrect(
+                response.getPayload(),
+                "Invalid value: abc for parameter: subscribe, valid " + "values are: " + "true|false!",
+                endpoint,
+                BAD_REQUEST);
 
-        verify(reader, never()).read(any(Dataset.class), anyString(), anyString(), anyString(), anyInt());
+        verify(reader, never())
+                .read(any(Dataset.class), anyString(), anyString(), anyString(), anyInt());
     }
 
     @Test
@@ -354,16 +375,17 @@ public class DatasetResourceTest extends AbstractResourceTest {
         when(datasetDao.get(dataset.getId())).thenReturn(dataset);
 
         Throwable exception = new RuntimeException("boom!");
-        when(reader.read(eq(dataset), anyString(), anyString(), anyString(), eq(-1))).thenReturn(Observable.error
-                (exception));
+        when(reader.read(eq(dataset), anyString(), anyString(), anyString(), eq(-1)))
+                .thenReturn(Observable.error(exception));
 
-        String endpoint = "dataset/" + dataset.getId() + "/content?select=aSelect&where=aWhere&orderBy=anOrderBy";
+        String endpoint =
+                "dataset/" + dataset.getId() + "/content?select=aSelect&where=aWhere&orderBy=anOrderBy";
         HttpResponse response = read(endpoint);
         assertThat(response.getStatusCode(), is(INTERNAL_SERVER_ERROR.code()));
         assertThat(response.getStatusMessage(), is(INTERNAL_SERVER_ERROR.reasonPhrase()));
 
-        assertThatErrorResponseIsCorrect(response.getPayload(), exception.getMessage(), endpoint,
-                INTERNAL_SERVER_ERROR);
+        assertThatErrorResponseIsCorrect(
+                response.getPayload(), exception.getMessage(), endpoint, INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -390,62 +412,87 @@ public class DatasetResourceTest extends AbstractResourceTest {
         Observable<DataEnvelope> initialContent = Observable.just(one, two);
         when(reader.read(dataset, select, where, orderBy, -1)).thenReturn(initialContent);
         Observable<DataEnvelope> subsequentContent = Observable.just(three);
-        when(reader.read(eq(dataset), eq(select), anyString(), eq(""), eq(-1))).thenReturn(subsequentContent);
+        when(reader.read(eq(dataset), eq(select), anyString(), eq(""), eq(-1)))
+                .thenReturn(subsequentContent);
 
-        String endpoint = "dataset/" + dataset.getId() + "/content?select=" + select + "&where=" + where +
-                "&orderBy=" + orderBy + "&subscribe=true&subscriptionInterval=" + subscriptionInterval;
+        String endpoint =
+                "dataset/"
+                        + dataset.getId()
+                        + "/content?select="
+                        + select
+                        + "&where="
+                        + where
+                        + "&orderBy="
+                        + orderBy
+                        + "&subscribe=true&subscriptionInterval="
+                        + subscriptionInterval;
         List<Map<String, Object>> response = readList(endpoint);
 
         assertThat(response.size(), is(2));
         assertThat(response, hasItem(one.getPayload()));
         assertThat(response, hasItem(two.getPayload()));
 
-        Awaitility.await().atMost((subscriptionInterval + 2500), TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost((subscriptionInterval + 2500), TimeUnit.MILLISECONDS)
                 .until(subscriptionCompleted::get);
 
-        assertThat(subscriptionData.get().getMap().get("payload"), is(new JsonObject(three.getPayload())));
+        assertThat(
+                subscriptionData.get().getMap().get("payload"), is(new JsonObject(three.getPayload())));
 
-        verify(reader, times(2)).read(any(Dataset.class), anyString(), anyString(), anyString(), anyInt());
+        verify(reader, times(2))
+                .read(any(Dataset.class), anyString(), anyString(), anyString(), anyInt());
     }
 
-    private void subscriber(Dataset dataset, AtomicBoolean subscriptionCompleted,
-                            AtomicReference<JsonObject> subscriptionData) {
-        vertx.eventBus().consumer(dataset.getId(), (Handler<Message<JsonObject>>) event -> {
-            logger.info("Received pushed content: {}", event.body().toString());
+    private void subscriber(
+            Dataset dataset,
+            AtomicBoolean subscriptionCompleted,
+            AtomicReference<JsonObject> subscriptionData) {
+        vertx
+                .eventBus()
+                .consumer(
+                        dataset.getId(),
+                        (Handler<Message<JsonObject>>)
+                                event -> {
+                                    logger.info("Received pushed content: {}", event.body().toString());
 
-            if (event.body().containsKey("eventType")) {
-                SubscriptionEvent.SubscriptionEventType eventType =
-                        SubscriptionEvent.SubscriptionEventType.valueOf(event.body().getString("eventType"));
-                if (eventType.isTerminal()) {
-                    subscriptionCompleted.set(true);
-                } else {
-                    if (subscriptionData.get() != null) {
+                                    if (event.body().containsKey("eventType")) {
+                                        SubscriptionEvent.SubscriptionEventType eventType =
+                                                SubscriptionEvent.SubscriptionEventType.valueOf(
+                                                        event.body().getString("eventType"));
+                                        if (eventType.isTerminal()) {
+                                            subscriptionCompleted.set(true);
+                                        } else {
+                                            if (subscriptionData.get() != null) {
                         // boom because we expect a single publication
                         fail("Dataset contents were published more than once!");
-                    } else {
+                                            } else {
                         // cancel the subscription to facilitate our assertion on cancel
                         delete("dataset/" + dataset.getName() + "/content");
 
                         subscriptionData.set(event.body());
-                    }
-                }
-            } else {
-                logger.warn("The subscription event does not contain an event type!");
+                                            }
+                                        }
+                                    } else {
+                                        logger.warn("The subscription event does not contain an event type!");
 
-                // exit
-                subscriptionCompleted.set(true);
-            }
-        });
+                                        // exit
+                                        subscriptionCompleted.set(true);
+                                    }
+                                });
     }
 
-    private void assertThatErrorResponseIsCorrect(String response, String exceptionMessage, String endpoint,
-                                                  HttpResponseStatus httpResponseStatus) {
+    private void assertThatErrorResponseIsCorrect(
+            String response,
+            String exceptionMessage,
+            String endpoint,
+            HttpResponseStatus httpResponseStatus) {
         JsonObject errorResponse = new JsonObject(response);
 
         assertThat(errorResponse.getString("timestamp"), notNullValue());
         assertThat(errorResponse.getInteger("statusCode"), is(httpResponseStatus.code()));
         assertThat(errorResponse.getString("statusMessage"), is(httpResponseStatus.reasonPhrase()));
-        MatcherAssert.assertThat(errorResponse.getString("path"), Matchers.is(WebServerUtils.withApplicationName(endpoint)));
+        MatcherAssert.assertThat(
+                errorResponse.getString("path"), Matchers.is(WebServerUtils.withApplicationName(endpoint)));
         assertThat(errorResponse.getString("message"), containsString(exceptionMessage));
         assertThat(errorResponse.getString("stackTrace"), notNullValue());
     }

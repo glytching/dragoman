@@ -33,7 +33,6 @@ public class Dataset {
     private String subscriptionControlFieldPattern;
 
     public Dataset() {
-
     }
 
     public Dataset(String owner, String name, String source) {
@@ -44,8 +43,12 @@ public class Dataset {
         this(owner, name, source, subscriptionControlField, null);
     }
 
-    public Dataset(String owner, String name, String source, String subscriptionControlField,
-                   String subscriptionControlFieldPattern) {
+    public Dataset(
+            String owner,
+            String name,
+            String source,
+            String subscriptionControlField,
+            String subscriptionControlFieldPattern) {
         this.owner = owner;
         this.name = name;
         this.source = source;

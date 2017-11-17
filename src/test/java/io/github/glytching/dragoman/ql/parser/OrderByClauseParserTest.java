@@ -45,10 +45,13 @@ public class OrderByClauseParserTest {
     public void cannotParseToAnUnsupportedType() {
         IllegalArgumentException actual =
                 assertThrows(IllegalArgumentException.class, () -> parser.get(String.class, "a, b"));
-        assertThat(actual.getMessage(), containsString("Type: 'String' is not supported, the supported types are: [Bson]"));
+        assertThat(
+                actual.getMessage(),
+                containsString("Type: 'String' is not supported, the supported types are: [Bson]"));
     }
 
     private BsonDocument toBsonDocument(Bson bson) {
-        return bson.toBsonDocument(BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
+        return bson.toBsonDocument(
+                BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
     }
 }

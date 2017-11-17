@@ -29,9 +29,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  */
 public class Predicate {
 
+    private final List<String> rhs;
     private String lhs;
     private String operator;
-    private final List<String> rhs;
     private boolean negated;
     private boolean quoted;
 
@@ -64,12 +64,12 @@ public class Predicate {
         }
     }
 
-    public void setOperator(String operator) {
-        this.operator = operator;
-    }
-
     public String getOperator() {
         return this.operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
 
     public List<String> getRhs() {

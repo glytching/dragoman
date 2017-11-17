@@ -62,18 +62,20 @@ public class CannedDataset {
         // validate the canned dataset
         Objects.requireNonNull(dataset, "A canned dataset must contain a dataset!");
 
-        // populate each document with a subscriptionControlField if the dataset is defined with such a field
+        // populate each document with a subscriptionControlField if the dataset is defined with such a
+        // field
         if (dataset.getSubscriptionControlField() != null && documents != null) {
             String subscriptionControlField = dataset.getSubscriptionControlField();
             for (Map<String, Object> document : documents) {
-                // populate if either (a) the document has no subscriptionControlField or (b) the document contains
+                // populate if either (a) the document has no subscriptionControlField or (b) the document
+                // contains
                 // a subscriptionControlField which is not populated with a date
-                if (!document.containsKey(subscriptionControlField) || !(document.get(subscriptionControlField)
-                        instanceof Date)) {
+                if (!document.containsKey(subscriptionControlField)
+                        || !(document.get(subscriptionControlField) instanceof Date)) {
                     document.put(subscriptionControlField, new Date());
                 }
             }
         }
         return this;
-    }
+  }
 }

@@ -81,13 +81,17 @@ public class MongoSelectClauseListenerTest {
 
     @Test
     public void testInvalidProjection() {
-        SqlParserException actual = assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a, "));
-        assertThat(actual.getMessage(), containsString("Line: 1, Position: 3: no viable alternative at input '<EOF>'"));
+        SqlParserException actual =
+                assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a, "));
+        assertThat(
+                actual.getMessage(),
+                containsString("Line: 1, Position: 3: no viable alternative at input '<EOF>'"));
     }
 
     private BsonDocument parse(String select) {
         Bson bson = sqlParser.get(Bson.class, select);
 
-        return bson.toBsonDocument(BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
+        return bson.toBsonDocument(
+                BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
     }
 }

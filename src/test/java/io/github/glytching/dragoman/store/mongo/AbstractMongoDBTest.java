@@ -53,12 +53,12 @@ public abstract class AbstractMongoDBTest {
 
     private static final AtomicInteger nextId = new AtomicInteger();
 
-    private static final MongodStarter starter = MongodStarter.getInstance(
-            new RuntimeConfigBuilder()
-                    .defaults(Command.MongoD)
-                    .processOutput(ProcessOutput.getDefaultInstanceSilent())
-                    .build()
-    );
+    private static final MongodStarter starter =
+            MongodStarter.getInstance(
+                    new RuntimeConfigBuilder()
+                            .defaults(Command.MongoD)
+                            .processOutput(ProcessOutput.getDefaultInstanceSilent())
+                            .build());
 
     private static MongodExecutable mongodExe;
     private static MongodProcess mongod;
@@ -68,7 +68,8 @@ public abstract class AbstractMongoDBTest {
     private MongoClient mongoClient;
 
     //
-    // we create a single embedded mongo instance for all tests because we do not want to incur the creation cost
+    // we create a single embedded mongo instance for all tests because we do not want to incur the
+    // creation cost
     // _per test_
     //
 
@@ -76,15 +77,20 @@ public abstract class AbstractMongoDBTest {
     public static void start() throws Exception {
         StopWatch stopWatch = StopWatch.startForSplits();
         port = Network.getFreeServerPort();
-        mongodExe = starter.prepare(new MongodConfigBuilder()
+        mongodExe =
+                starter.prepare(
+                        new MongodConfigBuilder()
                 .version(Version.Main.DEVELOPMENT)
                 .net(new Net("localhost", port, Network.localhostIsIPv6()))
                 .build());
         long prepareElapsedTime = stopWatch.split();
         mongod = mongodExe.start();
         long startElapsedTime = stopWatch.split();
-        logger.info("Started embedded Mongo in {}ms (prepareElapsedTime={}ms, startElapsedTime={}ms)",
-                stopWatch.stop(), prepareElapsedTime, startElapsedTime);
+        logger.info(
+                "Started embedded Mongo in {}ms (prepareElapsedTime={}ms, startElapsedTime={}ms)",
+                stopWatch.stop(),
+                prepareElapsedTime,
+                startElapsedTime);
     }
 
     @AfterAll
@@ -96,8 +102,11 @@ public abstract class AbstractMongoDBTest {
             long stopMongodElapsedTime = stopWatch.split();
             mongodExe.stop();
             long stopMongoExeElapsedTime = stopWatch.split();
-            logger.info("Stopped embedded Mongo in {}ms (stopMongodElapsedTime={}ms, stopMongoExeElapsedTime={}ms)",
-                    stopWatch.stop(), stopMongodElapsedTime, stopMongoExeElapsedTime);
+            logger.info(
+                    "Stopped embedded Mongo in {}ms (stopMongodElapsedTime={}ms, stopMongoExeElapsedTime={}ms)",
+                    stopWatch.stop(),
+                    stopMongodElapsedTime,
+                    stopMongoExeElapsedTime);
         } catch (Exception ex) {
             logger.warn("Failed to stop embedded mongod!", ex);
         }
@@ -116,13 +125,19 @@ public abstract class AbstractMongoDBTest {
         MongoCollection<Document> mongoCollection =
                 getMongoClient().getDatabase(databaseName).getCollection(collectionName);
 
-        mongoCollection.insertMany(Lists.newArrayList(documents)).timeout(10, SECONDS).toBlocking().single();
+        mongoCollection
+                .insertMany(Lists.newArrayList(documents))
+                .timeout(10, SECONDS)
+                .toBlocking()
+                .single();
 
         for (Document document : documents) {
             document.remove("_id");
         }
 
-        assertThat("Failed to seed the given documents!", mongoCollection.count().toBlocking().single(),
+        assertThat(
+                "Failed to seed the given documents!",
+                mongoCollection.count().toBlocking().single(),
                 is((long) documents.length));
 
         return new MongoStorageCoordinates(databaseName, collectionName);

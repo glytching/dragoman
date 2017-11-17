@@ -20,14 +20,14 @@ import io.github.glytching.dragoman.dataset.Dataset;
 import rx.Observable;
 
 /**
- * Defines the interaction with our repository layer. Implementations of this interface are expected to be specific
- * to a data source class e.g. MongoDB, HTTP etc.
+ * Defines the interaction with our repository layer. Implementations of this interface are expected
+ * to be specific to a data source class e.g. MongoDB, HTTP etc.
  */
 public interface Repository<T> {
 
     /**
-     * Read data from the given {@code dataset}'s source, ensuring that the result is faithful to the supplied
-     * {@code select}, {@code where} etc.
+     * Read data from the given {@code dataset}'s source, ensuring that the result is faithful to the
+     * supplied {@code select}, {@code where} etc.
      *
      * @param dataset the {@link Dataset} to be queried
      * @param select the projections (if any) to be applied to the data in the requested dataset
@@ -40,8 +40,9 @@ public interface Repository<T> {
     Observable<T> find(Dataset dataset, String select, String where, String orderBy, int maxResults);
 
     /**
-     * Is this repository instance relevant to the given {@code dataset}. Every dataset can be handled by at most one
-     * repository type, with this method providing the answer to this question: 'can you handle this dataset?'.
+     * Is this repository instance relevant to the given {@code dataset}. Every dataset can be handled
+     * by at most one repository type, with this method providing the answer to this question: 'can
+     * you handle this dataset?'.
      *
      * @param dataset the {@link Dataset} to be tested for applicability
      *

@@ -68,13 +68,19 @@ public class MongoCannedDatasetsWriterTest extends AbstractMongoDBTest {
 
     @BeforeEach
     public void setUp() {
-        Injector injector = Guice.createInjector(Modules.override(new DatasetModule(), new CannedDatasetsModule(),
-                new ConfigurationModule()).with(new MongoOverrideModule(), new AbstractModule() {
-            @Override
-            protected void configure() {
-                bind(CannedDatasetsLoader.class).toInstance(Mockito.mock(CannedDatasetsLoader.class));
-            }
-        }));
+        Injector injector =
+                Guice.createInjector(
+                        Modules.override(
+                                new DatasetModule(), new CannedDatasetsModule(), new ConfigurationModule())
+                                .with(
+                                        new MongoOverrideModule(),
+                                        new AbstractModule() {
+                                            @Override
+                                            protected void configure() {
+                                                bind(CannedDatasetsLoader.class)
+                                                        .toInstance(Mockito.mock(CannedDatasetsLoader.class));
+                                            }
+                                        }));
         injector.injectMembers(this);
 
         when(mongoProvider.provide()).thenReturn(getMongoClient());
@@ -82,10 +88,13 @@ public class MongoCannedDatasetsWriterTest extends AbstractMongoDBTest {
 
     @Test
     public void canWriteCannedDatasets() {
-        CannedDataset one = new CannedDataset(anyDataset(new MongoStorageCoordinates("a:b")),
-                newArrayList(anyDocument(), anyDocument()));
+        CannedDataset one =
+                new CannedDataset(
+                        anyDataset(new MongoStorageCoordinates("a:b")),
+                        newArrayList(anyDocument(), anyDocument()));
         CannedDataset two =
-                new CannedDataset(new Dataset(aString(), aString(), "http://host:1234/some/end/point"), null);
+                new CannedDataset(
+                        new Dataset(aString(), aString(), "http://host:1234/some/end/point"), null);
         when(cannedDatasetsLoader.load(configuration.getCannedDatasetsDirectory()))
                 .thenReturn(newArrayList(one, two));
 
@@ -103,7 +112,8 @@ public class MongoCannedDatasetsWriterTest extends AbstractMongoDBTest {
 
     @Test
     public void canHandleNoCannedDatasets() {
-        when(cannedDatasetsLoader.load(configuration.getCannedDatasetsDirectory())).thenReturn(emptyList());
+        when(cannedDatasetsLoader.load(configuration.getCannedDatasetsDirectory()))
+                .thenReturn(emptyList());
 
         int writeCount = cannedDatasetsWriter.write();
 
@@ -112,10 +122,11 @@ public class MongoCannedDatasetsWriterTest extends AbstractMongoDBTest {
 
     private void assertDatasetIsWritten(CannedDataset cannedDataset) {
         FindObservable<Document> datasets =
-                getCollection(configuration.getDatabaseName(), configuration.getDatasetStorageName()).
-                        find(Filters.eq("name", cannedDataset.getDataset().getName()));
+                getCollection(configuration.getDatabaseName(), configuration.getDatasetStorageName())
+                        .find(Filters.eq("name", cannedDataset.getDataset().getName()));
 
-        assertThat(documentTransformer.transform(Dataset.class, datasets.first().toBlocking().single()),
+        assertThat(
+                documentTransformer.transform(Dataset.class, datasets.first().toBlocking().single()),
                 is(cannedDataset.getDataset()));
     }
 
@@ -124,13 +135,23 @@ public class MongoCannedDatasetsWriterTest extends AbstractMongoDBTest {
                 getCollection(new MongoStorageCoordinates(cannedDataset.getDataset().getSource()));
 
         if (cannedDataset.getDocuments() != null) {
-            assertThat(collection.count().toBlocking().single(), is((long) cannedDataset.getDocuments().size()));
+            assertThat(
+                    collection.count().toBlocking().single(), is((long) cannedDataset.getDocuments().size()));
 
-            List<Document> actualDocuments = collection.find().toObservable().map(document -> {
-                // remove the persisted _id to allow comparison with the unpersisted 'expected' documents
-                document.remove("_id");
-                return document;
-            }).toList().toBlocking().single();
+            List<Document> actualDocuments =
+                    collection
+                            .find()
+                            .toObservable()
+                            .map(
+                                    document -> {
+                                        // remove the persisted _id to allow comparison with the unpersisted 'expected'
+                                        // documents
+                                        document.remove("_id");
+                                        return document;
+                                    })
+                            .toList()
+                            .toBlocking()
+                            .single();
 
             for (Map<String, Object> expected : cannedDataset.getDocuments()) {
                 assertThat(actualDocuments, hasItem(new Document(expected)));
@@ -139,14 +160,13 @@ public class MongoCannedDatasetsWriterTest extends AbstractMongoDBTest {
     }
 
     private MongoCollection<Document> getCollection(MongoStorageCoordinates storageCoordinates) {
-        return mongoProvider.provide()
+        return mongoProvider
+                .provide()
                 .getDatabase(storageCoordinates.getDatabaseName())
                 .getCollection(storageCoordinates.getCollectionName());
     }
 
     private MongoCollection<Document> getCollection(String databaseName, String collectionName) {
-        return mongoProvider.provide()
-                .getDatabase(databaseName)
-                .getCollection(collectionName);
+        return mongoProvider.provide().getDatabase(databaseName).getCollection(collectionName);
     }
 }

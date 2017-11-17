@@ -49,35 +49,39 @@ public class DragomanModule extends AbstractModule {
     @Provides
     @Singleton
     public Vertx provideVertx(ApplicationConfiguration applicationConfiguration) {
-        VertxOptions vertxOptions = new VertxOptions()
-                .setMaxEventLoopExecuteTime(applicationConfiguration.getMaxEventLoopExecutionTime())
-                .setWarningExceptionTime(20L * 1000 * 1000000)
-                .setMaxWorkerExecuteTime(applicationConfiguration.getMaxWorkerExecutionTime())
-                .setWorkerPoolSize(applicationConfiguration.getWorkerPoolSize());
+        VertxOptions vertxOptions =
+                new VertxOptions()
+                        .setMaxEventLoopExecuteTime(applicationConfiguration.getMaxEventLoopExecutionTime())
+                        .setWarningExceptionTime(20L * 1000 * 1000000)
+                        .setMaxWorkerExecuteTime(applicationConfiguration.getMaxWorkerExecutionTime())
+                        .setWorkerPoolSize(applicationConfiguration.getWorkerPoolSize());
 
-        // see https://github.com/vert-x3/vertx-dropwizard-metrics/blob/master/src/main/asciidoc/java/index.adoc#jmx
+        // see
+        // https://github.com/vert-x3/vertx-dropwizard-metrics/blob/master/src/main/asciidoc/java/index.adoc#jmx
         vertxOptions.setMetricsOptions(
                 new DropwizardMetricsOptions()
                         .setEnabled(applicationConfiguration.isMetricsEnabled())
                         .setJmxEnabled(applicationConfiguration.isJmxEnabled())
-                        .setJmxDomain(applicationConfiguration.getJmxDomainName())
-        );
+                        .setJmxDomain(applicationConfiguration.getJmxDomainName()));
 
         return Vertx.vertx(vertxOptions);
     }
 
     @Provides
     @Singleton
-    public DeploymentOptions provideDeploymentOptions(ApplicationConfiguration applicationConfiguration) {
-        // Vert.x is a non-blocking event-loop based framework; it does not follow the approach of 1 connection -> 1
-        // thread instead since each request is handled in a request-calback-response fashion the event loop is (or
-        // should be) ~immediately available to handle the next request so want to accept the default since this
-        // indicates conformance with the Vert.x approach or to put it another way we want non conformance to be made
+    public DeploymentOptions provideDeploymentOptions(
+            ApplicationConfiguration applicationConfiguration) {
+        // Vert.x is a non-blocking event-loop based framework; it does not follow the approach of 1
+        // connection -> 1
+        // thread instead since each request is handled in a request-calback-response fashion the event
+        // loop is (or
+        // should be) ~immediately available to handle the next request so want to accept the default
+        // since this
+        // indicates conformance with the Vert.x approach or to put it another way we want non
+        // conformance to be made
         // obvious so that we can fix it rather than for it to be hidden behind tweaked thread pools
         // Note: since Guice is creating the verticles for us we cannot set instances > 1, this _may_ be
         // reconsidered later ...
-        return new DeploymentOptions()
-                .setWorkerPoolName("vertx-worker")
-                .setInstances(1);
+        return new DeploymentOptions().setWorkerPoolName("vertx-worker").setInstances(1);
     }
 }

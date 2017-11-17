@@ -26,8 +26,9 @@ public class MapMaker {
     @SafeVarargs
     @SuppressWarnings("unchecked")
     public static Map<String, Object> makeMap(AbstractMap.SimpleEntry<String, Object>... entries) {
-        return Stream.of(
-                entries).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+        return Stream.of(entries)
+                .collect(
+                        Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
     }
 
     public static AbstractMap.SimpleEntry<String, Object> makeEntry(String key, Object value) {

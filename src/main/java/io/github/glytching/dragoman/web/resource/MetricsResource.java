@@ -33,9 +33,8 @@ import static io.github.glytching.dragoman.web.WebServerUtils.withApplicationNam
  */
 public class MetricsResource implements RestResource {
 
-    private MetricsFacade metricsFacade;
-
     private final ApplicationConfiguration applicationConfiguration;
+    private MetricsFacade metricsFacade;
 
     @Inject
     public MetricsResource(ApplicationConfiguration applicationConfiguration) {
@@ -44,29 +43,37 @@ public class MetricsResource implements RestResource {
 
     @Override
     public void configure(Vertx vertx, HttpServer httpServer, Router router) {
-        router.get(withApplicationName("metrics")).blockingHandler(routingContext -> {
-            HttpServerRequest request = routingContext.request();
-            if (request.params().contains("regex")) {
+        router
+                .get(withApplicationName("metrics"))
+                .blockingHandler(
+                        routingContext -> {
+                            HttpServerRequest request = routingContext.request();
+                            if (request.params().contains("regex")) {
                 // get a set of metric(s), identified by regex
                 String regex = routingContext.request().getParam("regex");
 
                 JsonObject filtered = metricsFacade.getByFilter(regex);
 
                 routingContext.response().end(filtered.encodePrettily());
-            } else {
+                            } else {
                 // get all metrics
                 routingContext.response().end(metricsFacade.getAll().encodePrettily());
-            }
-        });
+                            }
+                        });
 
         // get a named metrics
-        router.get(withApplicationName("metrics/:name")).blockingHandler(routingContext -> {
-            JsonObject filtered = metricsFacade.getByName(routingContext.request().getParam("name"));
+        router
+                .get(withApplicationName("metrics/:name"))
+                .blockingHandler(
+                        routingContext -> {
+                            JsonObject filtered =
+                                    metricsFacade.getByName(routingContext.request().getParam("name"));
 
-            routingContext.response().end(filtered.encodePrettily());
-        });
+                            routingContext.response().end(filtered.encodePrettily());
+                        });
 
-        this.metricsFacade = new MetricsFacade(vertx, httpServer,
-                applicationConfiguration.getMetricsPublicationPeriod());
+        this.metricsFacade =
+                new MetricsFacade(
+                        vertx, httpServer, applicationConfiguration.getMetricsPublicationPeriod());
     }
 }

@@ -29,7 +29,6 @@ public class User {
     private String hashedPassword;
 
     public User() {
-
     }
 
     public User(String name, String hashedPassword) {
@@ -67,5 +66,5 @@ public class User {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }
+  }
 }

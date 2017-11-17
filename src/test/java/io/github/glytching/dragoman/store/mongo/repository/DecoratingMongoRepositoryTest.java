@@ -41,6 +41,11 @@ import static org.mockito.Mockito.when;
 @ExtendWith(RandomBeansExtension.class)
 public class DecoratingMongoRepositoryTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final String select = "aSelect";
+    private final String where = "aWhere";
+    private final String orderBy = "nOrderBy";
+    private final int maxResults = 50;
     @Mock
     private MongoRepository delegate;
     @Random
@@ -49,14 +54,6 @@ public class DecoratingMongoRepositoryTest {
     private Document one;
     @Random
     private Document two;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    private final String select = "aSelect";
-    private final String where = "aWhere";
-    private final String orderBy = "nOrderBy";
-    private final int maxResults = 50;
-
     private DocumentTransformer documentTransformer;
     private DecoratingMongoRepository repository;
 
@@ -80,9 +77,11 @@ public class DecoratingMongoRepositoryTest {
 
     @Test
     public void willDelegateThenTransformTheResponse() {
-        when(delegate.find(dataset, select, where, orderBy, maxResults)).thenReturn(Observable.just(one, two));
+        when(delegate.find(dataset, select, where, orderBy, maxResults))
+                .thenReturn(Observable.just(one, two));
 
-        List<Map<String, Object>> results = toList(repository.find(dataset, select, where, orderBy, maxResults));
+        List<Map<String, Object>> results =
+                toList(repository.find(dataset, select, where, orderBy, maxResults));
 
         assertThat(results.size(), is(2));
         assertThat(results, hasItem(documentTransformer.transform(one)));
@@ -92,5 +91,4 @@ public class DecoratingMongoRepositoryTest {
     private List<Map<String, Object>> toList(Observable<Map<String, Object>> observable) {
         return observable.toList().toBlocking().single();
     }
-
 }

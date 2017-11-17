@@ -22,11 +22,13 @@ import io.github.glytching.dragoman.dataset.Dataset;
  * A factory for creating a {@link ResponsePostProcessor} instance for a given {@link Dataset}.
  */
 public class ResponsePostProcessorFactory {
-    private static final ResponsePostProcessor DEFAULT_RESPONSE_POST_PROCESSOR = new ListAwareResponsePostProcessor();
+    private static final ResponsePostProcessor DEFAULT_RESPONSE_POST_PROCESSOR =
+            new ListAwareResponsePostProcessor();
 
     /**
-     * Returns an instance of {@link ResponsePostProcessor} appropriate to the given {@code dataset}. Currently, there
-     * is only one implementation of {@link ResponsePostProcessor} so this factory looks a little bit silly.
+     * Returns an instance of {@link ResponsePostProcessor} appropriate to the given {@code dataset}.
+     * Currently, there is only one implementation of {@link ResponsePostProcessor} so this factory
+     * looks a little bit silly.
      *
      * @param dataset
      *

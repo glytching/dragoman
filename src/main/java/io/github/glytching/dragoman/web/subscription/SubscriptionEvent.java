@@ -18,14 +18,6 @@ package io.github.glytching.dragoman.web.subscription;
 
 public abstract class SubscriptionEvent {
 
-    public enum SubscriptionEventType {
-        STREAM_EVENT, STREAM_FAILED_EVENT, STREAM_COMPLETED_EVENT;
-
-        public boolean isTerminal() {
-            return this == STREAM_COMPLETED_EVENT || this == STREAM_FAILED_EVENT;
-        }
-    }
-
     private SubscriptionEventType eventType;
     private String subscriptionKey;
 
@@ -58,7 +50,17 @@ public abstract class SubscriptionEvent {
     }
 
     public boolean isTerminal() {
-        return eventType == SubscriptionEventType.STREAM_FAILED_EVENT ||
-                eventType == SubscriptionEventType.STREAM_COMPLETED_EVENT;
+        return eventType == SubscriptionEventType.STREAM_FAILED_EVENT
+                || eventType == SubscriptionEventType.STREAM_COMPLETED_EVENT;
+    }
+
+    public enum SubscriptionEventType {
+        STREAM_EVENT,
+        STREAM_FAILED_EVENT,
+        STREAM_COMPLETED_EVENT;
+
+        public boolean isTerminal() {
+            return this == STREAM_COMPLETED_EVENT || this == STREAM_FAILED_EVENT;
+        }
     }
 }

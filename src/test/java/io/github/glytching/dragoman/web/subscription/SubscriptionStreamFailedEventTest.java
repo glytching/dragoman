@@ -28,6 +28,7 @@ public class SubscriptionStreamFailedEventTest {
         SubscriptionStreamFailedEvent streamEvent = new SubscriptionStreamFailedEvent("aKey", "boom!");
 
         assertThat(streamEvent.isTerminal(), is(true));
-        assertThat(streamEvent.is(SubscriptionEvent.SubscriptionEventType.STREAM_FAILED_EVENT), is(true));
+        assertThat(
+                streamEvent.is(SubscriptionEvent.SubscriptionEventType.STREAM_FAILED_EVENT), is(true));
     }
 }

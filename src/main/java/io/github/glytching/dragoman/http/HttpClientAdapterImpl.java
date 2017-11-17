@@ -27,8 +27,8 @@ import java.util.Map;
 import static java.lang.String.format;
 
 /**
- * An implementation of {@link HttpClientAdapter} which pairs our {@link HttpClient} with a {@link JsonTransformer} to
- * adapt HTTP responses into an {@link Observable}.
+ * An implementation of {@link HttpClientAdapter} which pairs our {@link HttpClient} with a {@link
+ * JsonTransformer} to adapt HTTP responses into an {@link Observable}.
  */
 public class HttpClientAdapterImpl implements HttpClientAdapter {
 
@@ -43,11 +43,13 @@ public class HttpClientAdapterImpl implements HttpClientAdapter {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Observable<Map<String, Object>> read(String url, ResponsePostProcessor responsePostProcessor) {
+    public Observable<Map<String, Object>> read(
+            String url, ResponsePostProcessor responsePostProcessor) {
         HttpResponse response = httpClient.get(url);
 
         if (!response.isSuccessful()) {
-            throw new HttpClientException(format("Failed to read response from: %s, got: %s", url, response));
+            throw new HttpClientException(
+                    format("Failed to read response from: %s, got: %s", url, response));
         }
 
         String content = responsePostProcessor.postProcess(response.getPayload());

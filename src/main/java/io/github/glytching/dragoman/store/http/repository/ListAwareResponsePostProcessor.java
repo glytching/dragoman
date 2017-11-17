@@ -19,7 +19,8 @@ package io.github.glytching.dragoman.store.http.repository;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
- * An implementation of {@link ResponsePostProcessor} which insists on all HTTP responses being JSON lists.
+ * An implementation of {@link ResponsePostProcessor} which insists on all HTTP responses being JSON
+ * lists.
  */
 public class ListAwareResponsePostProcessor implements ResponsePostProcessor {
 

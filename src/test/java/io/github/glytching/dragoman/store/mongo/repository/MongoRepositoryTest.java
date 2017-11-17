@@ -64,35 +64,39 @@ public class MongoRepositoryTest extends AbstractMongoDBTest {
     @BeforeEach
     public void setUp() {
         Injector injector =
-                Guice.createInjector(Modules.override(new MongoModule(), new ConfigurationModule()).with(new
-                        MongoOverrideModule()));
+                Guice.createInjector(
+                        Modules.override(new MongoModule(), new ConfigurationModule())
+                                .with(new MongoOverrideModule()));
         injector.injectMembers(this);
 
-        bill = new Document("name", "Bill")
-                .append("type", "Human")
-                .append("age", 35)
-                .append("biped", true)
-                .append("shoeSize", 9)
-                .append("rating", 1.2)
-                .append("comments", "likes pianos")
-                .append("expirationDate", toDate(LocalDate.parse("2017-10-27").plusYears(10)))
-                .append("createdAt", toDate(LocalDateTime.now()));
+        bill =
+                new Document("name", "Bill")
+                        .append("type", "Human")
+                        .append("age", 35)
+                        .append("biped", true)
+                        .append("shoeSize", 9)
+                        .append("rating", 1.2)
+                        .append("comments", "likes pianos")
+                        .append("expirationDate", toDate(LocalDate.parse("2017-10-27").plusYears(10)))
+                        .append("createdAt", toDate(LocalDateTime.now()));
 
-        martin = new Document("name", "Martin")
-                .append("type", "Martian")
-                .append("age", 1156)
-                .append("biped", false)
-                .append("shoeSize", 4.5)
-                .append("rating", null)
-                .append("comments", "interplanetary travel")
-                .append("expirationDate", toDate(LocalDate.parse("2017-10-27").plusYears(100)))
-                .append("createdAt", toDate(LocalDateTime.now()));
+        martin =
+                new Document("name", "Martin")
+                        .append("type", "Martian")
+                        .append("age", 1156)
+                        .append("biped", false)
+                        .append("shoeSize", 4.5)
+                        .append("rating", null)
+                        .append("comments", "interplanetary travel")
+                        .append("expirationDate", toDate(LocalDate.parse("2017-10-27").plusYears(100)))
+                        .append("createdAt", toDate(LocalDateTime.now()));
 
         storageCoordinates = seed(bill, martin);
 
         dataset = mock(Dataset.class);
-        when(dataset.getSource()).thenReturn(storageCoordinates.getDatabaseName() + ":" + storageCoordinates
-                .getCollectionName());
+        when(dataset.getSource())
+                .thenReturn(
+                        storageCoordinates.getDatabaseName() + ":" + storageCoordinates.getCollectionName());
 
         when(mongoProvider.provide()).thenReturn(getMongoClient());
     }
@@ -100,9 +104,11 @@ public class MongoRepositoryTest extends AbstractMongoDBTest {
     @AfterEach
     public void tearDown() {
         StopWatch stopWatch = StopWatch.start();
-        getMongoClient().getDatabase(storageCoordinates.getDatabaseName()).drop()
-                .subscribe(success -> logger.info("Dropped database: {}", storageCoordinates
-                        .getDatabaseName()));
+        getMongoClient()
+                .getDatabase(storageCoordinates.getDatabaseName())
+                .drop()
+                .subscribe(
+                        success -> logger.info("Dropped database: {}", storageCoordinates.getDatabaseName()));
         logger.info("Dropped test data in {}ms", stopWatch.stop());
     }
 
@@ -134,8 +140,9 @@ public class MongoRepositoryTest extends AbstractMongoDBTest {
         List<Document> documents = toList(repository.find(dataset, "name, age", expression, "", -1));
 
         assertThat(documents.size(), is(1));
-        assertThat(documents.get(0), is(new Document().append("name", bill.get("name"))
-                .append("age", bill.get("age"))));
+        assertThat(
+                documents.get(0),
+                is(new Document().append("name", bill.get("name")).append("age", bill.get("age"))));
     }
 
     @Test
@@ -220,7 +227,8 @@ public class MongoRepositoryTest extends AbstractMongoDBTest {
     public void withNull() {
         String expression = "rating is null";
 
-        List<Document> documents = repository.find(dataset, "", expression, "", -1).toList().toBlocking().single();
+        List<Document> documents =
+                repository.find(dataset, "", expression, "", -1).toList().toBlocking().single();
         assertThat(documents.size(), is(1));
         assertThat(documents, hasItem(martin));
     }
@@ -263,14 +271,16 @@ public class MongoRepositoryTest extends AbstractMongoDBTest {
 
     @Test
     public void withDateTimeLiteral() {
-        String expression = format("createdAt < '%s'", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()));
+        String expression =
+                format("createdAt < '%s'", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()));
 
         List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
         assertThat(documents.size(), is(2));
         assertThat(documents, hasItem(bill));
         assertThat(documents, hasItem(martin));
 
-        expression = format("createdAt > '%s'", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()));
+        expression =
+                format("createdAt > '%s'", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()));
 
         documents = toList(repository.find(dataset, "", expression, "", -1));
         assertThat(documents.size(), is(0));

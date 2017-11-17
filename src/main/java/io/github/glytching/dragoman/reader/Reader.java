@@ -20,15 +20,15 @@ import io.github.glytching.dragoman.dataset.Dataset;
 import rx.Observable;
 
 /**
- * This is the main entry point for all reads; delegates the given query details (predicates, projections etc) to the underlying
- * repository layer and emits an Observable over the results.
+ * This is the main entry point for all reads; delegates the given query details (predicates,
+ * projections etc) to the underlying repository layer and emits an Observable over the results.
  */
 public interface Reader {
 
     /**
-     * Gets an observable over a resultset. Most of the arguments here are optinal; if none are provided then the entire
-     * resultset is retrieved. So, yes, in general, it makes sense to use the arguments to (a) filter the resultset and
-     * (b) shape the resultset.
+     * Gets an observable over a resultset. Most of the arguments here are optinal; if none are
+     * provided then the entire resultset is retrieved. So, yes, in general, it makes sense to use the
+     * arguments to (a) filter the resultset and (b) shape the resultset.
      *
      * @param dataset the {@link Dataset} to be queried
      * @param select the projections (if any) to be applied to the data in the requested dataset
@@ -36,7 +36,9 @@ public interface Reader {
      * @param orderBy the ordering (if any) to be applied to the data read from the requested dataset
      * @param maxResults a limit on the number of entries to be read from the requested dataset
      *
-     * @return an observable over the dataset identified by the given {@code dataset}, {@code select}, {@code where} etc
+     * @return an observable over the dataset identified by the given {@code dataset}, {@code select},
+     * {@code where} etc
      */
-    Observable<DataEnvelope> read(Dataset dataset, String select, String where, String orderBy, Integer maxResults);
+    Observable<DataEnvelope> read(
+            Dataset dataset, String select, String where, String orderBy, Integer maxResults);
 }

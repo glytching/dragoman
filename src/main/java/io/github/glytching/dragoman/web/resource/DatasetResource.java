@@ -58,8 +58,12 @@ public class DatasetResource implements RestResource {
     private final ApplicationConfiguration applicationConfiguration;
 
     @Inject
-    public DatasetResource(DatasetDao datasetDao, Reader reader, ViewTransformer viewTransformer,
-                           SubscriptionManager subscriptionManager, ApplicationConfiguration applicationConfiguration) {
+    public DatasetResource(
+            DatasetDao datasetDao,
+            Reader reader,
+            ViewTransformer viewTransformer,
+            SubscriptionManager subscriptionManager,
+            ApplicationConfiguration applicationConfiguration) {
         this.datasetDao = datasetDao;
         this.reader = reader;
         this.viewTransformer = viewTransformer;
@@ -70,14 +74,17 @@ public class DatasetResource implements RestResource {
     @Override
     public void configure(Vertx vertx, HttpServer httpServer, Router router) {
         //
-        // getAll returns an observable to which we subscribe and write the observed stream into the HTTP response so
+        // getAll returns an observable to which we subscribe and write the observed stream into the
+        // HTTP response so
         // this can use a non blocking handler
         //
         router.get(withApplicationName("datasets")).handler(this::getAll);
 
         //
-        // the remaining endpoints may be blocking (e.g. any reads from HTTP sources) or are simple, quick calls to a
-        // Dao and the additional illegibility of exposing Observables is deemed not worth the bother so these all use
+        // the remaining endpoints may be blocking (e.g. any reads from HTTP sources) or are simple,
+        // quick calls to a
+        // Dao and the additional illegibility of exposing Observables is deemed not worth the bother so
+        // these all use
         // blocking handlers
         //
 
@@ -93,7 +100,9 @@ public class DatasetResource implements RestResource {
 
         router.get(withApplicationName("dataset/:id/content")).blockingHandler(this::getContent);
 
-        router.delete(withApplicationName("dataset/:id/content")).blockingHandler(this::stopSubscription);
+        router
+                .delete(withApplicationName("dataset/:id/content"))
+                .blockingHandler(this::stopSubscription);
     }
 
     private void stopSubscription(RoutingContext routingContext) {
@@ -112,8 +121,9 @@ public class DatasetResource implements RestResource {
         String orderBy = routingContext.request().getParam("orderBy");
 
         String subscriptionFlag = routingContext.request().getParam("subscribe");
-        if (isNotBlank(subscriptionFlag) && !(subscriptionFlag.equalsIgnoreCase("true") || subscriptionFlag
-                .equalsIgnoreCase("false"))) {
+        if (isNotBlank(subscriptionFlag)
+                && !(subscriptionFlag.equalsIgnoreCase("true")
+                || subscriptionFlag.equalsIgnoreCase("false"))) {
             throw InvalidRequestException.invalidValue("subscribe", subscriptionFlag, "true|false");
         }
 
@@ -122,10 +132,12 @@ public class DatasetResource implements RestResource {
         if (Boolean.valueOf(subscriptionFlag)) {
             Optional<Long> refreshPeriod = Optional.empty();
             if (routingContext.request().params().contains("subscriptionInterval")) {
-                refreshPeriod = Optional.of(Long.valueOf(routingContext.request().getParam("subscriptionInterval")));
+                refreshPeriod =
+                        Optional.of(Long.valueOf(routingContext.request().getParam("subscriptionInterval")));
             }
 
-            subscriptionManager.start(dataset, refreshPeriod, LocalDateTime.now(ZoneId.of("UTC")), select, where);
+            subscriptionManager.start(
+                    dataset, refreshPeriod, LocalDateTime.now(ZoneId.of("UTC")), select, where);
         }
 
         writeDatasetContents(routingContext, reader.read(dataset, select, where, orderBy, -1));
@@ -185,12 +197,14 @@ public class DatasetResource implements RestResource {
         return datasetDao.get(id);
     }
 
-    private void writeDatasetContents(RoutingContext routingContext, Observable<DataEnvelope> datasetContents) {
-        HttpServerResponse httpServerResponse = jsonContentType(routingContext.response())
-                .setChunked(true);
+    private void writeDatasetContents(
+            RoutingContext routingContext, Observable<DataEnvelope> datasetContents) {
+        HttpServerResponse httpServerResponse =
+                jsonContentType(routingContext.response()).setChunked(true);
 
         final AtomicBoolean isFirst = new AtomicBoolean(true);
-        datasetContents.subscribe((DataEnvelope dataEnvelope) -> {
+        datasetContents.subscribe(
+                (DataEnvelope dataEnvelope) -> {
                     if (!isFirst.get()) {
                         httpServerResponse.write(",");
                     } else {
@@ -204,11 +218,12 @@ public class DatasetResource implements RestResource {
     }
 
     private void writeDatasets(RoutingContext routingContext, Observable<Dataset> datasets) {
-        HttpServerResponse httpServerResponse = jsonContentType(routingContext.response())
-                .setChunked(true);
+        HttpServerResponse httpServerResponse =
+                jsonContentType(routingContext.response()).setChunked(true);
 
         final AtomicBoolean isFirst = new AtomicBoolean(true);
-        datasets.subscribe(dataset -> {
+        datasets.subscribe(
+                dataset -> {
                     if (!isFirst.get()) {
                         httpServerResponse.write(",");
                     } else {

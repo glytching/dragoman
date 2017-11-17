@@ -17,8 +17,8 @@
 package io.github.glytching.dragoman.transform;
 
 /**
- * Extends {@link RuntimeException} to provide some identity and traceability for exceptions which arise from our
- * transformers.
+ * Extends {@link RuntimeException} to provide some identity and traceability for exceptions which
+ * arise from our transformers.
  */
 public class TransformerException extends RuntimeException {
 

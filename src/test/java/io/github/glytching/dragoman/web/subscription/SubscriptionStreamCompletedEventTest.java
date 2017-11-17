@@ -28,6 +28,7 @@ public class SubscriptionStreamCompletedEventTest {
         SubscriptionStreamCompletedEvent streamEvent = new SubscriptionStreamCompletedEvent("aKey");
 
         assertThat(streamEvent.isTerminal(), is(true));
-        assertThat(streamEvent.is(SubscriptionEvent.SubscriptionEventType.STREAM_COMPLETED_EVENT), is(true));
+        assertThat(
+                streamEvent.is(SubscriptionEvent.SubscriptionEventType.STREAM_COMPLETED_EVENT), is(true));
     }
 }

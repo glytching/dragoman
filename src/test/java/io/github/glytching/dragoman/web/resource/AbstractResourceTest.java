@@ -48,6 +48,13 @@ public abstract class AbstractResourceTest {
     @Inject
     protected Vertx vertx;
     @Inject
+    protected ViewTransformer viewTransformer;
+    @Inject
+    protected RepositoryRouter repositoryRouter;
+    @Inject
+    protected ApplicationConfiguration configuration;
+    protected int port;
+    @Inject
     private DeploymentOptions deploymentOptions;
     @Inject
     private Reader reader;
@@ -55,20 +62,13 @@ public abstract class AbstractResourceTest {
     private Set<RestResource> restResources;
     @Inject
     private HttpClient httpClient;
-    @Inject
-    protected ViewTransformer viewTransformer;
-    @Inject
-    protected RepositoryRouter repositoryRouter;
-    @Inject
-    protected ApplicationConfiguration configuration;
-
-    protected int port;
 
     @BeforeEach
     @SuppressWarnings("unchecked")
     public void start() {
         Injector injector =
-                Guice.createInjector(Modules.override(new DragomanModule()).with(new RestOverridesModule()));
+                Guice.createInjector(
+                        Modules.override(new DragomanModule()).with(new RestOverridesModule()));
         injector.injectMembers(this);
 
         startHttpServer();
@@ -130,9 +130,12 @@ public abstract class AbstractResourceTest {
         port = configuration.getHttpPort();
         logger.info("Starting embedded HTTP server on port: {}", port);
         CountDownLatch latch = new CountDownLatch(1);
-        vertx.deployVerticle(new WebServerVerticle(restResources, configuration), deploymentOptions, result -> {
-            logger.info("Started embedded HTTP server with result: {}", result);
-            latch.countDown();
+        vertx.deployVerticle(
+                new WebServerVerticle(restResources, configuration),
+                deploymentOptions,
+                result -> {
+                    logger.info("Started embedded HTTP server with result: {}", result);
+                    latch.countDown();
         });
 
         try {

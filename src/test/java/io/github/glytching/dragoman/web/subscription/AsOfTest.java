@@ -47,7 +47,12 @@ public class AsOfTest {
 
         String actual = asOf.applyAsOf("x > 1");
 
-        assertThat(actual, is("x > 1 and updatedAt > '" + DateTimeFormatter.ofPattern(asOfFieldPattern).format(lastRead) + "'"));
+        assertThat(
+                actual,
+                is(
+                        "x > 1 and updatedAt > '"
+                                + DateTimeFormatter.ofPattern(asOfFieldPattern).format(lastRead)
+                                + "'"));
     }
 
     @Test
@@ -56,7 +61,8 @@ public class AsOfTest {
 
         String actual = asOf.applyAsOf("x > 1");
 
-        assertThat(actual, is("x > 1 and updatedAt > " + lastRead.toInstant(ZoneOffset.UTC).toEpochMilli()));
+        assertThat(
+                actual, is("x > 1 and updatedAt > " + lastRead.toInstant(ZoneOffset.UTC).toEpochMilli()));
     }
 
     @Test
@@ -65,13 +71,19 @@ public class AsOfTest {
 
         String actual = asOf.applyAsOf("x > 1");
 
-        assertThat(actual, is("x > 1 and updatedAt > '" + DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(lastRead) + "'"));
+        assertThat(
+                actual,
+                is(
+                        "x > 1 and updatedAt > '"
+                                + DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(lastRead)
+                                + "'"));
     }
 
     @Test
     public void willFailIfGivenAnUnsupportedPattern() {
-        RuntimeException actual = assertThrows(RuntimeException.class,
-                () -> new AsOf("updatedAt", "foo", lastRead, asOfFormatter));
+        RuntimeException actual =
+                assertThrows(
+                        RuntimeException.class, () -> new AsOf("updatedAt", "foo", lastRead, asOfFormatter));
         assertThat(actual.getMessage(), is("Cannot format AsOf for an unsupported pattern: foo!"));
     }
 }

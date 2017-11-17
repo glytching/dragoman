@@ -25,8 +25,8 @@ import org.bson.conversions.Bson;
 import java.util.List;
 
 /**
- * A Mongo specific implementation of {@link AbstractSelectClauseListener} which turns the domain {@link Projection}
- * into a {@link Bson} instance.
+ * A Mongo specific implementation of {@link AbstractSelectClauseListener} which turns the domain
+ * {@link Projection} into a {@link Bson} instance.
  */
 public class MongoSelectClauseListener extends AbstractSelectClauseListener<Bson> {
 

@@ -47,8 +47,12 @@ public class MongoRepository implements Repository<Document> {
     private final UrlUtils urlUtils;
 
     @Inject
-    public MongoRepository(SelectClauseParser selectClauseParser, WhereClauseParser whereClauseParser,
-                           OrderByClauseParser orderByClauseParser, MongoProvider mongoProvider, UrlUtils urlUtils) {
+    public MongoRepository(
+            SelectClauseParser selectClauseParser,
+            WhereClauseParser whereClauseParser,
+            OrderByClauseParser orderByClauseParser,
+            MongoProvider mongoProvider,
+            UrlUtils urlUtils) {
         this.selectClauseParser = selectClauseParser;
         this.whereClauseParser = whereClauseParser;
         this.orderByClauseParser = orderByClauseParser;
@@ -57,7 +61,8 @@ public class MongoRepository implements Repository<Document> {
     }
 
     @Override
-    public Observable<Document> find(Dataset dataset, String select, String where, String orderBy, int maxResults) {
+    public Observable<Document> find(
+            Dataset dataset, String select, String where, String orderBy, int maxResults) {
         MongoStorageCoordinates storageCoordinates = new MongoStorageCoordinates(dataset.getSource());
         StopWatch stopWatch = StopWatch.startForSplits();
         Bson projections = selectClauseParser.get(Bson.class, select);
@@ -69,12 +74,14 @@ public class MongoRepository implements Repository<Document> {
         Bson order = orderByClauseParser.get(Bson.class, orderBy);
         long orderByElapsedTime = stopWatch.split();
 
-        FindObservable<Document> findObservable = mongoProvider.provide()
-                .getDatabase(storageCoordinates.getDatabaseName())
-                .getCollection(storageCoordinates.getCollectionName())
-                .find(filter)
-                .projection(projections)
-                .sort(order);
+        FindObservable<Document> findObservable =
+                mongoProvider
+                        .provide()
+                        .getDatabase(storageCoordinates.getDatabaseName())
+                        .getCollection(storageCoordinates.getCollectionName())
+                        .find(filter)
+                        .projection(projections)
+                        .sort(order);
 
         if (maxResults > 0) {
             findObservable.limit(maxResults);
@@ -83,8 +90,13 @@ public class MongoRepository implements Repository<Document> {
 
         long totalElapsedTime = stopWatch.stop();
 
-        logger.info("Total elapsed time for find call={}ms (projection={}ms, predicate={}ms, orderBy={}ms, find={}ms)",
-                totalElapsedTime, projectionElapsedTime, predicateElapsedTime, orderByElapsedTime, findElapsedTime);
+        logger.info(
+                "Total elapsed time for find call={}ms (projection={}ms, predicate={}ms, orderBy={}ms, find={}ms)",
+                totalElapsedTime,
+                projectionElapsedTime,
+                predicateElapsedTime,
+                orderByElapsedTime,
+                findElapsedTime);
 
         return findObservable.toObservable();
     }

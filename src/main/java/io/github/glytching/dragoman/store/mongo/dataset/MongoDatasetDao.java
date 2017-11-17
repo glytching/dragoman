@@ -47,34 +47,35 @@ public class MongoDatasetDao implements DatasetDao {
     private final MongoStorageCoordinates storageCoordinates;
 
     @Inject
-    public MongoDatasetDao(MongoProvider mongoProvider, DocumentTransformer documentTransformer,
-                           ApplicationConfiguration configuration) {
+    public MongoDatasetDao(
+            MongoProvider mongoProvider,
+            DocumentTransformer documentTransformer,
+            ApplicationConfiguration configuration) {
         this.mongoProvider = mongoProvider;
         this.documentTransformer = documentTransformer;
-        this.storageCoordinates = new MongoStorageCoordinates(configuration.getDatabaseName(),
-                configuration.getDatasetStorageName());
+        this.storageCoordinates =
+                new MongoStorageCoordinates(
+                        configuration.getDatabaseName(), configuration.getDatasetStorageName());
     }
 
     @Override
     public Observable<Dataset> getAll(String userName) {
-        FindObservable<Document> findObservable = getCollection()
-                .find(Filters.eq("owner", userName));
+        FindObservable<Document> findObservable = getCollection().find(Filters.eq("owner", userName));
 
         return findObservable.toObservable().map(toDataset());
     }
 
     @Override
     public Dataset get(String id) {
-        FindObservable<Document> findObservable = getCollection()
-                .find(Filters.eq("id", id))
-                .limit(1);
+        FindObservable<Document> findObservable = getCollection().find(Filters.eq("id", id)).limit(1);
 
         return findObservable.first().map(toDataset()).toBlocking().singleOrDefault(null);
     }
 
     @Override
     public boolean exists(String id) {
-        Observable<Long> count = getCollection().count(Filters.eq("id", id), new CountOptions().limit(1));
+        Observable<Long> count =
+                getCollection().count(Filters.eq("id", id), new CountOptions().limit(1));
 
         return count.toBlocking().single() > 0;
     }
@@ -96,10 +97,11 @@ public class MongoDatasetDao implements DatasetDao {
         }
 
         Observable<Document> observable =
-                getCollection().findOneAndReplace(Filters.eq("id", dataset.getId()),
-                        documentTransformer.transform(dataset),
-                        new FindOneAndReplaceOptions
-                                ().upsert(true).returnDocument(ReturnDocument.AFTER));
+                getCollection()
+                        .findOneAndReplace(
+                                Filters.eq("id", dataset.getId()),
+                                documentTransformer.transform(dataset),
+                                new FindOneAndReplaceOptions().upsert(true).returnDocument(ReturnDocument.AFTER));
 
         return documentTransformer.transform(Dataset.class, observable.toBlocking().single());
     }
@@ -109,7 +111,8 @@ public class MongoDatasetDao implements DatasetDao {
     }
 
     private MongoCollection<Document> getCollection() {
-        return mongoProvider.provide()
+        return mongoProvider
+                .provide()
                 .getDatabase(storageCoordinates.getDatabaseName())
                 .getCollection(storageCoordinates.getCollectionName());
     }

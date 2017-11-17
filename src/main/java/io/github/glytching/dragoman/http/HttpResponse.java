@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A simple wrapper over a raw HTTP response. Layers within the application which are not HTTP-aware can then handle the
- * response based on its status code, headers, payload etc without having to know about our HTTP integration, without
- * needing a HTTP client etc.
+ * A simple wrapper over a raw HTTP response. Layers within the application which are not HTTP-aware
+ * can then handle the response based on its status code, headers, payload etc without having to
+ * know about our HTTP integration, without needing a HTTP client etc.
  */
 public class HttpResponse {
 
@@ -34,8 +34,12 @@ public class HttpResponse {
     private final Map<String, List<String>> headers;
     private final String payload;
 
-    public HttpResponse(int statusCode, String statusMessage, String url, Map<String, List<String>> headers,
-                        String payload) {
+    public HttpResponse(
+            int statusCode,
+            String statusMessage,
+            String url,
+            Map<String, List<String>> headers,
+            String payload) {
         this.statusCode = statusCode;
         this.statusMessage = statusMessage;
         this.url = url;

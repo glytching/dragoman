@@ -40,7 +40,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class VertxSubscriptionManager implements SubscriptionManager {
     private static final Logger logger = LoggerFactory.getLogger(VertxSubscriptionManager.class);
 
-    private final static long DEFAULT_REFRESH_PERIOD = 15000L;
+    private static final long DEFAULT_REFRESH_PERIOD = 15000L;
 
     private final Vertx vertx;
     private final DatasetDao datasetDao;
@@ -50,7 +50,8 @@ public class VertxSubscriptionManager implements SubscriptionManager {
     private final WorkerExecutor executor;
 
     @Inject
-    public VertxSubscriptionManager(Vertx vertx, DatasetDao datasetDao, Reader reader, AsOfFactory asOfFactory) {
+    public VertxSubscriptionManager(
+            Vertx vertx, DatasetDao datasetDao, Reader reader, AsOfFactory asOfFactory) {
         this.vertx = vertx;
         this.datasetDao = datasetDao;
         this.reader = reader;
@@ -60,24 +61,40 @@ public class VertxSubscriptionManager implements SubscriptionManager {
     }
 
     @Override
-    public void start(Dataset dataset, Optional<Long> refreshPeriodInMillis, LocalDateTime startTime, String select,
-                      String where) {
+    public void start(
+            Dataset dataset,
+            Optional<Long> refreshPeriodInMillis,
+            LocalDateTime startTime,
+            String select,
+            String where) {
         validateForSubscription(dataset);
 
         String subscriptionKey = dataset.getId();
 
         long refreshPeriod = refreshPeriodInMillis.orElse(DEFAULT_REFRESH_PERIOD);
 
-            logger.info("Creating a subscription for key: {} and period: {}", subscriptionKey, refreshPeriod);
+        logger.info(
+                "Creating a subscription for key: {} and period: {}", subscriptionKey, refreshPeriod);
 
-            // use a blocking handler to ensure that the publication work does *not* occur on an event loop thread
-            long timerId = vertx.setPeriodic(refreshPeriod, aLong -> vertx.executeBlocking(
+        // use a blocking handler to ensure that the publication work does *not* occur on an event loop
+        // thread
+        long timerId =
+                vertx.setPeriodic(
+                        refreshPeriod,
+                        aLong ->
+                                vertx.executeBlocking(
                     (Handler<Future<Void>>) future -> publishContent(dataset, select, where),
-                    future -> {
-                    }));
+                                        future -> {
+                                        }));
 
-            subscriptions.put(subscriptionKey, new SubscriptionContext(timerId, asOfFactory.create(dataset
-                    .getSubscriptionControlField(), dataset.getSubscriptionControlFieldPattern(), startTime)));
+        subscriptions.put(
+                subscriptionKey,
+                new SubscriptionContext(
+                        timerId,
+                        asOfFactory.create(
+                                dataset.getSubscriptionControlField(),
+                                dataset.getSubscriptionControlFieldPattern(),
+                                startTime)));
     }
 
     @Override
@@ -107,10 +124,11 @@ public class VertxSubscriptionManager implements SubscriptionManager {
                 read.subscribe(
                         dataEnvelope -> publishOne(subscriptionKey, dataset, dataEnvelope),
                         throwable -> publishFailure(subscriptionKey, dataset, throwable),
-                        () -> publishCompletion(subscriptionKey, dataset)
-                );
+                        () -> publishCompletion(subscriptionKey, dataset));
             } else {
-                logger.info("Received a request to publish contents for subscriptionKey: {} but there is no such subscription present!", subscriptionKey);
+                logger.info(
+                        "Received a request to publish contents for subscriptionKey: {} but there is no such subscription present!",
+                        subscriptionKey);
             }
         } else {
             logger.info("Dataset: {} no longer exists, cancelling its subscription!", dataset);
@@ -125,7 +143,9 @@ public class VertxSubscriptionManager implements SubscriptionManager {
 
     private void publishFailure(String subscriptionKey, Dataset dataset, Throwable throwable) {
         logger.warn("Failed to read data for subscriptionKey: {}!", subscriptionKey, throwable);
-        publish(dataset, new SubscriptionStreamFailedEvent(subscriptionKey, throwable.getMessage(), throwable));
+        publish(
+                dataset,
+                new SubscriptionStreamFailedEvent(subscriptionKey, throwable.getMessage(), throwable));
     }
 
     private void publishCompletion(String subscriptionKey, Dataset dataset) {

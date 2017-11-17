@@ -24,8 +24,12 @@ import java.util.Optional;
 public interface SubscriptionManager {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    void start(Dataset dataset, Optional<Long> refreshPeriodInMillis, LocalDateTime startTime, String select,
-               String where);
+    void start(
+            Dataset dataset,
+            Optional<Long> refreshPeriodInMillis,
+            LocalDateTime startTime,
+            String select,
+            String where);
 
     void stop(String subscriptionKey);
 }

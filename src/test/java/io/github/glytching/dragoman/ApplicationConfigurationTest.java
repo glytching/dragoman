@@ -37,7 +37,9 @@ public class ApplicationConfigurationTest {
 
     @BeforeEach
     public void setUp() {
-        configuration = new ConstrettoApplicationConfiguration(new ConstrettoBuilder()
+        configuration =
+                new ConstrettoApplicationConfiguration(
+                        new ConstrettoBuilder()
                 .addCurrentTag(System.getProperty("env", ""))
                 .createPropertiesStore()
                 .addResource(new ClassPathResource("test-application.properties"))
@@ -53,7 +55,8 @@ public class ApplicationConfigurationTest {
 
     @Test
     public void canDeriveAValueForTheRandomPortSymbolic() {
-        // we cannot know exactly what value will be produced but it suffices to know that it is > 0 since
+        // we cannot know exactly what value will be produced but it suffices to know that it is > 0
+        // since
         // this means that a value in a valid port range has been derived
         assertThat(configuration.getMongoPort(), greaterThan(0));
     }
@@ -76,7 +79,10 @@ public class ApplicationConfigurationTest {
     @Test
     public void cannotReadANonExistentProperty() {
         RuntimeException actual =
-                assertThrows(RuntimeException.class, () -> configuration.getPropertyValue(String.class, "foo"));
-        assertThat(actual.getMessage(), startsWith("Failed to read configuration property: Expression [foo] not found"));
+                assertThrows(
+                        RuntimeException.class, () -> configuration.getPropertyValue(String.class, "foo"));
+        assertThat(
+                actual.getMessage(),
+                startsWith("Failed to read configuration property: Expression [foo] not found"));
     }
 }

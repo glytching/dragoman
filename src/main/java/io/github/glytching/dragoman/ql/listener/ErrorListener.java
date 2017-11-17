@@ -33,8 +33,13 @@ public class ErrorListener extends BaseErrorListener {
     private final List<String> errorMessages = Lists.newArrayList();
 
     @Override
-    public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int lineNumber, int positionInLine,
-                            String message, RecognitionException e) {
+    public void syntaxError(
+            Recognizer<?, ?> recognizer,
+            Object offendingSymbol,
+            int lineNumber,
+            int positionInLine,
+            String message,
+            RecognitionException e) {
         errorMessages.add(asMessage(lineNumber, positionInLine, message));
     }
 

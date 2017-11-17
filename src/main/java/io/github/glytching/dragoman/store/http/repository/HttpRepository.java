@@ -42,8 +42,11 @@ public class HttpRepository implements Repository<Map<String, Object>> {
     private final UrlUtils urlUtils;
 
     @Inject
-    public HttpRepository(GroovyFactory groovyFactory, HttpClientAdapter httpClientAdapter,
-                          ResponsePostProcessorFactory responsePostProcessorFactory, UrlUtils urlUtils) {
+    public HttpRepository(
+            GroovyFactory groovyFactory,
+            HttpClientAdapter httpClientAdapter,
+            ResponsePostProcessorFactory responsePostProcessorFactory,
+            UrlUtils urlUtils) {
         this.groovyFactory = groovyFactory;
         this.httpClientAdapter = httpClientAdapter;
         this.responsePostProcessorFactory = responsePostProcessorFactory;
@@ -51,12 +54,13 @@ public class HttpRepository implements Repository<Map<String, Object>> {
     }
 
     /**
-     * Reads data from the source identified by {@link Dataset#source} and applies the projections and predicates
-     * defined by the given {@code select} and {@code where}. This repository cannot apply these projections and
-     * predicates at source since all it knows about the data source is a URL so instead it reads all the data
-     * referenced by that URL and then applies projections and predicates on the client side. Clearly this may present
-     * performance and scaleability issues so it is advisable that {@link Dataset#source} be declared in such a way as
-     * to limit these issues. In time this approach may be revisited to declare more information about the source in the
+     * Reads data from the source identified by {@link Dataset#source} and applies the projections and
+     * predicates defined by the given {@code select} and {@code where}. This repository cannot apply
+     * these projections and predicates at source since all it knows about the data source is a URL so
+     * instead it reads all the data referenced by that URL and then applies projections and
+     * predicates on the client side. Clearly this may present performance and scaleability issues so
+     * it is advisable that {@link Dataset#source} be declared in such a way as to limit these issues.
+     * In time this approach may be revisited to declare more information about the source in the
      * {@link Dataset} so as to allow smarter usage of the HTTP sources.
      *
      * @param dataset the {@link Dataset} to be queried
@@ -68,19 +72,20 @@ public class HttpRepository implements Repository<Map<String, Object>> {
      * @return
      */
     @Override
-    public Observable<Map<String, Object>> find(Dataset dataset, String select, String where, String orderBy,
-                                                int maxResults) {
+    public Observable<Map<String, Object>> find(
+            Dataset dataset, String select, String where, String orderBy, int maxResults) {
         Mapper mapper = groovyFactory.createProjector(select);
 
         Filter filter = groovyFactory.createFilter(where);
 
-        Observable<Map<String, Object>> rawResponse = httpClientAdapter.read(dataset.getSource(),
-                responsePostProcessorFactory.create(dataset));
+        Observable<Map<String, Object>> rawResponse =
+                httpClientAdapter.read(dataset.getSource(), responsePostProcessorFactory.create(dataset));
 
         logger.info("Start filter and map");
         Observable<Map<String, Object>> observable = rawResponse.filter(filter::filter);
 
-        // we can only apply maxResults here because if we apply it before we filter we might have nothing to
+        // we can only apply maxResults here because if we apply it before we filter we might have
+        // nothing to
         // filter!
         if (maxResults > 0) {
             observable = observable.limit(maxResults);

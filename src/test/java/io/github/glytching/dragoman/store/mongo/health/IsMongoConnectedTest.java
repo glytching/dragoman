@@ -78,7 +78,8 @@ public class IsMongoConnectedTest {
 
     private MongoClientSettings mongoSettings(String host, int port) {
         return MongoClientSettings.builder()
-                .clusterSettings(ClusterSettings.builder().hosts(newArrayList(new ServerAddress(host, port))).build())
+                .clusterSettings(
+                        ClusterSettings.builder().hosts(newArrayList(new ServerAddress(host, port))).build())
                 .build();
     }
 }

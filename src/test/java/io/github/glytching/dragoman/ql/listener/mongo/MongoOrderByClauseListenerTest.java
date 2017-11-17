@@ -68,13 +68,17 @@ public class MongoOrderByClauseListenerTest {
 
     @Test
     public void testInvalidOrderBy() {
-        SqlParserException actual = assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a, "));
-        assertThat(actual.getMessage(), containsString("Line: 1, Position: 3: no viable alternative at input '<EOF>'"));
+        SqlParserException actual =
+                assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a, "));
+        assertThat(
+                actual.getMessage(),
+                containsString("Line: 1, Position: 3: no viable alternative at input '<EOF>'"));
     }
 
     private BsonDocument parse(String orderBy) {
         Bson bson = sqlParser.get(Bson.class, orderBy);
 
-        return bson.toBsonDocument(BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
+        return bson.toBsonDocument(
+                BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
     }
 }

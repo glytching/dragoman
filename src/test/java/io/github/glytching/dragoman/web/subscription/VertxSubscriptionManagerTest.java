@@ -75,12 +75,16 @@ public class VertxSubscriptionManagerTest {
         select = "select";
         where = "where";
 
-        // asOf is tested elsewhere, from the perspective of this test case it is simply an external collaborator with
+        // asOf is tested elsewhere, from the perspective of this test case it is simply an external
+        // collaborator with
         // the same behaviour for every test in this test case
         asOf = mock(AsOf.class);
         when(asOf.applyAsOf(where)).thenReturn(where);
-        when(asOfFactory.create(eq(dataset.getSubscriptionControlField()),
-                eq(dataset.getSubscriptionControlFieldPattern()), any(LocalDateTime.class))).thenReturn(asOf);
+        when(asOfFactory.create(
+                eq(dataset.getSubscriptionControlField()),
+                eq(dataset.getSubscriptionControlFieldPattern()),
+                any(LocalDateTime.class)))
+                .thenReturn(asOf);
 
         subscriptionManager = new VertxSubscriptionManager(vertx, datasetDao, reader, asOfFactory);
     }
@@ -93,22 +97,25 @@ public class VertxSubscriptionManagerTest {
         DataEnvelope two = TestFixture.anyDataEnvelope();
         DataEnvelope three = TestFixture.anyDataEnvelope();
         //noinspection unchecked
-        when(reader.read(dataset, select, asOf.applyAsOf(where), "", -1)).thenReturn(
-                // return something
-                Observable.just(one, two),
-                // then nothing
-                Observable.empty(),
-                // then something again
-                Observable.just(three)
-        );
+        when(reader.read(dataset, select, asOf.applyAsOf(where), "", -1))
+                .thenReturn(
+                        // return something
+                        Observable.just(one, two),
+                        // then nothing
+                        Observable.empty(),
+                        // then something again
+                        Observable.just(three));
 
         Subscriber subscriber = new Subscriber(dataset.getId());
 
         long subscriptionInterval = 100L;
-        subscriptionManager.start(dataset, Optional.of(subscriptionInterval), LocalDateTime.now(), select, where);
+        subscriptionManager.start(
+                dataset, Optional.of(subscriptionInterval), LocalDateTime.now(), select, where);
 
-        // we're expecting at least three publications so let's wait for (subscriptionInterval * 3) + _some_padding_
-        Awaitility.await().atMost(((subscriptionInterval * 3) + 500), TimeUnit.MILLISECONDS)
+        // we're expecting at least three publications so let's wait for (subscriptionInterval * 3) +
+        // _some_padding_
+        Awaitility.await()
+                .atMost(((subscriptionInterval * 3) + 500), TimeUnit.MILLISECONDS)
                 .until(() -> subscriber.isCompleted(3));
 
         List<JsonObject> consumed = subscriber.getPayloads();
@@ -126,10 +133,18 @@ public class VertxSubscriptionManagerTest {
 
         // subscribe again ... and boom!
         SubscriptionUnsupportedException actual =
-                assertThrows(SubscriptionUnsupportedException.class,
-                        () -> subscriptionManager.start(dataset, Optional.empty(), LocalDateTime.now(), select, where));
-        assertThat(actual.getMessage(), is(format("The dataset: %s already has an active subscription, you cannot have " +
-                "more than one subscription to a given dataset at any given time!", dataset.getName())));
+                assertThrows(
+                        SubscriptionUnsupportedException.class,
+                        () ->
+                                subscriptionManager.start(
+                                        dataset, Optional.empty(), LocalDateTime.now(), select, where));
+        assertThat(
+                actual.getMessage(),
+                is(
+                        format(
+                                "The dataset: %s already has an active subscription, you cannot have "
+                                        + "more than one subscription to a given dataset at any given time!",
+                                dataset.getName())));
     }
 
     @Test
@@ -138,15 +153,16 @@ public class VertxSubscriptionManagerTest {
 
         Subscriber subscriber = new Subscriber(dataset.getId());
 
-        when(reader.read(dataset, select, asOf.applyAsOf(where), "", -1)).thenReturn(
-                Observable.error(new RuntimeException("boom!"))
-        );
+        when(reader.read(dataset, select, asOf.applyAsOf(where), "", -1))
+                .thenReturn(Observable.error(new RuntimeException("boom!")));
 
         long subscriptionInterval = 50L;
-        subscriptionManager.start(dataset, Optional.of(subscriptionInterval), LocalDateTime.now(), select, where);
+        subscriptionManager.start(
+                dataset, Optional.of(subscriptionInterval), LocalDateTime.now(), select, where);
 
         // have to wait for the async call to came through ...
-        Awaitility.await().atMost((subscriptionInterval + 1000), TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost((subscriptionInterval + 1000), TimeUnit.MILLISECONDS)
                 .until(subscriber::isFailed);
 
         assertThat(subscriber.getPayloads().isEmpty(), is(true));
@@ -157,24 +173,27 @@ public class VertxSubscriptionManagerTest {
         when(datasetDao.exists(dataset.getId())).thenReturn(true);
 
         DataEnvelope one = TestFixture.anyDataEnvelope();
-        when(reader.read(dataset, select, asOf.applyAsOf(where), "", -1)).thenReturn(
-                // return something
-                Observable.just(one)
-        );
+        when(reader.read(dataset, select, asOf.applyAsOf(where), "", -1))
+                .thenReturn(
+                        // return something
+                        Observable.just(one));
 
         Subscriber subscriber = new Subscriber(dataset.getId(), true);
 
         long subscriptionInterval = 250L;
-        subscriptionManager.start(dataset, Optional.of(subscriptionInterval), LocalDateTime.now(), select, where);
+        subscriptionManager.start(
+                dataset, Optional.of(subscriptionInterval), LocalDateTime.now(), select, where);
 
         // we're expecting one publication so let's wait for (subscriptionInterval + _some_padding_)
-        Awaitility.await().atMost(((subscriptionInterval + 500)), TimeUnit.MILLISECONDS)
+        Awaitility.await()
+                .atMost(((subscriptionInterval + 500)), TimeUnit.MILLISECONDS)
                 .until(() -> subscriber.isCompleted(1));
 
         assertThat(subscriber.getPayloads(), hasItem(new JsonObject(one.getPayload())));
 
         // should only have been one call to the reader since we cancelled as soon as we got a response
-        verify(reader, times(1)).read(any(Dataset.class), anyString(), anyString(), anyString(), anyInt());
+        verify(reader, times(1))
+                .read(any(Dataset.class), anyString(), anyString(), anyString(), anyInt());
     }
 
     @Test
@@ -183,22 +202,26 @@ public class VertxSubscriptionManagerTest {
 
         subscriptionManager.start(dataset, Optional.of(10L), LocalDateTime.now(), select, where);
 
-        verify(reader, never()).read(any(Dataset.class), anyString(), anyString(), anyString(), anyInt());
+        verify(reader, never())
+                .read(any(Dataset.class), anyString(), anyString(), anyString(), anyInt());
     }
 
     @Test
     public void cannotSubscribeIfTheDatasetDoesNotSupportSubscriptions() {
         dataset.setSubscriptionControlField(null);
 
-        assertThrows(SubscriptionUnsupportedException.class,
-                () -> subscriptionManager.start(dataset, Optional.of(10L), LocalDateTime.now(), select, where));
+        assertThrows(
+                SubscriptionUnsupportedException.class,
+                () ->
+                        subscriptionManager.start(
+                                dataset, Optional.of(10L), LocalDateTime.now(), select, where));
     }
 
     private class Subscriber {
 
+        private final List<JsonObject> payloads;
         private int completedEventCount;
         private int failedEventCount;
-        private final List<JsonObject> payloads;
 
         private Subscriber(String subscriptionKey) {
             this(subscriptionKey, false);
@@ -207,29 +230,37 @@ public class VertxSubscriptionManagerTest {
         private Subscriber(String subscriptionKey, boolean cancelOnReceipt) {
             this.payloads = Lists.newArrayList();
 
-            vertx.eventBus().consumer(subscriptionKey, (Handler<Message<JsonObject>>) event -> {
-                logger.info("Received pushed content: {}", event.body().toString());
+            vertx
+                    .eventBus()
+                    .consumer(
+                            subscriptionKey,
+                            (Handler<Message<JsonObject>>)
+                                    event -> {
+                                        logger.info("Received pushed content: {}", event.body().toString());
 
-                if (event.body().containsKey("eventType")) {
-                    SubscriptionEvent.SubscriptionEventType eventType =
-                            SubscriptionEvent.SubscriptionEventType.valueOf(event.body().getString("eventType"));
-                    if (eventType == SubscriptionEvent.SubscriptionEventType.STREAM_FAILED_EVENT) {
+                                        if (event.body().containsKey("eventType")) {
+                                            SubscriptionEvent.SubscriptionEventType eventType =
+                                                    SubscriptionEvent.SubscriptionEventType.valueOf(
+                                                            event.body().getString("eventType"));
+                                            if (eventType
+                                                    == SubscriptionEvent.SubscriptionEventType.STREAM_FAILED_EVENT) {
                         failedEventCount++;
-                    } else if (eventType == SubscriptionEvent.SubscriptionEventType.STREAM_COMPLETED_EVENT) {
+                                            } else if (eventType
+                                                    == SubscriptionEvent.SubscriptionEventType.STREAM_COMPLETED_EVENT) {
                         completedEventCount++;
-                    } else {
+                                            } else {
                         if (cancelOnReceipt) {
                             logger.info("Stopping subscriber: {}", subscriptionKey);
                             subscriptionManager.stop(subscriptionKey);
                         }
                         // add it to the consumer stub
                         payloads.add((JsonObject) event.body().getMap().get("payload"));
-                    }
-                } else {
-                    logger.warn("The subscription event does not contain an event type!");
-                    completedEventCount++;
-                }
-            });
+                                            }
+                                        } else {
+                                            logger.warn("The subscription event does not contain an event type!");
+                                            completedEventCount++;
+                                        }
+                                    });
         }
 
         public List<JsonObject> getPayloads() {
@@ -237,9 +268,12 @@ public class VertxSubscriptionManagerTest {
         }
 
         private boolean isCompleted(int expectedSubscriptionCount) {
-            // the use of >= looks a bit odd, shouldn't we be certain about how many distinct subscription events we
-            // receive? yes ... but there may be race conditions when using very small subscription intervals (as we do
-            // in this test case) because between receiving an event and cancelling the subscription the next publication
+            // the use of >= looks a bit odd, shouldn't we be certain about how many distinct subscription
+            // events we
+            // receive? yes ... but there may be race conditions when using very small subscription
+            // intervals (as we do
+            // in this test case) because between receiving an event and cancelling the subscription the
+            // next publication
             // may have already kicked in
             return this.completedEventCount >= expectedSubscriptionCount;
         }

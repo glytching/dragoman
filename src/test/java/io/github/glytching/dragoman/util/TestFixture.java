@@ -41,7 +41,8 @@ public class TestFixture {
 
     public static Dataset anyDataset(MongoStorageCoordinates storageCoordinates) {
         Dataset dataset = random(Dataset.class, "source");
-        dataset.setSource(storageCoordinates.getDatabaseName() + ":" + storageCoordinates.getCollectionName());
+        dataset.setSource(
+                storageCoordinates.getDatabaseName() + ":" + storageCoordinates.getCollectionName());
         return dataset;
     }
 

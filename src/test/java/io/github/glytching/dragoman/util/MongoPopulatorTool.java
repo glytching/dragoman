@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 
 /**
- * A simple tool for inserting into a MongoDB collection, useful for manual testing of the subscription feature for
- * MongoDB datasets.
+ * A simple tool for inserting into a MongoDB collection, useful for manual testing of the
+ * subscription feature for MongoDB datasets.
  */
 public class MongoPopulatorTool {
     private static final Logger logger = LoggerFactory.getLogger(MongoPopulatorTool.class);

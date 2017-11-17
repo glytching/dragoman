@@ -31,7 +31,11 @@ public class AsOf {
     private final AsOfFormatter asOfFormatter;
     private LocalDateTime lastRead;
 
-    AsOf(String asOfField, String asOfFieldPattern, LocalDateTime lastRead, AsOfFormatter asOfFormatter) {
+    AsOf(
+            String asOfField,
+            String asOfFieldPattern,
+            LocalDateTime lastRead,
+            AsOfFormatter asOfFormatter) {
         this.asOfField = asOfField;
         this.asOfFormatter = asOfFormatter;
         this.asOfFieldPattern = asOfFormatter.validate(asOfFieldPattern);

@@ -24,14 +24,14 @@ import rx.Observable;
 import java.util.Map;
 
 /**
- * Defines the responsibilties for a facade which sits between a raw {@link HttpClient} and a
- * {@link HttpRepository}. The former returns a string reponse (JSON, for
- * example) whereas the latter operates on an {@code Observable<Map<String, Object>>}. We need this adapter because we
- * cannot rely on all HTTP data sources having an Rx-friendly interface.
- * <p/>
- * This cannot be part of the {@link Repository} hierarchy (e.g. a decorating form of the
- * {@link HttpRepository}) because it knows nothing about projections,
- * predicates etc instead it just knows about a URL.
+ * Defines the responsibilties for a facade which sits between a raw {@link HttpClient} and a {@link
+ * HttpRepository}. The former returns a string reponse (JSON, for example) whereas the latter
+ * operates on an {@code Observable<Map<String, Object>>}. We need this adapter because we cannot
+ * rely on all HTTP data sources having an Rx-friendly interface.
+ *
+ * <p>This cannot be part of the {@link Repository} hierarchy (e.g. a decorating form of the {@link
+ * HttpRepository}) because it knows nothing about projections, predicates etc instead it just knows
+ * about a URL.
  */
 public interface HttpClientAdapter {
 
@@ -39,8 +39,8 @@ public interface HttpClientAdapter {
      * Read data from the given {@code url} and map it to an observable.
      *
      * @param url the HTTP address from which to read
-     * @param responsePostProcessor a processor to be applied to the raw HTTP response before transforming into an
-     * {@link Observable}
+     * @param responsePostProcessor a processor to be applied to the raw HTTP response before
+     * transforming into an {@link Observable}
      *
      * @return an observable over the deserialised HTTP response
      */

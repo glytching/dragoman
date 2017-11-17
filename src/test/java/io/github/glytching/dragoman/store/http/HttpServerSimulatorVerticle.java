@@ -30,10 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 public class HttpServerSimulatorVerticle extends AbstractVerticle {
-    private static final Logger logger = LoggerFactory.getLogger(HttpServerSimulatorVerticle.class);
-
     public static final String QUERY_ADDRESS = "/simulator";
-
+    private static final Logger logger = LoggerFactory.getLogger(HttpServerSimulatorVerticle.class);
     private final HttpDataProvider httpDataProvider;
     private final ObjectMapper objectMapper;
 
@@ -53,7 +51,8 @@ public class HttpServerSimulatorVerticle extends AbstractVerticle {
 
         router.get(QUERY_ADDRESS).blockingHandler(this::getAll);
 
-        vertx.createHttpServer()
+        vertx
+                .createHttpServer()
                 .requestHandler(router::accept)
                 .listen(config().getInteger("http.port", 8080));
     }

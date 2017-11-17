@@ -27,9 +27,10 @@ import javax.inject.Inject;
 import java.util.Map;
 
 /**
- * The underlying {@link MongoRepository} returns an observable so it belongs in the repository hierarchy but it deals
- * with {@link Document}. To insulate the reader layer from knowledge of this storage specific, the reader layer uses
- * this repository which transforms {@link Document} to {@code Map<String, Object>}.
+ * The underlying {@link MongoRepository} returns an observable so it belongs in the repository
+ * hierarchy but it deals with {@link Document}. To insulate the reader layer from knowledge of this
+ * storage specific, the reader layer uses this repository which transforms {@link Document} to
+ * {@code Map<String, Object>}.
  */
 public class DecoratingMongoRepository implements Repository<Map<String, Object>> {
 
@@ -37,17 +38,21 @@ public class DecoratingMongoRepository implements Repository<Map<String, Object>
     private final DocumentTransformer documentTransformer;
 
     @Inject
-    public DecoratingMongoRepository(MongoRepository mongoRepository, DocumentTransformer documentTransformer) {
+    public DecoratingMongoRepository(
+            MongoRepository mongoRepository, DocumentTransformer documentTransformer) {
         this.mongoRepository = mongoRepository;
         this.documentTransformer = documentTransformer;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Observable<Map<String, Object>> find(Dataset dataset, String select, String where, String orderBy,
-                                                int maxResults) {
-        return mongoRepository.find(dataset, select, where, orderBy, maxResults)
-                .map((Func1<Document, Map<String, Object>>) doc -> documentTransformer.transform(Map.class, doc));
+    public Observable<Map<String, Object>> find(
+            Dataset dataset, String select, String where, String orderBy, int maxResults) {
+        return mongoRepository
+                .find(dataset, select, where, orderBy, maxResults)
+                .map(
+                        (Func1<Document, Map<String, Object>>)
+                                doc -> documentTransformer.transform(Map.class, doc));
     }
 
     @Override

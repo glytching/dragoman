@@ -28,14 +28,14 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  */
 public class GroovyWhereClauseListener extends AbstractWhereClauseListener<String> {
     private static final String GROOVY_SCRIPT_TEMPLATE =
-            "package io.github.glytching.dragoman.ql.listener.groovy\n" +
-                    "class GroovyFilter implements Filter {\n" +
-                    "    @Override\n" +
-                    "    boolean filter(Object incoming) {\n" +
-                    "        boolean isSame = true\n" +
-                    "        return isSame\n" +
-                    "    }\n" +
-                    "}\n";
+            "package io.github.glytching.dragoman.ql.listener.groovy\n"
+                    + "class GroovyFilter implements Filter {\n"
+                    + "    @Override\n"
+                    + "    boolean filter(Object incoming) {\n"
+                    + "        boolean isSame = true\n"
+                    + "        return isSame\n"
+                    + "    }\n"
+                    + "}\n";
 
     @Override
     public String get() {
@@ -152,6 +152,8 @@ public class GroovyWhereClauseListener extends AbstractWhereClauseListener<Strin
     private String replaceLast(String operand, String substring, String replacement) {
         int index = operand.lastIndexOf(substring);
 
-        return operand.substring(0, index) + replacement + operand.substring(index + substring.length());
+        return operand.substring(0, index)
+                + replacement
+                + operand.substring(index + substring.length());
     }
 }

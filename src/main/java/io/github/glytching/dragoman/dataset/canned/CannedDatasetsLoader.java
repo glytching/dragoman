@@ -19,15 +19,16 @@ package io.github.glytching.dragoman.dataset.canned;
 import java.util.List;
 
 /**
- * Defines how {@link CannedDataset} instances are loaded into memory, It is expected that these instances are written
- * to the dataset store as soon as they are loaded.
+ * Defines how {@link CannedDataset} instances are loaded into memory, It is expected that these
+ * instances are written to the dataset store as soon as they are loaded.
  */
 public interface CannedDatasetsLoader {
 
     /**
      * Load a collection of {@link CannedDataset} instances.
      *
-     * @param rootAddress the root address for the serialised representations of the {@link CannedDataset} instances
+     * @param rootAddress the root address for the serialised representations of the {@link
+     * CannedDataset} instances
      *
      * @return deserialised {@link CannedDataset} representations
      */

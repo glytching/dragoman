@@ -31,10 +31,9 @@ import static org.mockito.Mockito.mock;
 
 public abstract class AbstractHttpTestCase {
     private static final Logger logger = LoggerFactory.getLogger(AbstractHttpTestCase.class);
-    private static Vertx vertx;
-
     protected static int port;
     protected static HttpDataProvider httpDataProvider;
+    private static Vertx vertx;
 
     @BeforeAll
     public static void start() {
@@ -43,14 +42,16 @@ public abstract class AbstractHttpTestCase {
         httpDataProvider = mock(HttpDataProvider.class);
         logger.info("Starting embedded HTTP server on port: {}", port);
         vertx = Vertx.vertx();
-        DeploymentOptions options = new DeploymentOptions()
-                .setConfig(new JsonObject().put("http.port", port))
-                .setInstances(1);
+        DeploymentOptions options =
+                new DeploymentOptions().setConfig(new JsonObject().put("http.port", port)).setInstances(1);
 
         CountDownLatch latch = new CountDownLatch(1);
-        vertx.deployVerticle(new HttpServerSimulatorVerticle(httpDataProvider), options, result -> {
-            logger.info("Started embedded HTTP server with result: {}", result);
-            latch.countDown();
+        vertx.deployVerticle(
+                new HttpServerSimulatorVerticle(httpDataProvider),
+                options,
+                result -> {
+                    logger.info("Started embedded HTTP server with result: {}", result);
+                    latch.countDown();
         });
 
         try {

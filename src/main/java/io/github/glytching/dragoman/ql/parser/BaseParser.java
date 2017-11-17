@@ -33,9 +33,10 @@ public abstract class BaseParser {
 
     /**
      * This is ANTLR's recommended two stage parsing strategy:
+     * <p>
      * <ol>
-     * <li>Parse with {@link PredictionMode#SLL} and if this fails then move on to ...</li>
-     * <li>Parse with {@link PredictionMode#LL}</li>
+     * <li>Parse with {@link PredictionMode#SLL} and if this fails then move on to ...
+     * <li>Parse with {@link PredictionMode#LL}
      * </ol>
      */
     private static final PredictionMode DEFAULT_PREDICTION_MODE = PredictionMode.SLL;
@@ -64,20 +65,27 @@ public abstract class BaseParser {
 
     /**
      * The parser call involves:
+     * <p>
      * <ol>
-     * <li>Creating a parser for a specific clause such as map or where etc</li>
-     * <li>Creating a listener for a specific type of output such as MongoDb, Groovy etc</li>
-     * <li>Invoking the parser with the listener such that the derived output is contained within the listener
-     * after the parse call completes.</li>
+     * <li>Creating a parser for a specific clause such as map or where etc
+     * <li>Creating a listener for a specific type of output such as MongoDb, Groovy etc
+     * <li>Invoking the parser with the listener such that the derived output is contained within
+     * the listener after the parse call completes.
      * </ol>
-     * This method provides an extension point which allows clause-specific parsers a run with a selected listener and
-     * get the listeners contents. It is just sugar which allows a caller to write ...
+     * <p>
+     * This method provides an extension point which allows clause-specific parsers a run with a
+     * selected listener and get the listeners contents. It is just sugar which allows a caller to
+     * write ...
+     * <p>
+     * <p>
      * <p>
      * <pre>
      *     DerivedResponse derivedResponse = parser.get(DerivedResponse.class, expression);
      * </pre>
      * <p>
-     * ... instead of:
+     * <p>... instead of:
+     * <p>
+     * <p>
      * <p>
      * <pre>
      *     SomeKindOfListener aListener = new SomeKindOfListener();
@@ -94,15 +102,16 @@ public abstract class BaseParser {
     public abstract <T> T get(Class<T> clazz, String expression);
 
     /**
-     * Extension point which allows clause-specific parsers to define the entry point for their own clause. For
-     * example an {@code orderBy} parser has a different entry point to a {@code map} parser.
+     * Extension point which allows clause-specific parsers to define the entry point for their own
+     * clause. For example an {@code orderBy} parser has a different entry point to a {@code map}
+     * parser.
      *
      * @param parser
      *
-     * @return a {@link ParserRuleContext} representing the correct point in the tree for a given type of parser
+     * @return a {@link ParserRuleContext} representing the correct point in the tree for a given type
+     * of parser
      */
     protected abstract ParserRuleContext getParserContext(SQLParser parser);
-
 
     private SQLParser getSqlParser(String expression, ErrorListener errorListener) {
         SQLLexer lexer = new SQLLexer(new ANTLRInputStream(expression));
@@ -121,15 +130,20 @@ public abstract class BaseParser {
         return parser;
     }
 
-    private void parse(SQLParserListener sqlParserListener, ErrorListener errorListener,
-                       ParserRuleContext entryPoint) {
+    private void parse(
+            SQLParserListener sqlParserListener,
+            ErrorListener errorListener,
+            ParserRuleContext entryPoint) {
         ParseTreeWalker walker = new ParseTreeWalker();
 
         walker.walk(sqlParserListener, entryPoint);
 
         // if the parser call raised any exceptions then lets throw
-        errorListener.getException().ifPresent(ex -> {
-            throw ex;
-        });
+        errorListener
+                .getException()
+                .ifPresent(
+                        ex -> {
+                            throw ex;
+                        });
     }
 }

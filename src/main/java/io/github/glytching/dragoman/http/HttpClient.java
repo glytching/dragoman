@@ -17,8 +17,8 @@
 package io.github.glytching.dragoman.http;
 
 /**
- * Defines the interaction with HTTP data sources. Implementations of this interface are expected to be specific
- * to a chosen HTTP client technology e.g. OkHttp, Apache HTTP Client etc.
+ * Defines the interaction with HTTP data sources. Implementations of this interface are expected to
+ * be specific to a chosen HTTP client technology e.g. OkHttp, Apache HTTP Client etc.
  */
 public interface HttpClient {
 

@@ -17,8 +17,9 @@
 package io.github.glytching.dragoman.dataset.canned;
 
 /**
- * Defines the interaction with our dataset store for canned datasets. Implementations of this interface are expected
- * to be specific to a chosen data store technology e.g. MongoDB, a RDBMS etc.
+ * Defines the interaction with our dataset store for canned datasets. Implementations of this
+ * interface are expected to be specific to a chosen data store technology e.g. MongoDB, a RDBMS
+ * etc.
  */
 public interface CannedDatasetsWriter {
 

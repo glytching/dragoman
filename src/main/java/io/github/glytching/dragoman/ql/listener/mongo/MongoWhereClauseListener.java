@@ -35,8 +35,8 @@ import java.util.regex.Pattern;
 import static java.lang.String.format;
 
 /**
- * A Mongo specific implementation of {@link AbstractWhereClauseListener} which turns the domain {@link Predicate}
- * into a {@link Bson} instance.
+ * A Mongo specific implementation of {@link AbstractWhereClauseListener} which turns the domain
+ * {@link Predicate} into a {@link Bson} instance.
  */
 public class MongoWhereClauseListener extends AbstractWhereClauseListener<Bson> {
     private static final Pattern DATE_PATTERN = Pattern.compile("\\d{4}-\\d\\d-\\d\\d.*");
@@ -70,7 +70,8 @@ public class MongoWhereClauseListener extends AbstractWhereClauseListener<Bson> 
             } else if (predicate.isLike()) {
                 filters.add(Filters.regex(predicate.getLhs(), toRegex(predicate.getRhs().get(0))));
             } else if (predicate.isNotLike()) {
-                filters.add(Filters.not(Filters.regex(predicate.getLhs(), toRegex(predicate.getRhs().get(0)))));
+                filters.add(
+                        Filters.not(Filters.regex(predicate.getLhs(), toRegex(predicate.getRhs().get(0)))));
             } else if (predicate.isNull()) {
                 filters.add(Filters.eq(predicate.getLhs(), null));
             } else if (predicate.isNotNull()) {
@@ -137,14 +138,14 @@ public class MongoWhereClauseListener extends AbstractWhereClauseListener<Bson> 
         }
 
         throw InvalidRequestException.create(
-                format("Failed to parse date/time literal: %s, you must supply date/time literals in ISO8601 format!",
+                format(
+                        "Failed to parse date/time literal: %s, you must supply date/time literals in ISO8601 format!",
                         incoming));
     }
 
     private boolean isDateTimeLiteral(String incoming) {
         return DATE_PATTERN.matcher(incoming).matches();
     }
-
 
     private Pattern toRegex(String operand) {
         // find({"name": "a"}) <-- like '%a%'
@@ -188,6 +189,8 @@ public class MongoWhereClauseListener extends AbstractWhereClauseListener<Bson> 
     private String replaceLast(String operand, String substring, String replacement) {
         int index = operand.lastIndexOf(substring);
 
-        return operand.substring(0, index) + replacement + operand.substring(index + substring.length());
+        return operand.substring(0, index)
+                + replacement
+                + operand.substring(index + substring.length());
     }
 }

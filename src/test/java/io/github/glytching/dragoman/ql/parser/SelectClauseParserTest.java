@@ -46,17 +46,18 @@ public class SelectClauseParserTest {
     public void testParseToString() {
         String script = parser.get(String.class, "a, b.c");
 
-        String expected = "package io.github.glytching.dragoman.ql.listener.groovy\n" +
-                "import java.util.Map;\n" +
-                "class GroovyMapper implements Mapper {\n" +
-                "    @Override\n" +
-                "    Map<String, Object> map(Object incoming) {\n" +
-                "       \tMap<String, Object> response = new HashMap<>();\n" +
-                "\t\tresponse.put(\"a\", incoming?.a);\n" +
-                "\t\tresponse.put(\"b.c\", incoming?.b?.c);\n" +
-                "\t\treturn response;\n" +
-                "    }\n" +
-                "}\n";
+        String expected =
+                "package io.github.glytching.dragoman.ql.listener.groovy\n"
+                        + "import java.util.Map;\n"
+                        + "class GroovyMapper implements Mapper {\n"
+                        + "    @Override\n"
+                        + "    Map<String, Object> map(Object incoming) {\n"
+                        + "       \tMap<String, Object> response = new HashMap<>();\n"
+                        + "\t\tresponse.put(\"a\", incoming?.a);\n"
+                        + "\t\tresponse.put(\"b.c\", incoming?.b?.c);\n"
+                        + "\t\treturn response;\n"
+                        + "    }\n"
+                        + "}\n";
         assertThat(script, is(expected));
     }
 
@@ -64,10 +65,13 @@ public class SelectClauseParserTest {
     public void cannotParseToAnUnsupportedType() {
         IllegalArgumentException actual =
                 assertThrows(IllegalArgumentException.class, () -> parser.get(Object.class, "a, b"));
-        assertThat(actual.getMessage(), containsString("Type: 'Object' is not supported, the supported types are: [String, Bson]"));
+        assertThat(
+                actual.getMessage(),
+                containsString("Type: 'Object' is not supported, the supported types are: [String, Bson]"));
     }
 
     private BsonDocument toBsonDocument(Bson bson) {
-        return bson.toBsonDocument(BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
+        return bson.toBsonDocument(
+                BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
     }
 }

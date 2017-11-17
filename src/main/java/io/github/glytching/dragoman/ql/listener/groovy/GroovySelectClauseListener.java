@@ -23,21 +23,24 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 /**
- * Listen to callbacks from our sql parser and uses them to create a Groovy projection implementation.
+ * Listen to callbacks from our sql parser and uses them to create a Groovy projection
+ * implementation.
  */
 public class GroovySelectClauseListener extends AbstractSelectClauseListener<String> {
     private static final String TAB = "\t";
     private static final String NEWLINE = "\n";
     private static final String SELECT_STAR = "return incoming;\n";
 
-    private static final String TEMPLATE_SCRIPT = "package io.github.glytching.dragoman.ql.listener.groovy\n" +
-            "import java.util.Map;\n" +
-            "class GroovyMapper implements Mapper {\n" +
-            "    @Override\n" +
-            "    Map<String, Object> map(Object incoming) {\n" +
-            "       " + SELECT_STAR +
-            "    }\n" +
-            "}\n";
+    private static final String TEMPLATE_SCRIPT =
+            "package io.github.glytching.dragoman.ql.listener.groovy\n"
+                    + "import java.util.Map;\n"
+                    + "class GroovyMapper implements Mapper {\n"
+                    + "    @Override\n"
+                    + "    Map<String, Object> map(Object incoming) {\n"
+                    + "       "
+                    + SELECT_STAR
+                    + "    }\n"
+                    + "}\n";
 
     @Override
     public String get() {
@@ -64,18 +67,19 @@ public class GroovySelectClauseListener extends AbstractSelectClauseListener<Str
 
     private String getExpressions(List<Projection> projections) {
         StringBuilder sb = new StringBuilder();
-        projections.forEach(p -> {
-            // open the line
-            sb.append(tab(2)).append("response.put(");
-            // add the key
-            sb.append("\"").append(p.getName()).append("\"");
-            // prepare to add the value
-            sb.append(", ");
+        projections.forEach(
+                p -> {
+                    // open the line
+                    sb.append(tab(2)).append("response.put(");
+                    // add the key
+                    sb.append("\"").append(p.getName()).append("\"");
+                    // prepare to add the value
+                    sb.append(", ");
 
-            sb.append(toAccessor(p));
+                    sb.append(toAccessor(p));
 
-            // close the line
-            sb.append(");").append(NEWLINE);
+                    // close the line
+                    sb.append(");").append(NEWLINE);
         });
         return sb.toString();
     }

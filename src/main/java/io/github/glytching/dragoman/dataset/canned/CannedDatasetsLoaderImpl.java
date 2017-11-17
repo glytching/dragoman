@@ -33,7 +33,8 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 /**
- * An implementation of {@link CannedDatasetsLoader} which reads {@link CannedDataset}s from the classpath.
+ * An implementation of {@link CannedDatasetsLoader} which reads {@link CannedDataset}s from the
+ * classpath.
  */
 public class CannedDatasetsLoaderImpl implements CannedDatasetsLoader {
     private static final Logger logger = LoggerFactory.getLogger(CannedDatasetsLoaderImpl.class);
@@ -48,15 +49,16 @@ public class CannedDatasetsLoaderImpl implements CannedDatasetsLoader {
     }
 
     /**
-     * Loads {@link CannedDataset}s from the classpath with the given {@code rootAddress} being the address from which
-     * to load them. It is expected that the {@code rootAddress} will contains a file named
-     * {@code table-of-contents.txt} and this file will list the files to be loaded. Each file represents a single
-     * {@link CannedDataset}. This might sounds odd; why not just interrogate a folder and load the files found therein?
-     * Well, that's not a runner when the canned dataset resources are bundled inside the application JAR. Since we
-     * have to cater for the dataset resources beingbundled inside the application JAR we use this table-of-contents
-     * approach.
+     * Loads {@link CannedDataset}s from the classpath with the given {@code rootAddress} being the
+     * address from which to load them. It is expected that the {@code rootAddress} will contains a
+     * file named {@code table-of-contents.txt} and this file will list the files to be loaded. Each
+     * file represents a single {@link CannedDataset}. This might sounds odd; why not just interrogate
+     * a folder and load the files found therein? Well, that's not a runner when the canned dataset
+     * resources are bundled inside the application JAR. Since we have to cater for the dataset
+     * resources beingbundled inside the application JAR we use this table-of-contents approach.
      *
-     * @param rootAddress the root address for the serialised representations of the {@link CannedDataset} instances
+     * @param rootAddress the root address for the serialised representations of the {@link
+     * CannedDataset} instances
      *
      * @return deserialised {@link CannedDataset} representations
      */
@@ -67,9 +69,11 @@ public class CannedDatasetsLoaderImpl implements CannedDatasetsLoader {
         try {
             logger.info("Looking for canned datasets from: {}", rootAddress + "/table-of-contents.txt");
 
-            InputStream resourceAsStream = this.getClass().getResourceAsStream(rootAddress + "/" + TABLE_OF_CONTENTS);
+            InputStream resourceAsStream =
+                    this.getClass().getResourceAsStream(rootAddress + "/" + TABLE_OF_CONTENTS);
             if (resourceAsStream != null) {
-                List<String> tableOfContents = IOUtils.readLines(resourceAsStream, Charset.forName("UTF-8"));
+                List<String> tableOfContents =
+                        IOUtils.readLines(resourceAsStream, Charset.forName("UTF-8"));
 
                 logger.info("Loading canned datasets: {}", Joiner.on(",").join(tableOfContents));
 
@@ -81,8 +85,11 @@ public class CannedDatasetsLoaderImpl implements CannedDatasetsLoader {
                     }
                 }
             } else {
-                logger.warn("A canned datasets directory ({}) was supplied but it does not contain {} so no canned " +
-                        "datasets can be loaded!", rootAddress, TABLE_OF_CONTENTS);
+                logger.warn(
+                        "A canned datasets directory ({}) was supplied but it does not contain {} so no canned "
+                                + "datasets can be loaded!",
+                        rootAddress,
+                        TABLE_OF_CONTENTS);
             }
 
             logger.info("Loaded {} canned datasets from {}", cannedDatasets.size(), rootAddress);
@@ -99,7 +106,8 @@ public class CannedDatasetsLoaderImpl implements CannedDatasetsLoader {
         InputStream resourceAsStream = this.getClass().getResourceAsStream(address);
         if (resourceAsStream != null) {
             CannedDataset cannedDataset =
-                    jsonTransformer.transform(CannedDataset.class, IOUtils.toString(resourceAsStream, encoding));
+                    jsonTransformer.transform(
+                            CannedDataset.class, IOUtils.toString(resourceAsStream, encoding));
 
             return Optional.of(cannedDataset.finish());
         } else {

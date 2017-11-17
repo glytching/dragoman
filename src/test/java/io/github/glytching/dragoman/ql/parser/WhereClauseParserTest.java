@@ -45,14 +45,15 @@ public class WhereClauseParserTest {
     public void testParseToString() {
         String script = parser.get(String.class, "a = 1");
 
-        String expected = "package io.github.glytching.dragoman.ql.listener.groovy\n" +
-                "class GroovyFilter implements Filter {\n" +
-                "    @Override\n" +
-                "    boolean filter(Object incoming) {\n" +
-                "        boolean isSame = incoming?.a==1\n" +
-                "        return isSame\n" +
-                "    }\n" +
-                "}\n";
+        String expected =
+                "package io.github.glytching.dragoman.ql.listener.groovy\n"
+                        + "class GroovyFilter implements Filter {\n"
+                        + "    @Override\n"
+                        + "    boolean filter(Object incoming) {\n"
+                        + "        boolean isSame = incoming?.a==1\n"
+                        + "        return isSame\n"
+                        + "    }\n"
+                        + "}\n";
         assertThat(script, is(expected));
     }
 
@@ -60,11 +61,14 @@ public class WhereClauseParserTest {
     public void cannotParseToAnUnsupportedType() {
         IllegalArgumentException actual =
                 assertThrows(IllegalArgumentException.class, () -> parser.get(Object.class, "a, b"));
-        assertThat(actual.getMessage(), containsString("Type: 'Object' is not supported, the supported types are: [String, Bson]"));
+        assertThat(
+                actual.getMessage(),
+                containsString("Type: 'Object' is not supported, the supported types are: [String, Bson]"));
     }
 
     private BsonDocument toBsonDocument(Bson bson) {
-        return bson.toBsonDocument(BsonDocument.class, CodecRegistries.fromProviders(
-                new BsonValueCodecProvider(), new ValueCodecProvider()));
+        return bson.toBsonDocument(
+                BsonDocument.class,
+                CodecRegistries.fromProviders(new BsonValueCodecProvider(), new ValueCodecProvider()));
     }
 }

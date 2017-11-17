@@ -21,8 +21,8 @@ import io.github.glytching.dragoman.dataset.Dataset;
 import static java.lang.String.format;
 
 /**
- * Extends {@link RuntimeException} to provide some identity and traceability for exceptions which arise when a
- * dataset cannot be routed to a repository.
+ * Extends {@link RuntimeException} to provide some identity and traceability for exceptions which
+ * arise when a dataset cannot be routed to a repository.
  */
 public class NoRepositoryAvailableException extends RuntimeException {
 

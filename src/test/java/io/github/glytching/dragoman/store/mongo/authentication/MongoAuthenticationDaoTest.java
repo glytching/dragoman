@@ -52,7 +52,9 @@ public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
     @BeforeEach
     public void setUp() {
         Injector injector =
-                Guice.createInjector(Modules.override(new AuthenticationModule(), new ConfigurationModule()).with(new MongoOverrideModule()));
+                Guice.createInjector(
+                        Modules.override(new AuthenticationModule(), new ConfigurationModule())
+                                .with(new MongoOverrideModule()));
         injector.injectMembers(this);
 
         when(mongoProvider.provide()).thenReturn(getMongoClient());

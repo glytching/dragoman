@@ -22,6 +22,5 @@ public class WebModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
     }
 }

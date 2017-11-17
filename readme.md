@@ -26,7 +26,7 @@ Building Dragoman
 | Branch  | Status | Coverage |
 | --------| ------ | -------- |
 | Master  | [![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=master)](https://travis-ci.org/glytching/dragoman)  | [![Coverage Status](https://coveralls.io/repos/github/glytching/dragoman/badge.svg?branch=master)](https://coveralls.io/github/glytching/dragoman?branch=master) |
-| v1.0.0  | [![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=v1.0.0)](https://travis-ci.org/glytching/dragoman)  | [![Coverage Status](https://coveralls.io/repos/github/glytching/dragoman/badge.svg?branch=v1.0.0)](https://coveralls.io/github/glytching/dragoman?branch=v1.0.0) |
+| v1.0.0  | [![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=v1.0.0)](https://travis-ci.org/glytching/dragoman/branches)  | [![Coverage Status](https://coveralls.io/repos/github/glytching/dragoman/badge.svg?branch=v1.0.0)](https://coveralls.io/github/glytching/dragoman?branch=v1.0.0) |
 
 
 To build Dragoman locally:
@@ -38,6 +38,8 @@ $ mvn clean package
 ```
 
 This will compile and run all automated tests and create the application distributable. 
+
+Note: the Java code is formatted using the [Google Code Formatter](https://github.com/google/google-java-format).
 
 Running Dragoman
 -------

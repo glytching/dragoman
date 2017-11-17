@@ -40,19 +40,23 @@ public class RepositoryRouterImpl implements RepositoryRouter {
 
     @Inject
     public RepositoryRouterImpl(Set<Repository> repositories) {
-        this.repositoryCache = CacheBuilder.newBuilder()
-                .maximumSize(100)
-                .expireAfterWrite(10, TimeUnit.MINUTES)
-                .build(new RepositoryCacheLoader(repositories));
+        this.repositoryCache =
+                CacheBuilder.newBuilder()
+                        .maximumSize(100)
+                        .expireAfterWrite(10, TimeUnit.MINUTES)
+                        .build(new RepositoryCacheLoader(repositories));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Repository<Map<String, Object>> get(Dataset dataset) {
         try {
-            return repositoryCache.get(dataset).orElseThrow(() -> new NoRepositoryAvailableException(dataset));
+            return repositoryCache
+                    .get(dataset)
+                    .orElseThrow(() -> new NoRepositoryAvailableException(dataset));
         } catch (ExecutionException ex) {
-            throw new NoRepositoryAvailableException(format("Could not find a repository for: %s!", dataset), ex);
+            throw new NoRepositoryAvailableException(
+                    format("Could not find a repository for: %s!", dataset), ex);
         }
     }
 
@@ -71,7 +75,9 @@ public class RepositoryRouterImpl implements RepositoryRouter {
                     return Optional.of(repository);
                 }
             }
-            logger.warn("Could not route dataset:{} because there is no repository configured for this dataset!", key);
+            logger.warn(
+                    "Could not route dataset:{} because there is no repository configured for this dataset!",
+                    key);
             return Optional.empty();
         }
     }

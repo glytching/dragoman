@@ -29,21 +29,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * The master {@link Verticle} for this application. This ensures that all other verticles are started.
+ * The master {@link Verticle} for this application. This ensures that all other verticles are
+ * started.
  */
 public class DragomanVerticle extends AbstractVerticle {
     private static final Logger logger = LoggerFactory.getLogger(DragomanVerticle.class);
-
-    private List<String> deploymentIds;
-
     private final WebServerVerticle webServerVerticle;
     private final EmbeddedMongoVerticle embeddedMongoVerticle;
     private final DeploymentOptions deploymentOptions;
     private final ApplicationConfiguration configuration;
+    private List<String> deploymentIds;
 
     @Inject
-    public DragomanVerticle(WebServerVerticle webServerVerticle, EmbeddedMongoVerticle embeddedMongoVerticle,
-                            DeploymentOptions deploymentOptions, ApplicationConfiguration configuration) {
+    public DragomanVerticle(
+            WebServerVerticle webServerVerticle,
+            EmbeddedMongoVerticle embeddedMongoVerticle,
+            DeploymentOptions deploymentOptions,
+            ApplicationConfiguration configuration) {
         this.webServerVerticle = webServerVerticle;
         this.embeddedMongoVerticle = embeddedMongoVerticle;
         this.deploymentOptions = deploymentOptions;
@@ -58,19 +60,14 @@ public class DragomanVerticle extends AbstractVerticle {
 
     @Override
     public void start(Future<Void> future) {
-        CompositeFuture
-                .all(deployEmbeddedMongo(), deployWebServer())
+        CompositeFuture.all(deployEmbeddedMongo(), deployWebServer())
                 .setHandler(future.<CompositeFuture>map(c -> null).completer());
     }
 
     @Override
     public void stop(Future<Void> future) {
-        CompositeFuture.all(
-                deploymentIds
-                        .stream()
-                        .map(this::undeploy)
-                        .collect(Collectors.toList())
-        ).setHandler(future.<CompositeFuture>map(c -> null).completer());
+        CompositeFuture.all(deploymentIds.stream().map(this::undeploy).collect(Collectors.toList()))
+                .setHandler(future.<CompositeFuture>map(c -> null).completer());
     }
 
     /**
@@ -83,17 +80,20 @@ public class DragomanVerticle extends AbstractVerticle {
         if (configuration.isMongoEmbedded()) {
             DeploymentOptions options = new DeploymentOptions();
             options.setWorker(true);
-            vertx.deployVerticle(embeddedMongoVerticle, options, resultHandler -> {
-                if (resultHandler.failed()) {
-                    logger.warn("Failed to deploy EmbeddedMongoVerticle", resultHandler.cause());
-                    future.fail(resultHandler.cause());
-                } else {
-                    String deploymentId = resultHandler.result();
-                    logger.info("Deployed EmbeddedMongoVerticle verticle with id: {}", deploymentId);
-                    deploymentIds.add(deploymentId);
-                    future.complete();
-                }
-            });
+            vertx.deployVerticle(
+                    embeddedMongoVerticle,
+                    options,
+                    resultHandler -> {
+                        if (resultHandler.failed()) {
+                            logger.warn("Failed to deploy EmbeddedMongoVerticle", resultHandler.cause());
+                            future.fail(resultHandler.cause());
+                        } else {
+                            String deploymentId = resultHandler.result();
+                            logger.info("Deployed EmbeddedMongoVerticle verticle with id: {}", deploymentId);
+                            deploymentIds.add(deploymentId);
+                            future.complete();
+                        }
+                    });
         } else {
             future.complete();
         }
@@ -102,17 +102,20 @@ public class DragomanVerticle extends AbstractVerticle {
 
     private Future<String> deployWebServer() {
         Future<String> future = Future.future();
-        vertx.deployVerticle(webServerVerticle, deploymentOptions, resultHandler -> {
-            if (resultHandler.failed()) {
-                logger.warn("Failed to deploy WebServerVerticle", resultHandler.cause());
-                future.fail(resultHandler.cause());
-            } else {
-                String deploymentId = resultHandler.result();
-                logger.info("Deployed WebServerVerticle verticle with id: {}", deploymentId);
-                deploymentIds.add(deploymentId);
-                future.complete();
-            }
-        });
+        vertx.deployVerticle(
+                webServerVerticle,
+                deploymentOptions,
+                resultHandler -> {
+                    if (resultHandler.failed()) {
+                        logger.warn("Failed to deploy WebServerVerticle", resultHandler.cause());
+                        future.fail(resultHandler.cause());
+                    } else {
+                        String deploymentId = resultHandler.result();
+                        logger.info("Deployed WebServerVerticle verticle with id: {}", deploymentId);
+                        deploymentIds.add(deploymentId);
+                        future.complete();
+                    }
+                });
         return future;
     }
 
@@ -120,13 +123,15 @@ public class DragomanVerticle extends AbstractVerticle {
         logger.info("Undeploying a verticle with deploymentId: {}", deploymentId);
 
         Future<Void> future = Future.future();
-        vertx.undeploy(deploymentId, res -> {
-            if (res.succeeded()) {
-                future.complete();
-            } else {
-                future.fail(res.cause());
-            }
-        });
+        vertx.undeploy(
+                deploymentId,
+                res -> {
+                    if (res.succeeded()) {
+                        future.complete();
+                    } else {
+                        future.fail(res.cause());
+                    }
+                });
         return future;
-    }
+  }
 }

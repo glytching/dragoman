@@ -34,16 +34,18 @@ import java.util.stream.Collectors;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * Implements the global exception handling strategy for this app's HTTP API. All exceptions encountered by the
- * controller layer are routed via this handler and this handler applies the mapping from 'application exception type'
- * to HTTP status. The following HTTP statuses may be emitted by this handler
+ * Implements the global exception handling strategy for this app's HTTP API. All exceptions
+ * encountered by the controller layer are routed via this handler and this handler applies the
+ * mapping from 'application exception type' to HTTP status. The following HTTP statuses may be
+ * emitted by this handler
+ *
  * <ul>
- * <li>200 - OK</li>
- * <li>404 - Not Found</li>
- * <li>500 - Internal Server Error</li>
- * <li>400 - Bad Request</li>
- * <li>401 - Unauthorized</li>
- * <li>403 - Forbidden</li>
+ *   <li>200 - OK
+ *   <li>404 - Not Found
+ *   <li>500 - Internal Server Error
+ *   <li>400 - Bad Request
+ *   <li>401 - Unauthorized
+ *   <li>403 - Forbidden
  * </ul>
  */
 public class GlobalExceptionHandler {
@@ -56,7 +58,8 @@ public class GlobalExceptionHandler {
             error(routingContext, exception);
         } else {
             // this is odd
-            logger.warn("Routing context is failed but it does not contain an exception: {}!", routingContext);
+            logger.warn(
+                    "Routing context is failed but it does not contain an exception: {}!", routingContext);
         }
     }
 
@@ -68,13 +71,14 @@ public class GlobalExceptionHandler {
         routingContext.response().setStatusCode(error.getInteger("statusCode")).end(encodedError);
     }
 
-    private static JsonObject createErrorResponse(RoutingContext routingContext, Throwable exception) {
+    private static JsonObject createErrorResponse(
+            RoutingContext routingContext, Throwable exception) {
         // by default ...
         int status = 500;
 
         // intercept specific exception types and assign the relevant HTTP status code
-        if (InvalidRequestException.class.isAssignableFrom(exception.getClass()) ||
-                SubscriptionUnsupportedException.class.isAssignableFrom(exception.getClass())) {
+        if (InvalidRequestException.class.isAssignableFrom(exception.getClass())
+                || SubscriptionUnsupportedException.class.isAssignableFrom(exception.getClass())) {
             status = HttpResponseStatus.BAD_REQUEST.code();
         } else if (InvalidCredentialsException.class.isAssignableFrom(exception.getClass())) {
             status = HttpResponseStatus.UNAUTHORIZED.code();
@@ -97,8 +101,6 @@ public class GlobalExceptionHandler {
     }
 
     private static String displayable(StackTraceElement[] stackTrace) {
-        return Arrays.stream(stackTrace)
-                .map(Objects::toString)
-                .collect(Collectors.joining("\n"));
+        return Arrays.stream(stackTrace).map(Objects::toString).collect(Collectors.joining("\n"));
     }
 }

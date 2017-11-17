@@ -24,9 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of {@link SQLParserBaseListener} which logs every callback from ANTLR, very useful when writing the
- * parsers and when diagnosing issues in the parsers but very verbose so the logging config is expected to mute this
- * logger except when necessary during development.
+ * An implementation of {@link SQLParserBaseListener} which logs every callback from ANTLR, very
+ * useful when writing the parsers and when diagnosing issues in the parsers but very verbose so the
+ * logging config is expected to mute this logger except when necessary during development.
  */
 public class LoggingListener extends SQLParserBaseListener {
     private static final Logger logger = LoggerFactory.getLogger(LoggingListener.class);
@@ -200,13 +200,15 @@ public class LoggingListener extends SQLParserBaseListener {
     }
 
     @Override
-    public void enterExplicit_row_value_constructor(SQLParser.Explicit_row_value_constructorContext ctx) {
+    public void enterExplicit_row_value_constructor(
+            SQLParser.Explicit_row_value_constructorContext ctx) {
         super.enterExplicit_row_value_constructor(ctx);
         logger.debug("enterExplicit_row_value_constructor: " + ctx.start.getText());
     }
 
     @Override
-    public void exitExplicit_row_value_constructor(SQLParser.Explicit_row_value_constructorContext ctx) {
+    public void exitExplicit_row_value_constructor(
+            SQLParser.Explicit_row_value_constructorContext ctx) {
         super.exitExplicit_row_value_constructor(ctx);
         logger.debug("exitExplicit_row_value_constructor: " + ctx.start.getText());
     }
@@ -224,13 +226,15 @@ public class LoggingListener extends SQLParserBaseListener {
     }
 
     @Override
-    public void enterRow_value_constructor_predicand(SQLParser.Row_value_constructor_predicandContext ctx) {
+    public void enterRow_value_constructor_predicand(
+            SQLParser.Row_value_constructor_predicandContext ctx) {
         super.enterRow_value_constructor_predicand(ctx);
         logger.debug("enterRow_value_constructor_predicand: " + ctx.start.getText());
     }
 
     @Override
-    public void exitRow_value_constructor_predicand(SQLParser.Row_value_constructor_predicandContext ctx) {
+    public void exitRow_value_constructor_predicand(
+            SQLParser.Row_value_constructor_predicandContext ctx) {
         super.exitRow_value_constructor_predicand(ctx);
         logger.debug("exitRow_value_constructor_predicand: " + ctx.start.getText());
     }
@@ -982,13 +986,15 @@ public class LoggingListener extends SQLParserBaseListener {
     }
 
     @Override
-    public void enterBinary_large_object_string_type(SQLParser.Binary_large_object_string_typeContext ctx) {
+    public void enterBinary_large_object_string_type(
+            SQLParser.Binary_large_object_string_typeContext ctx) {
         super.enterBinary_large_object_string_type(ctx);
         logger.debug("enterBinary_large_object_string_type: " + ctx.start.getText());
     }
 
     @Override
-    public void exitBinary_large_object_string_type(SQLParser.Binary_large_object_string_typeContext ctx) {
+    public void exitBinary_large_object_string_type(
+            SQLParser.Binary_large_object_string_typeContext ctx) {
         super.exitBinary_large_object_string_type(ctx);
         logger.debug("exitBinary_large_object_string_type: " + ctx.start.getText());
     }
@@ -1162,13 +1168,15 @@ public class LoggingListener extends SQLParserBaseListener {
     }
 
     @Override
-    public void enterParenthesized_value_expression(SQLParser.Parenthesized_value_expressionContext ctx) {
+    public void enterParenthesized_value_expression(
+            SQLParser.Parenthesized_value_expressionContext ctx) {
         super.enterParenthesized_value_expression(ctx);
         logger.debug("enterParenthesized_value_expression: " + ctx.start.getText());
     }
 
     @Override
-    public void exitParenthesized_value_expression(SQLParser.Parenthesized_value_expressionContext ctx) {
+    public void exitParenthesized_value_expression(
+            SQLParser.Parenthesized_value_expressionContext ctx) {
         super.exitParenthesized_value_expression(ctx);
         logger.debug("exitParenthesized_value_expression: " + ctx.start.getText());
     }
@@ -1294,13 +1302,15 @@ public class LoggingListener extends SQLParserBaseListener {
     }
 
     @Override
-    public void enterNon_second_primary_datetime_field(SQLParser.Non_second_primary_datetime_fieldContext ctx) {
+    public void enterNon_second_primary_datetime_field(
+            SQLParser.Non_second_primary_datetime_fieldContext ctx) {
         super.enterNon_second_primary_datetime_field(ctx);
         logger.debug("enterNon_second_primary_datetime_field: " + ctx.start.getText());
     }
 
     @Override
-    public void exitNon_second_primary_datetime_field(SQLParser.Non_second_primary_datetime_fieldContext ctx) {
+    public void exitNon_second_primary_datetime_field(
+            SQLParser.Non_second_primary_datetime_fieldContext ctx) {
         super.exitNon_second_primary_datetime_field(ctx);
         logger.debug("exitNon_second_primary_datetime_field: " + ctx.start.getText());
     }
@@ -1870,13 +1880,15 @@ public class LoggingListener extends SQLParserBaseListener {
     }
 
     @Override
-    public void enterQuantified_comparison_predicate(SQLParser.Quantified_comparison_predicateContext ctx) {
+    public void enterQuantified_comparison_predicate(
+            SQLParser.Quantified_comparison_predicateContext ctx) {
         super.enterQuantified_comparison_predicate(ctx);
         logger.debug("enterQuantified_comparison_predicate: " + ctx.start.getText());
     }
 
     @Override
-    public void exitQuantified_comparison_predicate(SQLParser.Quantified_comparison_predicateContext ctx) {
+    public void exitQuantified_comparison_predicate(
+            SQLParser.Quantified_comparison_predicateContext ctx) {
         super.exitQuantified_comparison_predicate(ctx);
         logger.debug("exitQuantified_comparison_predicate: " + ctx.start.getText());
     }
@@ -1966,13 +1978,15 @@ public class LoggingListener extends SQLParserBaseListener {
     }
 
     @Override
-    public void enterNational_character_string_type(SQLParser.National_character_string_typeContext ctx) {
+    public void enterNational_character_string_type(
+            SQLParser.National_character_string_typeContext ctx) {
         super.enterNational_character_string_type(ctx);
         logger.debug("enterNational_character_string_type: " + ctx.start.getText());
     }
 
     @Override
-    public void exitNational_character_string_type(SQLParser.National_character_string_typeContext ctx) {
+    public void exitNational_character_string_type(
+            SQLParser.National_character_string_typeContext ctx) {
         super.exitNational_character_string_type(ctx);
         logger.debug("exitNational_character_string_type: " + ctx.start.getText());
     }
@@ -2338,13 +2352,15 @@ public class LoggingListener extends SQLParserBaseListener {
     }
 
     @Override
-    public void enterFunction_names_for_reserved_words(SQLParser.Function_names_for_reserved_wordsContext ctx) {
+    public void enterFunction_names_for_reserved_words(
+            SQLParser.Function_names_for_reserved_wordsContext ctx) {
         super.enterFunction_names_for_reserved_words(ctx);
         logger.debug("enterFunction_names_for_reserved_words: " + ctx.start.getText());
     }
 
     @Override
-    public void exitFunction_names_for_reserved_words(SQLParser.Function_names_for_reserved_wordsContext ctx) {
+    public void exitFunction_names_for_reserved_words(
+            SQLParser.Function_names_for_reserved_wordsContext ctx) {
         super.exitFunction_names_for_reserved_words(ctx);
         logger.debug("exitFunction_names_for_reserved_words: " + ctx.start.getText());
     }

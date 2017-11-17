@@ -25,8 +25,9 @@ import java.net.ServerSocket;
 public class NetworkUtils {
 
     /**
-     * Gets a free port. Note: although the returned port is free immediately after this method completes there is no
-     * guarantee that it will remain free so callers are advised to use it as soon as posisble after getting it.
+     * Gets a free port. Note: although the returned port is free immediately after this method
+     * completes there is no guarantee that it will remain free so callers are advised to use it as
+     * soon as posisble after getting it.
      *
      * @return a free port
      */

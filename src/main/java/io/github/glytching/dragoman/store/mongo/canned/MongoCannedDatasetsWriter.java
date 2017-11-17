@@ -50,8 +50,11 @@ public class MongoCannedDatasetsWriter implements CannedDatasetsWriter {
     private final MongoProvider mongoProvider;
 
     @Inject
-    public MongoCannedDatasetsWriter(ApplicationConfiguration configuration, CannedDatasetsLoader loader,
-                                     MongoDatasetDao datasetDao, MongoProvider mongoProvider) {
+    public MongoCannedDatasetsWriter(
+            ApplicationConfiguration configuration,
+            CannedDatasetsLoader loader,
+            MongoDatasetDao datasetDao,
+            MongoProvider mongoProvider) {
         this.configuration = configuration;
         this.loader = loader;
         this.datasetDao = datasetDao;
@@ -64,29 +67,42 @@ public class MongoCannedDatasetsWriter implements CannedDatasetsWriter {
         if (isNotBlank(configuration.getCannedDatasetsDirectory())) {
             List<CannedDataset> cannedDatasets = loader.load(configuration.getCannedDatasetsDirectory());
 
-            cannedDatasets.parallelStream().forEach(cannedDataset -> {
+            cannedDatasets
+                    .parallelStream()
+                    .forEach(
+                            cannedDataset -> {
                 Dataset dataset = cannedDataset.getDataset();
 
                 logger.info("Writing canned dataset: {}", dataset.getName());
 
                 datasetDao.write(dataset);
 
-                MongoStorageCoordinates storageCoordinates = new MongoStorageCoordinates(dataset.getSource());
+                                MongoStorageCoordinates storageCoordinates =
+                                        new MongoStorageCoordinates(dataset.getSource());
 
                 MongoCollection<Document> collection =
-                        getCollection(storageCoordinates.getDatabaseName(), storageCoordinates.getCollectionName());
+                        getCollection(
+                                storageCoordinates.getDatabaseName(),
+                                storageCoordinates.getCollectionName());
 
                 if (cannedDataset.getDocuments() != null) {
                     List<Success> single =
-                            collection.insertMany(toDocuments(cannedDataset.getDocuments())).toList().toBlocking().single();
+                            collection
+                                    .insertMany(toDocuments(cannedDataset.getDocuments()))
+                                    .toList()
+                                    .toBlocking()
+                                    .single();
 
-                    logger.info("Wrote {} documents for canned dataset: {}", single.size(), dataset.getName());
+                    logger.info(
+                            "Wrote {} documents for canned dataset: {}",
+                            single.size(),
+                            dataset.getName());
                 }
 
                 logger.info("Wrote canned dataset: {}", dataset.getName());
 
                 count.incrementAndGet();
-            });
+                            });
         }
 
         return count.get();
@@ -97,8 +113,6 @@ public class MongoCannedDatasetsWriter implements CannedDatasetsWriter {
     }
 
     private MongoCollection<Document> getCollection(String databaseName, String collectionName) {
-        return mongoProvider.provide()
-                .getDatabase(databaseName)
-                .getCollection(collectionName);
-    }
+        return mongoProvider.provide().getDatabase(databaseName).getCollection(collectionName);
+  }
 }

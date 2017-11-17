@@ -29,31 +29,28 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * ANTLR hook for {@code where} expressions. Transforms a {@code where} expression into a collection of
- * {@link Predicate}. This should not be used directly, instead use a
- * {@link WhereClauseParser}. Note: this is stateful so we one of these per {@code where}
- * expression but as long as the pattern of using a {@link WhereClauseParser} is adhered
- * to this statefulness issue is handled.
+ * ANTLR hook for {@code where} expressions. Transforms a {@code where} expression into a collection
+ * of {@link Predicate}. This should not be used directly, instead use a {@link WhereClauseParser}.
+ * Note: this is stateful so we one of these per {@code where} expression but as long as the pattern
+ * of using a {@link WhereClauseParser} is adhered to this statefulness issue is handled.
  *
- * @param <T> the target type, typically either Bson for a MongoDB source or String for a HTTP source
+ * @param <T> the target type, typically either Bson for a MongoDB source or String for a HTTP
+ *     source
  */
 public abstract class AbstractWhereClauseListener<T> extends LoggingListener {
     private static final String FIELD_SEPARATOR = ".";
     private static final String AND = "and";
     private static final String NOT = "not";
-
+    // final results
+    private final List<Predicate> predicates;
     // controllers
     private boolean inInClause;
     private boolean inNullClause;
     private boolean inBetweenClause;
     private boolean skipNextTerminal;
-
     // intermediate state
     private Predicate currentPredicate;
     private boolean negative;
-
-    // final results
-    private final List<Predicate> predicates;
 
     public AbstractWhereClauseListener() {
         this.predicates = Lists.newArrayList();
@@ -222,7 +219,6 @@ public abstract class AbstractWhereClauseListener<T> extends LoggingListener {
         exitBetweenClause();
     }
     // END: BETWEEN
-
 
     public abstract T get();
 

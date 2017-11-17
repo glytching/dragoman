@@ -34,7 +34,6 @@ public class ConfigurationModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
     }
 
     @Provides
@@ -46,11 +45,12 @@ public class ConfigurationModule extends AbstractModule {
             logger.info("Configuring system for env={}", env);
         }
 
-        return new ConstrettoApplicationConfiguration(new ConstrettoBuilder()
-                .addCurrentTag(env)
-                .createPropertiesStore()
-                .addResource(new ClassPathResource("application.properties"))
-                .done()
-                .getConfiguration());
+        return new ConstrettoApplicationConfiguration(
+                new ConstrettoBuilder()
+                        .addCurrentTag(env)
+                        .createPropertiesStore()
+                        .addResource(new ClassPathResource("application.properties"))
+                        .done()
+                        .getConfiguration());
     }
 }

@@ -24,8 +24,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.Map;
 
 /**
- * A simple wrapper over the results from a {@link Repository}, this associates the
- * results with some meta data such as the source of the results.
+ * A simple wrapper over the results from a {@link Repository}, this associates the results with
+ * some meta data such as the source of the results.
  */
 public class DataEnvelope {
 

@@ -24,7 +24,8 @@ import org.bson.Document;
 import javax.inject.Inject;
 
 /**
- * An implementation of {@link Transformer} which deals with transforms to/from MongoDB {@link Document}.
+ * An implementation of {@link Transformer} which deals with transforms to/from MongoDB {@link
+ * Document}.
  */
 public class DocumentTransformer implements Transformer<Document> {
 

@@ -51,7 +51,8 @@ public class EmbeddedMongoVerticle extends AbstractVerticle {
     private MongodProcess mongod;
 
     @Inject
-    public EmbeddedMongoVerticle(ApplicationConfiguration configuration, CannedDatasetsWriter cannedDatasetsWriter) {
+    public EmbeddedMongoVerticle(
+            ApplicationConfiguration configuration, CannedDatasetsWriter cannedDatasetsWriter) {
         this.port = configuration.getMongoPort();
         this.cannedDatasetsWriter = cannedDatasetsWriter;
     }
@@ -59,39 +60,46 @@ public class EmbeddedMongoVerticle extends AbstractVerticle {
     @Override
     public void start(Future<Void> future) throws Exception {
         // take the (rather slow) call to start embedded Mongo off the event loop thread
-        vertx.executeBlocking((Handler<Future<Void>>) blockingFuture -> {
-            try {
+        vertx.executeBlocking(
+                (Handler<Future<Void>>)
+                        blockingFuture -> {
+                            try {
                 StopWatch stopWatch = StopWatch.startForSplits();
-                MongodStarter starter = MongodStarter.getInstance(
+                                MongodStarter starter =
+                                        MongodStarter.getInstance(
                         new RuntimeConfigBuilder()
                                 .defaults(Command.MongoD)
                                 .processOutput(ProcessOutput.getInstance("embedded-mongo", mongoLogger))
-                                .build()
-                );
+                                .build());
 
-                mongodExe = starter.prepare(new MongodConfigBuilder()
-                        .version(Version.Main.PRODUCTION)
-                        .net(new Net("localhost", port, Network.localhostIsIPv6()))
-                        .build());
+                                mongodExe =
+                                        starter.prepare(
+                                                new MongodConfigBuilder()
+                                                        .version(Version.Main.PRODUCTION)
+                                                        .net(new Net("localhost", port, Network.localhostIsIPv6()))
+                                                        .build());
                 logger.info("Prepared embedded Mongo starter in {}ms", stopWatch.split());
 
                 mongod = mongodExe.start();
                 logger.info("Started embedded Mongo in {}ms in port: {}", stopWatch.split(), port);
 
                 blockingFuture.complete();
-            } catch (Exception ex) {
+                            } catch (Exception ex) {
                 logger.warn("Exception occurred when starting embedded Mongo!", ex);
                 future.fail(ex);
                 return;
-            }
-        }, blockingFuture -> {
-            if (blockingFuture.succeeded()) {
-                // if embedded Mongo started succssfully then let's populate it with canned datasets (if any)
-                StopWatch stopWatch = StopWatch.start();
-                int count = cannedDatasetsWriter.write();
-                logger.info("Loaded {} canned datasets into embedded Mongo in {}ms", count, stopWatch.stop());
-            }
-            future.complete();
+                            }
+                        },
+                blockingFuture -> {
+                    if (blockingFuture.succeeded()) {
+                        // if embedded Mongo started succssfully then let's populate it with canned datasets (if
+                        // any)
+                        StopWatch stopWatch = StopWatch.start();
+                        int count = cannedDatasetsWriter.write();
+                        logger.info(
+                                "Loaded {} canned datasets into embedded Mongo in {}ms", count, stopWatch.stop());
+                    }
+                    future.complete();
         });
     }
 

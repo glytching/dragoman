@@ -31,9 +31,10 @@ import java.util.stream.Collectors;
 
 /**
  * Provides accessors onto Vert.x's metrics for use by:
+ *
  * <ul>
- * <li>Interactive querying of the metrics data</li>
- * <li>The application's dedicated metrics logger </li>
+ *   <li>Interactive querying of the metrics data
+ *   <li>The application's dedicated metrics logger
  * </ul>
  */
 public class MetricsFacade {
@@ -50,15 +51,21 @@ public class MetricsFacade {
         logger.info("Scheduling metrics publication every {}ms", publicationPeriodInMillis);
 
         // ensure that the metrics publication does *not* happen on an event loop thread
-        vertx.setPeriodic(publicationPeriodInMillis, event -> vertx.executeBlocking(event1 -> {
-            JsonObject metrics = metricsService.getMetricsSnapshot(httpServer);
-            if (metrics != null) {
-                metricsLogger.info(metrics.encode());
-            }
-            event1.complete();
-        }, (Handler<AsyncResult<Void>>) event12 -> {
-            // no-op
-        }));
+        vertx.setPeriodic(
+                publicationPeriodInMillis,
+                event ->
+                        vertx.executeBlocking(
+                                event1 -> {
+                                    JsonObject metrics = metricsService.getMetricsSnapshot(httpServer);
+                                    if (metrics != null) {
+                                        metricsLogger.info(metrics.encode());
+                                    }
+                                    event1.complete();
+                                },
+                                (Handler<AsyncResult<Void>>)
+                                        event12 -> {
+                                            // no-op
+                                        }));
     }
 
     /**
@@ -82,21 +89,27 @@ public class MetricsFacade {
     }
 
     /**
-     * Get the current snapshot for the metrics which match the {@code regex} from Vert.x metrics data.
+     * Get the current snapshot for the metrics which match the {@code regex} from Vert.x metrics
+     * data.
      *
      * @param regex a regex to be used when filtering Vert.x metrics data
      *
-     * @return the current metrics snapshots for any metrics which match the given regex, in JSON format
+     * @return the current metrics snapshots for any metrics which match the given regex, in JSON
+     * format
      */
     public JsonObject getByFilter(String regex) {
         final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 
         // read all metrics
-        Map<String, Object> filtered = getAll().getMap().entrySet()
-                // stream them and filter by applying the regex to the metrics key
-                .stream().filter(item -> pattern.matcher(item.getKey()).find())
-                // collect the results into a map
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        Map<String, Object> filtered =
+                getAll()
+                        .getMap()
+                        .entrySet()
+                        // stream them and filter by applying the regex to the metrics key
+                        .stream()
+                        .filter(item -> pattern.matcher(item.getKey()).find())
+                        // collect the results into a map
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         return new JsonObject(filtered);
     }

@@ -39,13 +39,11 @@ import static org.mockito.Mockito.when;
 
 public class HttpClientAdapterTest {
 
-    @Mock
-    private HttpClient httpClient;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final NoOpResponsePostProcessor responsePostProcessor = new NoOpResponsePostProcessor();
     private final String url = "aUrl";
-
+    @Mock
+    private HttpClient httpClient;
     private HttpClientAdapter httpClientAdapter;
 
     @BeforeEach
@@ -76,17 +74,26 @@ public class HttpClientAdapterTest {
 
         when(httpClient.get(url)).thenReturn(failedResponse(httpExceptionMessage));
 
-        HttpClientException actual = assertThrows(HttpClientException.class, () -> {
-            httpClientAdapter.read(url, responsePostProcessor);
-        });
+        HttpClientException actual =
+                assertThrows(
+                        HttpClientException.class,
+                        () -> {
+                            httpClientAdapter.read(url, responsePostProcessor);
+                        });
 
         assertThat(actual.getMessage(), startsWith("Failed to read response from: " + url));
         assertThat(actual.getMessage(), containsString(httpExceptionMessage));
     }
 
     @SafeVarargs
-    private final HttpResponse successfulResponse(Map<String, Object>... payloads) throws JsonProcessingException {
-        return new HttpResponse(200, "", "", new HashMap<>(), objectMapper.writeValueAsString(Lists.newArrayList(payloads)));
+    private final HttpResponse successfulResponse(Map<String, Object>... payloads)
+            throws JsonProcessingException {
+        return new HttpResponse(
+                200,
+                "",
+                "",
+                new HashMap<>(),
+                objectMapper.writeValueAsString(Lists.newArrayList(payloads)));
     }
 
     private HttpResponse failedResponse(String failureMessage) {

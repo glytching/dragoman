@@ -56,7 +56,9 @@ public class MongoDatasetDaoTest extends AbstractMongoDBTest {
     @BeforeEach
     public void setUp() {
         Injector injector =
-                Guice.createInjector(Modules.override(new DatasetModule(), new ConfigurationModule()).with(new MongoOverrideModule()));
+                Guice.createInjector(
+                        Modules.override(new DatasetModule(), new ConfigurationModule())
+                                .with(new MongoOverrideModule()));
         injector.injectMembers(this);
 
         when(mongoProvider.provide()).thenReturn(getMongoClient());

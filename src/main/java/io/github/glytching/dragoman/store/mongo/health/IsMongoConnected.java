@@ -41,17 +41,16 @@ public class IsMongoConnected extends HealthCheck {
      * Check that we can talk to the configured MongoDB instance.
      *
      * @return a {@link Result} with details of whether this check was successful or not
-     * @throws Exception not thrown, any failure to perform the check results in a failed {@link Result}
+     * @throws Exception not thrown, any failure to perform the check results in a failed {@link
+     * Result}
      */
     @Override
     protected Result check() throws Exception {
         MongoClient mongoClient = mongoProvider.provide();
 
         List<ServerAddress> serverAddresses = mongoClient.getSettings().getClusterSettings().getHosts();
-        String address = serverAddresses
-                .stream()
-                .map(ServerAddress::toString)
-                .collect(Collectors.joining(","));
+        String address =
+                serverAddresses.stream().map(ServerAddress::toString).collect(Collectors.joining(","));
 
         try {
             // any read will suffice to prove connectivity

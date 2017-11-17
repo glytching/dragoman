@@ -34,7 +34,8 @@ public class PasswordUtil {
      */
     public String toHash(String password) {
         try {
-            // MessageDigest isn't thread safe so we must create a new one each time we want to hash a password
+            // MessageDigest isn't thread safe so we must create a new one each time we want to hash a
+            // password
             MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
 
             sha256.update(password.getBytes("UTF-8"));

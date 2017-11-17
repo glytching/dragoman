@@ -48,33 +48,38 @@ public class MongoAuthenticationDao implements AuthenticationDao {
     private final MongoStorageCoordinates storageCoordinates;
 
     @Inject
-    public MongoAuthenticationDao(MongoProvider mongoProvider, DocumentTransformer documentTransformer,
-                                  PasswordUtil passwordUtil, ApplicationConfiguration configuration) {
+    public MongoAuthenticationDao(
+            MongoProvider mongoProvider,
+            DocumentTransformer documentTransformer,
+            PasswordUtil passwordUtil,
+            ApplicationConfiguration configuration) {
         this.mongoProvider = mongoProvider;
         this.documentTransformer = documentTransformer;
         this.passwordUtil = passwordUtil;
-        this.storageCoordinates = new MongoStorageCoordinates(configuration.getDatabaseName(),
-                configuration.getUserStorageName());
+        this.storageCoordinates =
+                new MongoStorageCoordinates(
+                        configuration.getDatabaseName(), configuration.getUserStorageName());
     }
 
     @Override
     public boolean exists(String userName) {
-        Observable<Long> count = getCollection().count(Filters.eq("name", userName), new CountOptions().limit(1));
+        Observable<Long> count =
+                getCollection().count(Filters.eq("name", userName), new CountOptions().limit(1));
         return count.toBlocking().single() > 0;
     }
 
     @Override
     public boolean isValid(String userName, String password) {
         Observable<Long> count =
-                getCollection().count(filter(userName, passwordUtil.toHash(password)), new CountOptions().limit(1));
+                getCollection()
+                        .count(filter(userName, passwordUtil.toHash(password)), new CountOptions().limit(1));
         return count.toBlocking().single() > 0;
     }
 
     @Override
     public User getUser(String userName, String password) {
-        FindObservable<Document> findObservable = getCollection()
-                .find(filter(userName, passwordUtil.toHash(password)))
-                .limit(1);
+        FindObservable<Document> findObservable =
+                getCollection().find(filter(userName, passwordUtil.toHash(password))).limit(1);
 
         return findObservable.first().map(toUser()).toBlocking().singleOrDefault(null);
     }
@@ -85,8 +90,9 @@ public class MongoAuthenticationDao implements AuthenticationDao {
             throw new RuntimeException(format("A user already exists for: %s!", userName));
         } else {
             Observable<Success> successObservable =
-                    getCollection().insertOne(documentTransformer.transform(new User(userName, passwordUtil.toHash
-                            (password))));
+                    getCollection()
+                            .insertOne(
+                                    documentTransformer.transform(new User(userName, passwordUtil.toHash(password))));
 
             Success success = successObservable.toBlocking().single();
             if (success != Success.SUCCESS) {
@@ -104,7 +110,8 @@ public class MongoAuthenticationDao implements AuthenticationDao {
     }
 
     private MongoCollection<Document> getCollection() {
-        return mongoProvider.provide()
+        return mongoProvider
+                .provide()
                 .getDatabase(storageCoordinates.getDatabaseName())
                 .getCollection(storageCoordinates.getCollectionName());
     }

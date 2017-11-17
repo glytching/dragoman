@@ -53,7 +53,8 @@ public class HttpRepositoryTest extends AbstractHttpTestCase {
 
     @BeforeEach
     public void setUp() {
-        Injector injector = Guice.createInjector(Modules.override(new HttpModule()).with(new HttpOverrideModule()));
+        Injector injector =
+                Guice.createInjector(Modules.override(new HttpModule()).with(new HttpOverrideModule()));
         injector.injectMembers(this);
 
         bill = Maps.newHashMap();
@@ -110,10 +111,13 @@ public class HttpRepositoryTest extends AbstractHttpTestCase {
     public void withSelect() {
         String expression = "name = 'Bill' and name != 'Bob'";
 
-        List<Map<String, Object>> results = toList(repository.find(dataset, "name, age", expression, "", -1));
+        List<Map<String, Object>> results =
+                toList(repository.find(dataset, "name, age", expression, "", -1));
 
         assertThat(results.size(), is(1));
-        assertThat(results.get(0), is(new Document().append("name", bill.get("name")).append("age", bill.get("age"))));
+        assertThat(
+                results.get(0),
+                is(new Document().append("name", bill.get("name")).append("age", bill.get("age"))));
     }
 
     @Test

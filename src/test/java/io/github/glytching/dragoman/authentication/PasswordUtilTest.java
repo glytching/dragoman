@@ -24,10 +24,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 /**
- * The util provides a secure one-way hash function so we cannot reverse it therefore we assert that:
+ * The util provides a secure one-way hash function so we cannot reverse it therefore we assert
+ * that:
+ *
  * <ul>
- * <li>It produced something other than the given password</li>
- * <li>It always produces the same value for the same input</li>
+ *   <li>It produced something other than the given password
+ *   <li>It always produces the same value for the same input
  * </ul>
  */
 public class PasswordUtilTest {

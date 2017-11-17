@@ -39,13 +39,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import static java.lang.String.format;
 
 /**
- * Vertx's {@link HandlebarsTemplateEngine} loads templates from the file system, this approach won't work when the
- * templates are embedded in an uber JAR so this extension of {@link HandlebarsTemplateEngine} provides a classpath
- * aware loader. The extension is crude because {@link HandlebarsTemplateEngine} does not expose a hook for overriding
- * the loader.
+ * Vertx's {@link HandlebarsTemplateEngine} loads templates from the file system, this approach
+ * won't work when the templates are embedded in an uber JAR so this extension of {@link
+ * HandlebarsTemplateEngine} provides a classpath aware loader. The extension is crude because
+ * {@link HandlebarsTemplateEngine} does not expose a hook for overriding the loader.
  */
 public class ClasspathAwareHandlebarsTemplateEngine extends HandlebarsTemplateEngineImpl {
-    private static final Logger logger = LoggerFactory.getLogger(ClasspathAwareHandlebarsTemplateEngine.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(ClasspathAwareHandlebarsTemplateEngine.class);
 
     private final Handlebars handlebars;
     private final Loader loader = new Loader();
@@ -56,7 +57,8 @@ public class ClasspathAwareHandlebarsTemplateEngine extends HandlebarsTemplateEn
     }
 
     @Override
-    public void render(RoutingContext context, String templateFileName, Handler<AsyncResult<Buffer>> handler) {
+    public void render(
+            RoutingContext context, String templateFileName, Handler<AsyncResult<Buffer>> handler) {
         try {
             Template template = cache.get(templateFileName);
             if (template == null) {
@@ -96,7 +98,8 @@ public class ClasspathAwareHandlebarsTemplateEngine extends HandlebarsTemplateEn
                     templ.set(buffer.toString());
                 }
             } catch (Exception ex) {
-                logger.warn(format("Cannot find template: %s on classpath due to: %s!", loc, ex.getMessage()), ex);
+                logger.warn(
+                        format("Cannot find template: %s on classpath due to: %s!", loc, ex.getMessage()), ex);
             }
 
             if (templ.get() == null) {
@@ -134,13 +137,13 @@ public class ClasspathAwareHandlebarsTemplateEngine extends HandlebarsTemplateEn
         }
 
         @Override
-        public String getSuffix() {
-            return extension;
+        public void setPrefix(String prefix) {
+            // does nothing since TemplateLoader handles the prefix
         }
 
         @Override
-        public void setPrefix(String prefix) {
-            // does nothing since TemplateLoader handles the prefix
+        public String getSuffix() {
+            return extension;
         }
 
         @Override

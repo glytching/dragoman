@@ -68,8 +68,8 @@ public class RepositoryRouterTest {
         when(repositoryA.appliesTo(dataset)).thenReturn(false);
         when(repositoryB.appliesTo(dataset)).thenReturn(false);
 
-        NoRepositoryAvailableException actual = assertThrows(NoRepositoryAvailableException.class,
-                () -> router.get(dataset));
+        NoRepositoryAvailableException actual =
+                assertThrows(NoRepositoryAvailableException.class, () -> router.get(dataset));
         assertThat(actual.getMessage(), is("No repository exists for dataset: " + dataset.getId()));
     }
 }

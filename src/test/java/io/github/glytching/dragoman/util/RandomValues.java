@@ -17,6 +17,4 @@
 package io.github.glytching.dragoman.util;
 
 public class RandomValues {
-
-
 }

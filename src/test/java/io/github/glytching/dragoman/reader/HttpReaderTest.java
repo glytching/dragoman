@@ -41,19 +41,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(RandomBeansExtension.class)
 public class HttpReaderTest {
 
+    private final String select = "aSelect";
+    private final String where = "aWhere";
+    private final String orderBy = "anOrderBy";
     @Random
     private Dataset dataset;
-
     @Mock
     private RepositoryRouter repositoryRouter;
     @Mock
     private Repository<Map<String, Object>> repository;
-
     private Reader reader;
-
-    private final String select = "aSelect";
-    private final String where = "aWhere";
-    private final String orderBy = "anOrderBy";
 
     @BeforeEach
     public void setUp() {
@@ -73,8 +70,8 @@ public class HttpReaderTest {
 
         when(repository.find(dataset, select, where, orderBy, -1)).thenReturn(response);
 
-        List<DataEnvelope> dataEnvelopes = reader.read(dataset, select, where, orderBy, -1).toList().toBlocking()
-                .single();
+        List<DataEnvelope> dataEnvelopes =
+                reader.read(dataset, select, where, orderBy, -1).toList().toBlocking().single();
 
         assertThat(dataEnvelopes.size(), is(2));
         assertThat(dataEnvelopes, hasItem(new DataEnvelope(dataset.getSource(), one)));

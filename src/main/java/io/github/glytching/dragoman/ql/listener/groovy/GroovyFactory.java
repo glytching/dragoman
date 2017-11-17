@@ -32,8 +32,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Responsible for creating a Groovy classes for a given expression. Why Groovy? so that they can be created and applied
- * dynamically.
+ * Responsible for creating a Groovy classes for a given expression. Why Groovy? so that they can be
+ * created and applied dynamically.
  */
 public class GroovyFactory {
     private static final Logger logger = LoggerFactory.getLogger(GroovyFactory.class);
@@ -44,22 +44,25 @@ public class GroovyFactory {
     private final Cache<String, Object> cache;
 
     @Inject
-    public GroovyFactory(GroovyClassLoader groovyClassLoader, SelectClauseParser selectClauseParser,
-                         WhereClauseParser
-                                 whereClauseParser) {
+    public GroovyFactory(
+            GroovyClassLoader groovyClassLoader,
+            SelectClauseParser selectClauseParser,
+            WhereClauseParser whereClauseParser) {
         this.groovyClassLoader = groovyClassLoader;
         this.selectClauseParser = selectClauseParser;
         this.whereClauseParser = whereClauseParser;
-        this.cache = CacheBuilder.newBuilder()
-                .maximumSize(2000)
-                .initialCapacity(1000)
-                .expireAfterWrite(1, TimeUnit.HOURS)
-                .build();
+        this.cache =
+                CacheBuilder.newBuilder()
+                        .maximumSize(2000)
+                        .initialCapacity(1000)
+                        .expireAfterWrite(1, TimeUnit.HOURS)
+                        .build();
     }
 
     /**
-     * Delegates to the {@link WhereClauseParser} to parse the given expression, supplying a listener which accepts
-     * callbacks from the parser and uses these to create a 'groovified' representation of the given expression.
+     * Delegates to the {@link WhereClauseParser} to parse the given expression, supplying a listener
+     * which accepts callbacks from the parser and uses these to create a 'groovified' representation
+     * of the given expression.
      *
      * @param expression a 'where clause'
      *
@@ -68,16 +71,16 @@ public class GroovyFactory {
     public Filter createFilter(String expression) throws GroovyFactoryException {
         final String script = whereClauseParser.get(String.class, expression);
 
-        logger.debug("From the the expression: {} comes the groovy function: [{}]", expression,
-                script);
+        logger.debug("From the the expression: {} comes the groovy function: [{}]", expression, script);
 
         // now compile the groovy class and get an instance
         return create(Filter.class, script);
     }
 
     /**
-     * Delegates to the {@link SelectClauseParser} to parse the given expression, supplying a listener which accepts
-     * callbacks from the parser and uses these to create a 'groovified' representation of the given expression.
+     * Delegates to the {@link SelectClauseParser} to parse the given expression, supplying a listener
+     * which accepts callbacks from the parser and uses these to create a 'groovified' representation
+     * of the given expression.
      *
      * @param expression a 'map clause'
      *
@@ -95,30 +98,37 @@ public class GroovyFactory {
     @SuppressWarnings("unchecked")
     private <T> T create(final Class<T> type, final String script) throws GroovyFactoryException {
         try {
-            return (T) cache.get(script, () -> {
+            return (T)
+                    cache.get(
+                            script,
+                            () -> {
                 // now to compile the groovy class and get an instance
                 String name = UUID.randomUUID().toString();
-                GroovyCodeSource groovyCodeSource = new GroovyCodeSource(script, name, "/groovy/shell");
+                                GroovyCodeSource groovyCodeSource =
+                                        new GroovyCodeSource(script, name, "/groovy/shell");
                 groovyCodeSource.setCachable(true);
                 Class<?> clazz = groovyClassLoader.parseClass(groovyCodeSource);
-                Object obj;
-                try {
-                    obj = clazz.newInstance();
+                                Object obj;
+                                try {
+                                    obj = clazz.newInstance();
                 } catch (InstantiationException | IllegalAccessException e) {
-                    logger.warn(e.getMessage(), e);
-                    throw new GroovyFactoryException(String.format("Exception creating the %s class instance!",
-                            type.getSimpleName()), e);
+                                    logger.warn(e.getMessage(), e);
+                                    throw new GroovyFactoryException(
+                                            String.format(
+                                                    "Exception creating the %s class instance!", type.getSimpleName()),
+                      e);
                 }
                 for (Class<?> c : groovyClassLoader.getLoadedClasses()) {
                     GroovySystem.getMetaClassRegistry().removeMetaClass(c);
                 }
                 groovyClassLoader.clearCache();
-                return obj;
-            });
+                                return obj;
+                            });
         } catch (ExecutionException e) {
             logger.warn(e.getMessage(), e);
-            throw new GroovyFactoryException(String.format("Exception raised fetching the %s from the cache!",
-                    type.getSimpleName()), e);
-        }
+            throw new GroovyFactoryException(
+                    String.format("Exception raised fetching the %s from the cache!", type.getSimpleName()),
+          e);
     }
+  }
 }

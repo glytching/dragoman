@@ -33,11 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(RandomBeansExtension.class)
 public class ViewTransformerTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Random
     private Dataset dataset;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     private ViewTransformer documentTransformer;
 
     @BeforeEach
@@ -59,7 +57,9 @@ public class ViewTransformerTest {
         String json = "{\"a\": \"b\", \"c\": 1}";
 
         InvalidRequestException actual =
-                assertThrows(InvalidRequestException.class, () -> documentTransformer.transform(Dataset.class, json));
+                assertThrows(
+                        InvalidRequestException.class,
+                        () -> documentTransformer.transform(Dataset.class, json));
         assertThat(actual.getMessage(), startsWith("Failed to deserialise request body"));
     }
 }

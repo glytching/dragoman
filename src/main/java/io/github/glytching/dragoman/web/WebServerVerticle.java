@@ -59,7 +59,8 @@ public class WebServerVerticle extends AbstractVerticle {
     private JolokiaServer jolokiaServer;
 
     @Inject
-    public WebServerVerticle(Set<RestResource> restResources, ApplicationConfiguration applicationConfiguration) {
+    public WebServerVerticle(
+            Set<RestResource> restResources, ApplicationConfiguration applicationConfiguration) {
         this.restResources = restResources;
         this.applicationConfiguration = applicationConfiguration;
     }
@@ -71,16 +72,17 @@ public class WebServerVerticle extends AbstractVerticle {
         Router router = router();
 
         httpServer.requestHandler(router::accept);
-        httpServer.listen(result -> {
-            if (result.succeeded()) {
-                if (applicationConfiguration.isJolokiaEnabled()) {
-                    startJolokia();
-                }
-                future.complete();
-            } else {
-                future.fail(result.cause());
-            }
-        });
+        httpServer.listen(
+                result -> {
+                    if (result.succeeded()) {
+                        if (applicationConfiguration.isJolokiaEnabled()) {
+                            startJolokia();
+                        }
+                        future.complete();
+                    } else {
+                        future.fail(result.cause());
+                    }
+                });
     }
 
     @Override
@@ -129,18 +131,23 @@ public class WebServerVerticle extends AbstractVerticle {
 
         router.route().handler(BodyHandler.create());
 
-        router.route().handler(context -> {
-            if (!applicationConfiguration.isAuthenticationEnabled()) {
+        router
+                .route()
+                .handler(
+                        context -> {
+                            if (!applicationConfiguration.isAuthenticationEnabled()) {
                 Session session = context.session();
-                if (!WebServerUtils.isLoggedIn(session, applicationConfiguration.getCannedUserName())) {
-                    WebServerUtils.assignUserToSession(session, applicationConfiguration.getCannedUserName());
-                }
-            }
+                                if (!WebServerUtils.isLoggedIn(
+                                        session, applicationConfiguration.getCannedUserName())) {
+                                    WebServerUtils.assignUserToSession(
+                                            session, applicationConfiguration.getCannedUserName());
+                                }
+                            }
 
-            WebServerUtils.jsonContentType(context.response());
+                            WebServerUtils.jsonContentType(context.response());
 
-            context.next();
-        });
+                            context.next();
+                        });
 
         // static resources
         staticHandler(router);
@@ -149,7 +156,9 @@ public class WebServerVerticle extends AbstractVerticle {
         dynamicPages(router);
 
         // reroute requests to the root url onwards to the entry page
-        router.route("/").handler(event -> event.reroute(WebServerUtils.withApplicationName("about.hbs")));
+        router
+                .route("/")
+                .handler(event -> event.reroute(WebServerUtils.withApplicationName("about.hbs")));
 
         // event bus
         router.route(WebServerUtils.withApplicationName("eventbus/*")).handler(eventBusHandler());
@@ -192,11 +201,14 @@ public class WebServerVerticle extends AbstractVerticle {
             router.get(WebServerUtils.withApplicationName("management/*")).handler(this::fromSession);
         }
 
-        router.getWithRegex(".+\\.hbs").handler(context -> {
-            final Session session = context.session();
-            WebServerUtils.assignUserToRoutingContext(context);
-            context.next();
-        });
+        router
+                .getWithRegex(".+\\.hbs")
+                .handler(
+                        context -> {
+                            final Session session = context.session();
+                            WebServerUtils.assignUserToRoutingContext(context);
+                            context.next();
+                        });
 
         router.getWithRegex(".+\\.hbs").handler(templateHandler);
     }

@@ -20,14 +20,23 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A simple (crude, even) stop watch implementation. Yes, there are plenty of existing stop watch implementations out
- * there but we need lap/split features.
+ * A simple (crude, even) stop watch implementation. Yes, there are plenty of existing stop watch
+ * implementations out there but we need lap/split features.
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class StopWatch {
 
-    private Optional<org.apache.commons.lang3.time.StopWatch> split;
     private final org.apache.commons.lang3.time.StopWatch main;
+    private Optional<org.apache.commons.lang3.time.StopWatch> split;
+
+    private StopWatch(boolean withSplits) {
+        this.main = new org.apache.commons.lang3.time.StopWatch();
+        main.start();
+        if (withSplits) {
+            this.split = Optional.of(new org.apache.commons.lang3.time.StopWatch());
+            split.get().start();
+        }
+    }
 
     /**
      * Create and start a {@link StopWatch} instance.
@@ -48,15 +57,16 @@ public class StopWatch {
     }
 
     /**
-     * Create a split. Note: this will throw an exception if called on a {@link StopWatch} instance which was not
-     * started with {@link #startForSplits()}.
+     * Create a split. Note: this will throw an exception if called on a {@link StopWatch} instance
+     * which was not started with {@link #startForSplits()}.
      *
-     * @return the time since this watch was last split or the time since this watch was started if this is the first
-     * split
+     * @return the time since this watch was last split or the time since this watch was started if
+     * this is the first split
      */
     public long split() {
         if (split == null || !split.isPresent()) {
-            throw new IllegalStateException("You cannot split a StopWatch which has not been configured withSplits=true!");
+            throw new IllegalStateException(
+                    "You cannot split a StopWatch which has not been configured withSplits=true!");
         }
 
         split.get().stop();
@@ -78,14 +88,5 @@ public class StopWatch {
             split.get().stop();
         }
         return main.getTime(TimeUnit.MILLISECONDS);
-    }
-
-    private StopWatch(boolean withSplits) {
-        this.main = new org.apache.commons.lang3.time.StopWatch();
-        main.start();
-        if (withSplits) {
-            this.split = Optional.of(new org.apache.commons.lang3.time.StopWatch());
-            split.get().start();
-        }
     }
 }

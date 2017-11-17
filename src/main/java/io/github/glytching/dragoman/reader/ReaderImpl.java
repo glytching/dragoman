@@ -24,8 +24,9 @@ import rx.Observable;
 import javax.inject.Inject;
 
 /**
- * Implements {@link Reader} by choosing the correct {@link Repository} instance for the
- * given {@link Dataset} and delegating to that repository and the mapping the response to a {@link DataEnvelope}.
+ * Implements {@link Reader} by choosing the correct {@link Repository} instance for the given
+ * {@link Dataset} and delegating to that repository and the mapping the response to a {@link
+ * DataEnvelope}.
  */
 public class ReaderImpl implements Reader {
 
@@ -37,9 +38,11 @@ public class ReaderImpl implements Reader {
     }
 
     @Override
-    public Observable<DataEnvelope> read(Dataset dataset, String select, String where, String orderBy,
-                                         Integer maxResults) {
-        return repositoryRouter.get(dataset).find(dataset, select, where, orderBy, maxResults)
+    public Observable<DataEnvelope> read(
+            Dataset dataset, String select, String where, String orderBy, Integer maxResults) {
+        return repositoryRouter
+                .get(dataset)
+                .find(dataset, select, where, orderBy, maxResults)
                 .map(incoming -> new DataEnvelope(dataset.getSource(), incoming));
     }
 }

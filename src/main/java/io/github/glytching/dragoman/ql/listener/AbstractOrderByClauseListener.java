@@ -27,23 +27,23 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * ANTLR hook for {@code where} expressions. Transforms a {@code orderBy} expression into a collection of
- * {@link OrderBy}. This should not be used directly, instead use a
- * {@link OrderByClauseParser}. Note: this is stateful so we one of these per {@code where}
- * expression but as long as the pattern of using a {@link OrderByClauseParser} is adhered
- * to this statefulness issue is handled.
+ * ANTLR hook for {@code where} expressions. Transforms a {@code orderBy} expression into a
+ * collection of {@link OrderBy}. This should not be used directly, instead use a {@link
+ * OrderByClauseParser}. Note: this is stateful so we one of these per {@code where} expression but
+ * as long as the pattern of using a {@link OrderByClauseParser} is adhered to this statefulness
+ * issue is handled.
  *
- * @param <T> the target type, typically either Bson for a MongoDB source or String for a HTTP source
+ * @param <T> the target type, typically either Bson for a MongoDB source or String for a HTTP
+ *     source
  */
 public abstract class AbstractOrderByClauseListener<T> extends LoggingListener {
 
+    // final results
+    private final List<OrderBy> orderBys;
     // intermediate state
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Optional<String> currentOrderByField;
     private boolean currentOrderBySpecifier;
-
-    // final results
-    private final List<OrderBy> orderBys;
 
     public AbstractOrderByClauseListener() {
         this.orderBys = Lists.newArrayList();
@@ -53,8 +53,10 @@ public abstract class AbstractOrderByClauseListener<T> extends LoggingListener {
     @Override
     public void enterIdentifier(SQLParser.IdentifierContext ctx) {
         super.enterIdentifier(ctx);
-        currentOrderByField = currentOrderByField.map(s -> Optional.of(s + '.' + ctx.start.getText()))
-                .orElseGet(() -> Optional.of(ctx.start.getText()));
+        currentOrderByField =
+                currentOrderByField
+                        .map(s -> Optional.of(s + '.' + ctx.start.getText()))
+                        .orElseGet(() -> Optional.of(ctx.start.getText()));
     }
 
     @Override

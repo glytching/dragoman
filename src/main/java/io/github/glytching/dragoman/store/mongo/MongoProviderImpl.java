@@ -34,10 +34,10 @@ import javax.inject.Inject;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
- * Simple provider implementation wrapping a {@link MongoClient}. Allows us to delay the initialisation of the
- * {@link MongoClient} (which is useful when running in embeddedmode) and also helps with testability.
+ * Simple provider implementation wrapping a {@link MongoClient}. Allows us to delay the
+ * initialisation of the {@link MongoClient} (which is useful when running in embeddedmode) and also
+ * helps with testability.
  */
-
 public class MongoProviderImpl implements MongoProvider {
     private static final Logger logger = LoggerFactory.getLogger(MongoProviderImpl.class);
 
@@ -70,31 +70,39 @@ public class MongoProviderImpl implements MongoProvider {
 
         logger.info("Creating Mongo client for: {}:{}", host, port);
 
-        MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
-                .applicationName("dragoman")
-                .serverSettings(ServerSettings.builder()
-                        .applyConnectionString(connectionString)
-                        .addServerMonitorListener(new LoggingServerMonitorListener())
-                        .addServerListener(new LoggingServerListener())
-                        .build())
-                .clusterSettings(ClusterSettings.builder()
-                        .applyConnectionString(connectionString)
-                        .serverSelectionTimeout(applicationConfiguration.getMongoServerSelectionTimeout(), MILLISECONDS)
-                        .addClusterListener(new LoggingClusterListener())
-                        .build())
-                .connectionPoolSettings(ConnectionPoolSettings.builder()
-                        .applyConnectionString(connectionString)
-                        .maxWaitTime(applicationConfiguration.getConnectionPoolMaxWaitTime(), MILLISECONDS)
-                        .minSize(applicationConfiguration.getConnectionPoolMinSize())
-                        .maxSize(applicationConfiguration.getConnectionPoolMaxSize())
-                        .addConnectionPoolListener(new LoggingConnectionPoolListener())
-                        .build())
-                .socketSettings(SocketSettings.builder()
-                        .applyConnectionString(connectionString)
-                        .connectTimeout(applicationConfiguration.getMongoSocketConnectionTimeout(), MILLISECONDS)
-                        .readTimeout(applicationConfiguration.getMongoReadTimeout(), MILLISECONDS)
-                        .build())
-                .build();
+        MongoClientSettings mongoClientSettings =
+                MongoClientSettings.builder()
+                        .applicationName("dragoman")
+                        .serverSettings(
+                                ServerSettings.builder()
+                                        .applyConnectionString(connectionString)
+                                        .addServerMonitorListener(new LoggingServerMonitorListener())
+                                        .addServerListener(new LoggingServerListener())
+                                        .build())
+                        .clusterSettings(
+                                ClusterSettings.builder()
+                                        .applyConnectionString(connectionString)
+                                        .serverSelectionTimeout(
+                                                applicationConfiguration.getMongoServerSelectionTimeout(), MILLISECONDS)
+                                        .addClusterListener(new LoggingClusterListener())
+                                        .build())
+                        .connectionPoolSettings(
+                                ConnectionPoolSettings.builder()
+                                        .applyConnectionString(connectionString)
+                                        .maxWaitTime(
+                                                applicationConfiguration.getConnectionPoolMaxWaitTime(), MILLISECONDS)
+                                        .minSize(applicationConfiguration.getConnectionPoolMinSize())
+                                        .maxSize(applicationConfiguration.getConnectionPoolMaxSize())
+                                        .addConnectionPoolListener(new LoggingConnectionPoolListener())
+                                        .build())
+                        .socketSettings(
+                                SocketSettings.builder()
+                                        .applyConnectionString(connectionString)
+                                        .connectTimeout(
+                                                applicationConfiguration.getMongoSocketConnectionTimeout(), MILLISECONDS)
+                                        .readTimeout(applicationConfiguration.getMongoReadTimeout(), MILLISECONDS)
+                                        .build())
+                        .build();
 
         return MongoClients.create(mongoClientSettings);
     }
@@ -114,8 +122,11 @@ public class MongoProviderImpl implements MongoProvider {
 
         @Override
         public void serverDescriptionChanged(ServerDescriptionChangedEvent event) {
-            logger.debug("serverDescriptionChanged: {} from {} to {}", event.getServerId().getAddress(),
-                    event.getPreviousDescription(), event.getNewDescription());
+            logger.debug(
+                    "serverDescriptionChanged: {} from {} to {}",
+                    event.getServerId().getAddress(),
+                    event.getPreviousDescription(),
+                    event.getNewDescription());
         }
     }
 
@@ -134,8 +145,11 @@ public class MongoProviderImpl implements MongoProvider {
 
         @Override
         public void clusterDescriptionChanged(ClusterDescriptionChangedEvent event) {
-            logger.debug("clusterDescriptionChanged: {} from {} to {}", event.getClusterId().getDescription(),
-                    event.getPreviousDescription(), event.getNewDescription());
+            logger.debug(
+                    "clusterDescriptionChanged: {} from {} to {}",
+                    event.getClusterId().getDescription(),
+                    event.getPreviousDescription(),
+                    event.getNewDescription());
         }
     }
 
@@ -144,12 +158,14 @@ public class MongoProviderImpl implements MongoProvider {
 
         @Override
         public void serverHearbeatStarted(ServerHeartbeatStartedEvent event) {
-            logger.debug("serverHeartbeatStarted: {}", event.getConnectionId().getServerId().getAddress());
+            logger.debug(
+                    "serverHeartbeatStarted: {}", event.getConnectionId().getServerId().getAddress());
         }
 
         @Override
         public void serverHeartbeatSucceeded(ServerHeartbeatSucceededEvent event) {
-            logger.debug("serverHeartbeatSucceeded: {}", event.getConnectionId().getServerId().getAddress());
+            logger.debug(
+                    "serverHeartbeatSucceeded: {}", event.getConnectionId().getServerId().getAddress());
         }
 
         @Override
@@ -173,12 +189,18 @@ public class MongoProviderImpl implements MongoProvider {
 
         @Override
         public void connectionCheckedOut(ConnectionCheckedOutEvent event) {
-            logger.debug("connectionCheckedOut: {}/{}", event.getConnectionId().getLocalValue(), event.getConnectionId().getServerValue());
+            logger.debug(
+                    "connectionCheckedOut: {}/{}",
+                    event.getConnectionId().getLocalValue(),
+                    event.getConnectionId().getServerValue());
         }
 
         @Override
         public void connectionCheckedIn(ConnectionCheckedInEvent event) {
-            logger.debug("connectionCheckedIn: {}/{}", event.getConnectionId().getLocalValue(), event.getConnectionId().getServerValue());
+            logger.debug(
+                    "connectionCheckedIn: {}/{}",
+                    event.getConnectionId().getLocalValue(),
+                    event.getConnectionId().getServerValue());
         }
 
         @Override
@@ -193,12 +215,18 @@ public class MongoProviderImpl implements MongoProvider {
 
         @Override
         public void connectionAdded(ConnectionAddedEvent event) {
-            logger.debug("connectionAdded: {}/{}", event.getConnectionId().getLocalValue(), event.getConnectionId().getServerValue());
+            logger.debug(
+                    "connectionAdded: {}/{}",
+                    event.getConnectionId().getLocalValue(),
+                    event.getConnectionId().getServerValue());
         }
 
         @Override
         public void connectionRemoved(ConnectionRemovedEvent event) {
-            logger.debug("connectionRemoved: {}/{}", event.getConnectionId().getLocalValue(), event.getConnectionId().getServerValue());
+            logger.debug(
+                    "connectionRemoved: {}/{}",
+                    event.getConnectionId().getLocalValue(),
+                    event.getConnectionId().getServerValue());
         }
     }
 }

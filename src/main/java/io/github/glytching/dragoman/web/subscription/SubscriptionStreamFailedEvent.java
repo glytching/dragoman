@@ -25,6 +25,7 @@ import java.util.Optional;
 public class SubscriptionStreamFailedEvent extends SubscriptionEvent {
 
     private final String failureMessage;
+
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<Throwable> throwable;
 
@@ -32,13 +33,14 @@ public class SubscriptionStreamFailedEvent extends SubscriptionEvent {
         this(subscriptionKey, failureMessage, Optional.empty());
     }
 
-    public SubscriptionStreamFailedEvent(String subscriptionKey, String failureMessage, Throwable throwable) {
+    public SubscriptionStreamFailedEvent(
+            String subscriptionKey, String failureMessage, Throwable throwable) {
         this(subscriptionKey, failureMessage, Optional.of(throwable));
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private SubscriptionStreamFailedEvent(String subscriptionKey, String failureMessage,
-                                          Optional<Throwable> throwable) {
+    private SubscriptionStreamFailedEvent(
+            String subscriptionKey, String failureMessage, Optional<Throwable> throwable) {
         super(SubscriptionEventType.STREAM_FAILED_EVENT, subscriptionKey);
         this.failureMessage = failureMessage;
         this.throwable = throwable;

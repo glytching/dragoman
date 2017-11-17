@@ -104,8 +104,11 @@ public class AuthenticationResourceTest extends AbstractResourceTest {
 
         assertThat(errorResponse.getString("timestamp"), notNullValue());
         assertThat(errorResponse.getInteger("statusCode"), is(HttpResponseStatus.UNAUTHORIZED.code()));
-        assertThat(errorResponse.getString("statusMessage"), is(HttpResponseStatus.UNAUTHORIZED.reasonPhrase()));
-        MatcherAssert.assertThat(errorResponse.getString("path"), Matchers.is(WebServerUtils.withApplicationName(endpoint)));
+        assertThat(
+                errorResponse.getString("statusMessage"),
+                is(HttpResponseStatus.UNAUTHORIZED.reasonPhrase()));
+        MatcherAssert.assertThat(
+                errorResponse.getString("path"), Matchers.is(WebServerUtils.withApplicationName(endpoint)));
         assertThat(errorResponse.getString("message"), containsString("Invalid credentials!"));
         assertThat(errorResponse.getString("stackTrace"), notNullValue());
 

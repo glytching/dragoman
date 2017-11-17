@@ -53,9 +53,7 @@ public class OkHttpClient implements HttpClient {
 
         logger.info("Get from: {}", url);
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        Request request = new Request.Builder().url(url).build();
 
         return execute(url, () -> handleResponse(url, httpClient.newCall(request).execute()));
     }
@@ -64,10 +62,7 @@ public class OkHttpClient implements HttpClient {
     public HttpResponse delete(String url) {
         logger.info("Delete from: {}", url);
 
-        Request request = new Request.Builder()
-                .url(url)
-                .delete()
-                .build();
+        Request request = new Request.Builder().url(url).delete().build();
 
         return execute(url, () -> handleResponse(url, httpClient.newCall(request).execute()));
     }
@@ -76,28 +71,30 @@ public class OkHttpClient implements HttpClient {
     public HttpResponse post(String url, String json) {
         logger.info("Post to: {}", url);
 
-        Request.Builder requestBuilder = new Request.Builder()
-                .url(url);
+        Request.Builder requestBuilder = new Request.Builder().url(url);
 
         if (json != null) {
-            requestBuilder.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json));
+            requestBuilder.post(
+                    RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json));
         }
 
-        return execute(url, () -> handleResponse(url, httpClient.newCall(requestBuilder.build()).execute()));
+        return execute(
+                url, () -> handleResponse(url, httpClient.newCall(requestBuilder.build()).execute()));
     }
 
     @Override
     public HttpResponse put(String url, String json) {
         logger.info("Put to: {}", url);
 
-        Request.Builder requestBuilder = new Request.Builder()
-                .url(url);
+        Request.Builder requestBuilder = new Request.Builder().url(url);
 
         if (json != null) {
-            requestBuilder.put(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json));
+            requestBuilder.put(
+                    RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json));
         }
 
-        return execute(url, () -> handleResponse(url, httpClient.newCall(requestBuilder.build()).execute()));
+        return execute(
+                url, () -> handleResponse(url, httpClient.newCall(requestBuilder.build()).execute()));
     }
 
     private <T> T execute(String url, Callable<T> c) {
@@ -110,7 +107,10 @@ public class OkHttpClient implements HttpClient {
 
     private HttpResponse handleResponse(String url, Response response) {
         try {
-            return new HttpResponse(response.code(), response.message(), response.request().url().toString(),
+            return new HttpResponse(
+                    response.code(),
+                    response.message(),
+                    response.request().url().toString(),
                     response.headers().toMultimap(),
                     response.body().string());
         } catch (Exception ex) {

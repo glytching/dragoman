@@ -32,7 +32,8 @@ public class AsOfFormatter {
             } else if (isEpochMillisPattern(pattern)) {
                 return String.valueOf(lastRead.toInstant(ZoneOffset.UTC).toEpochMilli());
             } else {
-                throw new RuntimeException(String.format("Cannot format AsOf for an unsupported pattern: %s!", pattern));
+                throw new RuntimeException(
+                        String.format("Cannot format AsOf for an unsupported pattern: %s!", pattern));
             }
         } else {
             return "'" + DateTimeFormatter.ofPattern(ISO_8601).format(lastRead) + "'";
@@ -44,7 +45,8 @@ public class AsOfFormatter {
             if (isDatePattern(pattern) || isEpochMillisPattern(pattern)) {
                 return pattern;
             } else {
-                throw new RuntimeException(String.format("Cannot format AsOf for an unsupported pattern: %s!", pattern));
+                throw new RuntimeException(
+                        String.format("Cannot format AsOf for an unsupported pattern: %s!", pattern));
             }
         } else {
             return pattern;
@@ -56,9 +58,9 @@ public class AsOfFormatter {
     }
 
     /**
-     * Any pattern which starts with {@code yyyy} (case insensitive) is deemed to be a date pattern. This sounds crude
-     * and if <i>actual</i> usage shows it to be crude then it can be replaced with something more nuanced such as a
-     * regex matcher.
+     * Any pattern which starts with {@code yyyy} (case insensitive) is deemed to be a date pattern.
+     * This sounds crude and if <i>actual</i> usage shows it to be crude then it can be replaced with
+     * something more nuanced such as a regex matcher.
      *
      * @param incoming
      *

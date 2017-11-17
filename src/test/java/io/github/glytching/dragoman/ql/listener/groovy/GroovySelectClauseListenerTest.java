@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GroovySelectClauseListenerTest {
 
-    private final GroovyFactory factory = new GroovyFactory(new GroovyClassLoader(), new SelectClauseParser(),
-            new WhereClauseParser());
+    private final GroovyFactory factory =
+            new GroovyFactory(new GroovyClassLoader(), new SelectClauseParser(), new WhereClauseParser());
 
     @Test
     public void testSingleProjection() throws Exception {
@@ -49,11 +49,11 @@ public class GroovySelectClauseListenerTest {
 
     @Test
     public void testMultipleProjections() throws Exception {
-        Map<String, Object> document = makeMap(
-                makeEntry("a", 1),
-                makeEntry("b", makeMap(makeEntry("c", 2), makeEntry("d", 3))),
-                makeEntry("e", "hello")
-        );
+        Map<String, Object> document =
+                makeMap(
+                        makeEntry("a", 1),
+                        makeEntry("b", makeMap(makeEntry("c", 2), makeEntry("d", 3))),
+                        makeEntry("e", "hello"));
 
         Map<String, Object> actual = project("a, e, b.c", document);
 
@@ -122,12 +122,15 @@ public class GroovySelectClauseListenerTest {
 
     @Test
     public void testInvalidProjection() throws Exception {
-        assertThrows(SqlParserException.class, () -> {
-            project("a, ", Maps.newHashMap());
+        assertThrows(
+                SqlParserException.class,
+                () -> {
+                    project("a, ", Maps.newHashMap());
         });
     }
 
-    private Map<String, Object> project(String select, Map<String, Object> document) throws Exception {
+    private Map<String, Object> project(String select, Map<String, Object> document)
+            throws Exception {
         Mapper mapper = factory.createProjector(select);
 
         return mapper.map(document);
