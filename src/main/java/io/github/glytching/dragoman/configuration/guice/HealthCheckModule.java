@@ -25,10 +25,10 @@ import io.github.glytching.dragoman.store.mongo.health.IsMongoConnected;
 
 public class HealthCheckModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        Multibinder<HealthCheck> multibinder = Multibinder.newSetBinder(binder(), HealthCheck.class);
-        multibinder.addBinding().to(IsMongoConnected.class);
-        bind(MongoProvider.class).to(MongoProviderImpl.class);
-    }
+  @Override
+  protected void configure() {
+    Multibinder<HealthCheck> multibinder = Multibinder.newSetBinder(binder(), HealthCheck.class);
+    multibinder.addBinding().to(IsMongoConnected.class);
+    bind(MongoProvider.class).to(MongoProviderImpl.class);
+  }
 }

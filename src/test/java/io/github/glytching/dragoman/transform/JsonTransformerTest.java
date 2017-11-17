@@ -29,52 +29,52 @@ import static org.hamcrest.Matchers.is;
 
 public class JsonTransformerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private JsonTransformer documentTransformer;
+  private JsonTransformer documentTransformer;
 
-    @BeforeEach
-    public void setUp() {
-        documentTransformer = new JsonTransformer(objectMapper);
-    }
+  @BeforeEach
+  public void setUp() {
+    documentTransformer = new JsonTransformer(objectMapper);
+  }
 
-    @Test
-    public void canTransformMapToJson() {
-        Map<String, Object> from = new HashMap<>();
-        from.put("a", "b");
-        from.put("c", 1);
+  @Test
+  public void canTransformMapToJson() {
+    Map<String, Object> from = new HashMap<>();
+    from.put("a", "b");
+    from.put("c", 1);
 
-        String transformed = documentTransformer.transform(from);
+    String transformed = documentTransformer.transform(from);
 
-        assertThat(transformed, is("{\"a\":\"b\",\"c\":1}"));
-    }
+    assertThat(transformed, is("{\"a\":\"b\",\"c\":1}"));
+  }
 
-    @Test
-    public void canTransformJsonToMap() {
-        String json = "{\"a\": \"b\", \"c\": 1}";
+  @Test
+  public void canTransformJsonToMap() {
+    String json = "{\"a\": \"b\", \"c\": 1}";
 
-        //noinspection unchecked
-        Map<String, Object> transformed = documentTransformer.transform(Map.class, json);
+    //noinspection unchecked
+    Map<String, Object> transformed = documentTransformer.transform(Map.class, json);
 
-        assertThat(transformed.size(), is(2));
+    assertThat(transformed.size(), is(2));
 
-        assertThat(transformed, hasKey("a"));
-        assertThat(transformed.get("a"), is("b"));
-        assertThat(transformed, hasKey("c"));
-        assertThat(transformed.get("c"), is(1));
-    }
+    assertThat(transformed, hasKey("a"));
+    assertThat(transformed.get("a"), is("b"));
+    assertThat(transformed, hasKey("c"));
+    assertThat(transformed.get("c"), is(1));
+  }
 
-    @Test
-    public void canPerformTwoWayTransform() {
-        Map<String, Object> from = new HashMap<>();
-        from.put("a", "b");
-        from.put("c", 1);
+  @Test
+  public void canPerformTwoWayTransform() {
+    Map<String, Object> from = new HashMap<>();
+    from.put("a", "b");
+    from.put("c", 1);
 
-        String json = documentTransformer.transform(from);
+    String json = documentTransformer.transform(from);
 
-        //noinspection unchecked
-        Map<String, Object> actual = documentTransformer.transform(Map.class, json);
+    //noinspection unchecked
+    Map<String, Object> actual = documentTransformer.transform(Map.class, json);
 
-        assertThat(actual, is(from));
-    }
+    assertThat(actual, is(from));
+  }
 }

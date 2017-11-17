@@ -43,105 +43,97 @@ import java.util.concurrent.CountDownLatch;
 import static java.lang.String.format;
 
 public abstract class AbstractResourceTest {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractResourceTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(AbstractResourceTest.class);
 
-    @Inject
-    protected Vertx vertx;
-    @Inject
-    protected ViewTransformer viewTransformer;
-    @Inject
-    protected RepositoryRouter repositoryRouter;
-    @Inject
-    protected ApplicationConfiguration configuration;
-    protected int port;
-    @Inject
-    private DeploymentOptions deploymentOptions;
-    @Inject
-    private Reader reader;
-    @Inject
-    private Set<RestResource> restResources;
-    @Inject
-    private HttpClient httpClient;
+  @Inject protected Vertx vertx;
+  @Inject protected ViewTransformer viewTransformer;
+  @Inject protected RepositoryRouter repositoryRouter;
+  @Inject protected ApplicationConfiguration configuration;
+  protected int port;
+  @Inject private DeploymentOptions deploymentOptions;
+  @Inject private Reader reader;
+  @Inject private Set<RestResource> restResources;
+  @Inject private HttpClient httpClient;
 
-    @BeforeEach
-    @SuppressWarnings("unchecked")
-    public void start() {
-        Injector injector =
-                Guice.createInjector(
-                        Modules.override(new DragomanModule()).with(new RestOverridesModule()));
-        injector.injectMembers(this);
+  @BeforeEach
+  @SuppressWarnings("unchecked")
+  public void start() {
+    Injector injector =
+        Guice.createInjector(
+            Modules.override(new DragomanModule()).with(new RestOverridesModule()));
+    injector.injectMembers(this);
 
-        startHttpServer();
+    startHttpServer();
+  }
+
+  @AfterEach
+  public void stop() {
+    if (vertx != null) {
+      logger.info("Stopping embedded HTTP server");
+      vertx.close();
+      logger.info("Stopped embedded HTTP server");
     }
+  }
 
-    @AfterEach
-    public void stop() {
-        if (vertx != null) {
-            logger.info("Stopping embedded HTTP server");
-            vertx.close();
-            logger.info("Stopped embedded HTTP server");
-        }
-    }
+  protected String readSimple(String endpoint) {
+    String url = getUrl(endpoint);
+    return httpClient.get(url).getPayload();
+  }
 
-    protected String readSimple(String endpoint) {
-        String url = getUrl(endpoint);
-        return httpClient.get(url).getPayload();
-    }
+  @SuppressWarnings("unchecked")
+  protected Map<String, Object> readMap(String endpoint) {
+    String response = readSimple(endpoint);
 
-    @SuppressWarnings("unchecked")
-    protected Map<String, Object> readMap(String endpoint) {
-        String response = readSimple(endpoint);
+    return viewTransformer.transform(Map.class, response);
+  }
 
-        return viewTransformer.transform(Map.class, response);
-    }
+  @SuppressWarnings("unchecked")
+  protected List<Map<String, Object>> readList(String endpoint) {
+    String url = getUrl(endpoint);
+    String response = httpClient.get(url).getPayload();
+    return viewTransformer.transform(List.class, response);
+  }
 
-    @SuppressWarnings("unchecked")
-    protected List<Map<String, Object>> readList(String endpoint) {
-        String url = getUrl(endpoint);
-        String response = httpClient.get(url).getPayload();
-        return viewTransformer.transform(List.class, response);
-    }
+  protected HttpResponse read(String endpoint) {
+    String url = getUrl(endpoint);
+    return httpClient.get(url);
+  }
 
-    protected HttpResponse read(String endpoint) {
-        String url = getUrl(endpoint);
-        return httpClient.get(url);
-    }
+  protected HttpResponse post(String endpoint, String payload) {
+    String url = getUrl(endpoint);
+    return httpClient.post(url, payload);
+  }
 
-    protected HttpResponse post(String endpoint, String payload) {
-        String url = getUrl(endpoint);
-        return httpClient.post(url, payload);
-    }
+  protected HttpResponse put(String endpoint, String payload) {
+    String url = getUrl(endpoint);
+    return httpClient.put(url, payload);
+  }
 
-    protected HttpResponse put(String endpoint, String payload) {
-        String url = getUrl(endpoint);
-        return httpClient.put(url, payload);
-    }
+  protected HttpResponse delete(String endpoint) {
+    String url = getUrl(endpoint);
+    return httpClient.delete(url);
+  }
 
-    protected HttpResponse delete(String endpoint) {
-        String url = getUrl(endpoint);
-        return httpClient.delete(url);
-    }
+  private String getUrl(String endpointAddress) {
+    return format("http://localhost:%s/dragoman/%s", port, endpointAddress);
+  }
 
-    private String getUrl(String endpointAddress) {
-        return format("http://localhost:%s/dragoman/%s", port, endpointAddress);
-    }
-
-    private void startHttpServer() {
-        port = configuration.getHttpPort();
-        logger.info("Starting embedded HTTP server on port: {}", port);
-        CountDownLatch latch = new CountDownLatch(1);
-        vertx.deployVerticle(
-                new WebServerVerticle(restResources, configuration),
-                deploymentOptions,
-                result -> {
-                    logger.info("Started embedded HTTP server with result: {}", result);
-                    latch.countDown();
+  private void startHttpServer() {
+    port = configuration.getHttpPort();
+    logger.info("Starting embedded HTTP server on port: {}", port);
+    CountDownLatch latch = new CountDownLatch(1);
+    vertx.deployVerticle(
+        new WebServerVerticle(restResources, configuration),
+        deploymentOptions,
+        result -> {
+          logger.info("Started embedded HTTP server with result: {}", result);
+          latch.countDown();
         });
 
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            logger.warn("Failed to wait for the embedded HTTP server to start!");
-        }
+    try {
+      latch.await();
+    } catch (InterruptedException e) {
+      logger.warn("Failed to wait for the embedded HTTP server to start!");
     }
+  }
 }

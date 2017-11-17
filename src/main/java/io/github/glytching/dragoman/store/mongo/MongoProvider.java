@@ -26,10 +26,10 @@ import com.mongodb.rx.client.MongoClient;
  */
 public interface MongoProvider {
 
-    /**
-     * Provide (with create-on-first-usage semantics) this application's {@link MongoClient} instance.
-     *
-     * @return
-     */
-    MongoClient provide();
+  /**
+   * Provide (with create-on-first-usage semantics) this application's {@link MongoClient} instance.
+   *
+   * @return
+   */
+  MongoClient provide();
 }

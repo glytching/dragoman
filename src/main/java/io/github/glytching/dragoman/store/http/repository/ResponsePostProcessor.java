@@ -23,13 +23,12 @@ package io.github.glytching.dragoman.store.http.repository;
  */
 public interface ResponsePostProcessor {
 
-    /**
-     * Process a raw HTTP response, ensuring that the result meets this application's expectations for
-     * HTTP responses, namely; valid JSON.
-     *
-     * @param content a raw response from a HTTP data source
-     *
-     * @return transformed {@code content}
-     */
-    String postProcess(String content);
+  /**
+   * Process a raw HTTP response, ensuring that the result meets this application's expectations for
+   * HTTP responses, namely; valid JSON.
+   *
+   * @param content a raw response from a HTTP data source
+   * @return transformed {@code content}
+   */
+  String postProcess(String content);
 }

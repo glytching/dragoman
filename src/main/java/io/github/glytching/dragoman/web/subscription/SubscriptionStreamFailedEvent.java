@@ -24,49 +24,49 @@ import java.util.Optional;
 
 public class SubscriptionStreamFailedEvent extends SubscriptionEvent {
 
-    private final String failureMessage;
+  private final String failureMessage;
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private final Optional<Throwable> throwable;
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+  private final Optional<Throwable> throwable;
 
-    public SubscriptionStreamFailedEvent(String subscriptionKey, String failureMessage) {
-        this(subscriptionKey, failureMessage, Optional.empty());
-    }
+  public SubscriptionStreamFailedEvent(String subscriptionKey, String failureMessage) {
+    this(subscriptionKey, failureMessage, Optional.empty());
+  }
 
-    public SubscriptionStreamFailedEvent(
-            String subscriptionKey, String failureMessage, Throwable throwable) {
-        this(subscriptionKey, failureMessage, Optional.of(throwable));
-    }
+  public SubscriptionStreamFailedEvent(
+      String subscriptionKey, String failureMessage, Throwable throwable) {
+    this(subscriptionKey, failureMessage, Optional.of(throwable));
+  }
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private SubscriptionStreamFailedEvent(
-            String subscriptionKey, String failureMessage, Optional<Throwable> throwable) {
-        super(SubscriptionEventType.STREAM_FAILED_EVENT, subscriptionKey);
-        this.failureMessage = failureMessage;
-        this.throwable = throwable;
-    }
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+  private SubscriptionStreamFailedEvent(
+      String subscriptionKey, String failureMessage, Optional<Throwable> throwable) {
+    super(SubscriptionEventType.STREAM_FAILED_EVENT, subscriptionKey);
+    this.failureMessage = failureMessage;
+    this.throwable = throwable;
+  }
 
-    public String getFailureMessage() {
-        return failureMessage;
-    }
+  public String getFailureMessage() {
+    return failureMessage;
+  }
 
-    public Optional<Throwable> getThrowable() {
-        return throwable;
-    }
+  public Optional<Throwable> getThrowable() {
+    return throwable;
+  }
 
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
+  @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+  @Override
+  public boolean equals(Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj);
+  }
 
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
+  }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
 }

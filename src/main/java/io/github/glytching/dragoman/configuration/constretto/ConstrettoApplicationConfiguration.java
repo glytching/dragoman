@@ -45,189 +45,189 @@ import static java.lang.String.format;
  * properties from the application's property file.
  */
 public class ConstrettoApplicationConfiguration implements ApplicationConfiguration {
-    private final ConstrettoConfiguration constretto;
+  private final ConstrettoConfiguration constretto;
 
-    private Integer httpPort;
-    private Integer mongoPort;
-    private Integer jolokiaPort;
+  private Integer httpPort;
+  private Integer mongoPort;
+  private Integer jolokiaPort;
 
-    public ConstrettoApplicationConfiguration(ConstrettoConfiguration constretto) {
-        this.constretto = constretto;
+  public ConstrettoApplicationConfiguration(ConstrettoConfiguration constretto) {
+    this.constretto = constretto;
+  }
+
+  @Override
+  public int getHttpPort() {
+    if (httpPort == null) {
+      httpPort = getOrDefault("http.port");
     }
+    return httpPort;
+  }
 
-    @Override
-    public int getHttpPort() {
-        if (httpPort == null) {
-            httpPort = getOrDefault("http.port");
-        }
-        return httpPort;
-    }
+  @Override
+  public String getMongoHost() {
+    return get(() -> constretto.evaluateToString("mongo.host"));
+  }
 
-    @Override
-    public String getMongoHost() {
-        return get(() -> constretto.evaluateToString("mongo.host"));
+  @Override
+  public int getMongoPort() {
+    if (mongoPort == null) {
+      mongoPort = getOrDefault("mongo.port");
     }
+    return mongoPort;
+  }
 
-    @Override
-    public int getMongoPort() {
-        if (mongoPort == null) {
-            mongoPort = getOrDefault("mongo.port");
-        }
-        return mongoPort;
-    }
+  @Override
+  public int getMongoServerSelectionTimeout() {
+    return get(() -> constretto.evaluateToInt("mongo.server.selection.timeout.millis"));
+  }
 
-    @Override
-    public int getMongoServerSelectionTimeout() {
-        return get(() -> constretto.evaluateToInt("mongo.server.selection.timeout.millis"));
-    }
+  @Override
+  public int getMongoSocketConnectionTimeout() {
+    return get(() -> constretto.evaluateToInt("mongo.socket.connection.timeout.millis"));
+  }
 
-    @Override
-    public int getMongoSocketConnectionTimeout() {
-        return get(() -> constretto.evaluateToInt("mongo.socket.connection.timeout.millis"));
-    }
+  @Override
+  public int getMongoReadTimeout() {
+    return get(() -> constretto.evaluateToInt("mongo.read.timeout.millis"));
+  }
 
-    @Override
-    public int getMongoReadTimeout() {
-        return get(() -> constretto.evaluateToInt("mongo.read.timeout.millis"));
-    }
+  @Override
+  public int getConnectionPoolMinSize() {
+    return get(() -> constretto.evaluateToInt("connection.pool.min.size"));
+  }
 
-    @Override
-    public int getConnectionPoolMinSize() {
-        return get(() -> constretto.evaluateToInt("connection.pool.min.size"));
-    }
+  @Override
+  public int getConnectionPoolMaxSize() {
+    return get(() -> constretto.evaluateToInt("connection.pool.max.size"));
+  }
 
-    @Override
-    public int getConnectionPoolMaxSize() {
-        return get(() -> constretto.evaluateToInt("connection.pool.max.size"));
-    }
+  @Override
+  public int getConnectionPoolMaxWaitTime() {
+    return get(() -> constretto.evaluateToInt("connection.pool.wait.timeout.millis"));
+  }
 
-    @Override
-    public int getConnectionPoolMaxWaitTime() {
-        return get(() -> constretto.evaluateToInt("connection.pool.wait.timeout.millis"));
-    }
+  @Override
+  public String getCannedUserName() {
+    return get(() -> constretto.evaluateToString("canned.user.name"));
+  }
 
-    @Override
-    public String getCannedUserName() {
-        return get(() -> constretto.evaluateToString("canned.user.name"));
-    }
+  @Override
+  public String getDatabaseName() {
+    return get(() -> constretto.evaluateToString("database.name"));
+  }
 
-    @Override
-    public String getDatabaseName() {
-        return get(() -> constretto.evaluateToString("database.name"));
-    }
+  @Override
+  public String getDatasetStorageName() {
+    return get(() -> constretto.evaluateToString("dataset.storage.name"));
+  }
 
-    @Override
-    public String getDatasetStorageName() {
-        return get(() -> constretto.evaluateToString("dataset.storage.name"));
-    }
+  @Override
+  public String getUserStorageName() {
+    return get(() -> constretto.evaluateToString("user.storage.name"));
+  }
 
-    @Override
-    public String getUserStorageName() {
-        return get(() -> constretto.evaluateToString("user.storage.name"));
-    }
+  @Override
+  public boolean isMetricsEnabled() {
+    return get(() -> constretto.evaluateToBoolean("metrics.enabled"));
+  }
 
-    @Override
-    public boolean isMetricsEnabled() {
-        return get(() -> constretto.evaluateToBoolean("metrics.enabled"));
-    }
+  @Override
+  public boolean isJmxEnabled() {
+    return get(() -> constretto.evaluateToBoolean("jmx.enabled"));
+  }
 
-    @Override
-    public boolean isJmxEnabled() {
-        return get(() -> constretto.evaluateToBoolean("jmx.enabled"));
-    }
+  @Override
+  public String getJmxDomainName() {
+    return get(() -> constretto.evaluateToString("jmx.domain.name"));
+  }
 
-    @Override
-    public String getJmxDomainName() {
-        return get(() -> constretto.evaluateToString("jmx.domain.name"));
-    }
+  @Override
+  public boolean isJolokiaEnabled() {
+    return get(() -> constretto.evaluateToBoolean("jolokia.enabled"));
+  }
 
-    @Override
-    public boolean isJolokiaEnabled() {
-        return get(() -> constretto.evaluateToBoolean("jolokia.enabled"));
+  @Override
+  public int getJolokiaPort() {
+    if (jolokiaPort == null) {
+      jolokiaPort = getOrDefault("jolokia.port");
     }
+    return jolokiaPort;
+  }
 
-    @Override
-    public int getJolokiaPort() {
-        if (jolokiaPort == null) {
-            jolokiaPort = getOrDefault("jolokia.port");
-        }
-        return jolokiaPort;
-    }
+  @Override
+  public boolean isJolokiaDebugEnabled() {
+    return get(() -> constretto.evaluateToBoolean("jolokia.debug.enabled"));
+  }
 
-    @Override
-    public boolean isJolokiaDebugEnabled() {
-        return get(() -> constretto.evaluateToBoolean("jolokia.debug.enabled"));
-    }
+  @Override
+  public int getViewTemplateCacheSize() {
+    return get(() -> constretto.evaluateToInt("view.template.cache.size"));
+  }
 
-    @Override
-    public int getViewTemplateCacheSize() {
-        return get(() -> constretto.evaluateToInt("view.template.cache.size"));
-    }
+  @Override
+  public boolean isViewStaticAssetsCacheEnabled() {
+    return get(() -> constretto.evaluateToBoolean("view.static.assets.cache.enabled"));
+  }
 
-    @Override
-    public boolean isViewStaticAssetsCacheEnabled() {
-        return get(() -> constretto.evaluateToBoolean("view.static.assets.cache.enabled"));
-    }
+  @Override
+  public long getMaxEventLoopExecutionTime() {
+    return get(() -> constretto.evaluateToLong("vertx.max.event.loop.execution.time.nanos"));
+  }
 
-    @Override
-    public long getMaxEventLoopExecutionTime() {
-        return get(() -> constretto.evaluateToLong("vertx.max.event.loop.execution.time.nanos"));
-    }
+  @Override
+  public long getMaxWorkerExecutionTime() {
+    return get(() -> constretto.evaluateToLong("vertx.max.worker.execution.time.nanos"));
+  }
 
-    @Override
-    public long getMaxWorkerExecutionTime() {
-        return get(() -> constretto.evaluateToLong("vertx.max.worker.execution.time.nanos"));
-    }
+  @Override
+  public int getWorkerPoolSize() {
+    return get(() -> constretto.evaluateToInt("vertx.worker.pool.size"));
+  }
 
-    @Override
-    public int getWorkerPoolSize() {
-        return get(() -> constretto.evaluateToInt("vertx.worker.pool.size"));
-    }
+  @Override
+  public boolean isAuthenticationEnabled() {
+    return get(() -> constretto.evaluateToBoolean("authentication.enabled"));
+  }
 
-    @Override
-    public boolean isAuthenticationEnabled() {
-        return get(() -> constretto.evaluateToBoolean("authentication.enabled"));
-    }
+  @Override
+  public boolean isMongoEmbedded() {
+    return get(() -> constretto.evaluateToBoolean("mongo.embedded"));
+  }
 
-    @Override
-    public boolean isMongoEmbedded() {
-        return get(() -> constretto.evaluateToBoolean("mongo.embedded"));
-    }
+  @Override
+  public int getMetricsPublicationPeriod() {
+    return get(() -> constretto.evaluateToInt("metrics.publication.period.in.millis"));
+  }
 
-    @Override
-    public int getMetricsPublicationPeriod() {
-        return get(() -> constretto.evaluateToInt("metrics.publication.period.in.millis"));
-    }
+  @Override
+  public String getCannedDatasetsDirectory() {
+    return get(() -> constretto.evaluateToString("canned.datasets.directory"));
+  }
 
-    @Override
-    public String getCannedDatasetsDirectory() {
-        return get(() -> constretto.evaluateToString("canned.datasets.directory"));
-    }
+  @Override
+  public <T> T getPropertyValue(Class<T> clazz, String propertyName) {
+    return get(() -> constretto.evaluateTo(clazz, propertyName));
+  }
 
-    @Override
-    public <T> T getPropertyValue(Class<T> clazz, String propertyName) {
-        return get(() -> constretto.evaluateTo(clazz, propertyName));
+  private <T> T get(Callable<T> c) {
+    try {
+      return c.call();
+    } catch (Exception ex) {
+      throw new RuntimeException(
+          format("Failed to read configuration property: %s!", ex.getMessage()));
     }
+  }
 
-    private <T> T get(Callable<T> c) {
-        try {
-            return c.call();
-        } catch (Exception ex) {
-            throw new RuntimeException(
-                    format("Failed to read configuration property: %s!", ex.getMessage()));
-        }
+  private int getOrDefault(String propertyName) {
+    if (isRandomPortSymbolic(propertyName)) {
+      return getFreePort();
+    } else {
+      return get(() -> constretto.evaluateToInt(propertyName));
     }
+  }
 
-    private int getOrDefault(String propertyName) {
-        if (isRandomPortSymbolic(propertyName)) {
-            return getFreePort();
-        } else {
-            return get(() -> constretto.evaluateToInt(propertyName));
-        }
-    }
-
-    private boolean isRandomPortSymbolic(String propertyName) {
-        return !constretto.hasValue(propertyName)
-                || constretto.evaluateToInt(propertyName) == RANDOM_PORT_SYMBOLIC;
-    }
+  private boolean isRandomPortSymbolic(String propertyName) {
+    return !constretto.hasValue(propertyName)
+        || constretto.evaluateToInt(propertyName) == RANDOM_PORT_SYMBOLIC;
+  }
 }

@@ -26,11 +26,11 @@ import static org.mockito.Mockito.mock;
 
 public class RestOverridesModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        bind(RepositoryRouter.class).toInstance(mock(RepositoryRouter.class));
-        bind(DatasetDao.class).toInstance(mock(DatasetDao.class));
-        bind(AuthenticationDao.class).toInstance(mock(AuthenticationDao.class));
-        bind(Reader.class).toInstance(mock(Reader.class));
-    }
+  @Override
+  protected void configure() {
+    bind(RepositoryRouter.class).toInstance(mock(RepositoryRouter.class));
+    bind(DatasetDao.class).toInstance(mock(DatasetDao.class));
+    bind(AuthenticationDao.class).toInstance(mock(AuthenticationDao.class));
+    bind(Reader.class).toInstance(mock(Reader.class));
+  }
 }

@@ -29,13 +29,12 @@ import java.util.Map;
  */
 public interface RepositoryRouter {
 
-    /**
-     * Chooses a {@link Repository} implementation for the given {@code dataset}.
-     *
-     * @param dataset the {@link Dataset} for which a repository is to be provided
-     *
-     * @return a {@link Repository} implementation for the given {@code dataset} if one exists, an
-     * exception otherwise
-     */
-    Repository<Map<String, Object>> get(Dataset dataset);
+  /**
+   * Chooses a {@link Repository} implementation for the given {@code dataset}.
+   *
+   * @param dataset the {@link Dataset} for which a repository is to be provided
+   * @return a {@link Repository} implementation for the given {@code dataset} if one exists, an
+   *     exception otherwise
+   */
+  Repository<Map<String, Object>> get(Dataset dataset);
 }

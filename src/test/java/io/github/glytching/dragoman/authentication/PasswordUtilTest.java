@@ -34,29 +34,29 @@ import static org.hamcrest.Matchers.not;
  */
 public class PasswordUtilTest {
 
-    private PasswordUtil passwordUtil;
+  private PasswordUtil passwordUtil;
 
-    @BeforeEach
-    public void setUp() {
-        passwordUtil = new PasswordUtil();
-    }
+  @BeforeEach
+  public void setUp() {
+    passwordUtil = new PasswordUtil();
+  }
 
-    @Test
-    public void willProduceSomethingOtherThanTheGivenPassword() {
-        String password = "foo";
+  @Test
+  public void willProduceSomethingOtherThanTheGivenPassword() {
+    String password = "foo";
 
-        String hash = passwordUtil.toHash(password);
+    String hash = passwordUtil.toHash(password);
 
-        assertThat(hash, not(is(password)));
-    }
+    assertThat(hash, not(is(password)));
+  }
 
-    @Test
-    public void willAlwaysProduceTheSameHashForAGivenPassword() {
-        String password = "foo";
+  @Test
+  public void willAlwaysProduceTheSameHashForAGivenPassword() {
+    String password = "foo";
 
-        String hash = passwordUtil.toHash(password);
+    String hash = passwordUtil.toHash(password);
 
-        assertThat(hash, is(passwordUtil.toHash(password)));
-        assertThat(hash, is(passwordUtil.toHash(password)));
-    }
+    assertThat(hash, is(passwordUtil.toHash(password)));
+    assertThat(hash, is(passwordUtil.toHash(password)));
+  }
 }

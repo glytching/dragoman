@@ -39,68 +39,67 @@ import static org.mockito.Mockito.when;
 
 public class HttpClientAdapterTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final NoOpResponsePostProcessor responsePostProcessor = new NoOpResponsePostProcessor();
-    private final String url = "aUrl";
-    @Mock
-    private HttpClient httpClient;
-    private HttpClientAdapter httpClientAdapter;
+  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final NoOpResponsePostProcessor responsePostProcessor = new NoOpResponsePostProcessor();
+  private final String url = "aUrl";
+  @Mock private HttpClient httpClient;
+  private HttpClientAdapter httpClientAdapter;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
 
-        httpClientAdapter = new HttpClientAdapterImpl(httpClient, new JsonTransformer(objectMapper));
-    }
+    httpClientAdapter = new HttpClientAdapterImpl(httpClient, new JsonTransformer(objectMapper));
+  }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void canHandleSuccessfulResponse() throws Exception {
-        Map<String, Object> one = anyMap();
-        Map<String, Object> two = anyMap();
+  @SuppressWarnings("unchecked")
+  @Test
+  public void canHandleSuccessfulResponse() throws Exception {
+    Map<String, Object> one = anyMap();
+    Map<String, Object> two = anyMap();
 
-        when(httpClient.get(url)).thenReturn(successfulResponse(one, two));
+    when(httpClient.get(url)).thenReturn(successfulResponse(one, two));
 
-        List<Map<String, Object>> items = toList(httpClientAdapter.read(url, responsePostProcessor));
+    List<Map<String, Object>> items = toList(httpClientAdapter.read(url, responsePostProcessor));
 
-        assertThat(items.size(), is(2));
-        assertThat(items, hasItem(one));
-        assertThat(items, hasItem(two));
-    }
+    assertThat(items.size(), is(2));
+    assertThat(items, hasItem(one));
+    assertThat(items, hasItem(two));
+  }
 
-    @Test
-    public void canHandleFailedResponse() {
-        String httpExceptionMessage = "boom!";
+  @Test
+  public void canHandleFailedResponse() {
+    String httpExceptionMessage = "boom!";
 
-        when(httpClient.get(url)).thenReturn(failedResponse(httpExceptionMessage));
+    when(httpClient.get(url)).thenReturn(failedResponse(httpExceptionMessage));
 
-        HttpClientException actual =
-                assertThrows(
-                        HttpClientException.class,
-                        () -> {
-                            httpClientAdapter.read(url, responsePostProcessor);
-                        });
+    HttpClientException actual =
+        assertThrows(
+            HttpClientException.class,
+            () -> {
+              httpClientAdapter.read(url, responsePostProcessor);
+            });
 
-        assertThat(actual.getMessage(), startsWith("Failed to read response from: " + url));
-        assertThat(actual.getMessage(), containsString(httpExceptionMessage));
-    }
+    assertThat(actual.getMessage(), startsWith("Failed to read response from: " + url));
+    assertThat(actual.getMessage(), containsString(httpExceptionMessage));
+  }
 
-    @SafeVarargs
-    private final HttpResponse successfulResponse(Map<String, Object>... payloads)
-            throws JsonProcessingException {
-        return new HttpResponse(
-                200,
-                "",
-                "",
-                new HashMap<>(),
-                objectMapper.writeValueAsString(Lists.newArrayList(payloads)));
-    }
+  @SafeVarargs
+  private final HttpResponse successfulResponse(Map<String, Object>... payloads)
+      throws JsonProcessingException {
+    return new HttpResponse(
+        200,
+        "",
+        "",
+        new HashMap<>(),
+        objectMapper.writeValueAsString(Lists.newArrayList(payloads)));
+  }
 
-    private HttpResponse failedResponse(String failureMessage) {
-        return new HttpResponse(500, failureMessage, "", new HashMap<>(), "");
-    }
+  private HttpResponse failedResponse(String failureMessage) {
+    return new HttpResponse(500, failureMessage, "", new HashMap<>(), "");
+  }
 
-    private List<Map<String, Object>> toList(Observable<Map<String, Object>> incoming) {
-        return incoming.toList().toBlocking().single();
-    }
+  private List<Map<String, Object>> toList(Observable<Map<String, Object>> incoming) {
+    return incoming.toList().toBlocking().single();
+  }
 }

@@ -31,75 +31,75 @@ import static org.hamcrest.Matchers.*;
 
 public class DocumentTransformerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private DocumentTransformer documentTransformer;
+  private DocumentTransformer documentTransformer;
 
-    @BeforeEach
-    public void setUp() {
-        documentTransformer = new DocumentTransformer(objectMapper);
+  @BeforeEach
+  public void setUp() {
+    documentTransformer = new DocumentTransformer(objectMapper);
+  }
+
+  @Test
+  public void canTransformMapToDocument() {
+    Map<String, Object> from = anyMap();
+
+    Document transformed = documentTransformer.transform(from);
+
+    assertThat(transformed.size(), is(from.size()));
+
+    for (Map.Entry<String, Object> entry : from.entrySet()) {
+      assertThat(transformed, hasKey(entry.getKey()));
+      assertThat(transformed.get(entry.getKey()), is(entry.getValue()));
     }
+  }
 
-    @Test
-    public void canTransformMapToDocument() {
-        Map<String, Object> from = anyMap();
+  @Test
+  public void canTransformJsonToDocument() {
+    String json = "{\"a\": \"b\", \"c\": 1}";
 
-        Document transformed = documentTransformer.transform(from);
+    Document transformed = documentTransformer.transform(json);
 
-        assertThat(transformed.size(), is(from.size()));
+    assertThat(transformed.size(), is(2));
+    assertThat(transformed, hasKey("a"));
+    assertThat(transformed.get("a"), is("b"));
+    assertThat(transformed, hasKey("c"));
+    assertThat(transformed.get("c"), is(1));
+  }
 
-        for (Map.Entry<String, Object> entry : from.entrySet()) {
-            assertThat(transformed, hasKey(entry.getKey()));
-            assertThat(transformed.get(entry.getKey()), is(entry.getValue()));
-        }
+  @Test
+  public void canTransformDocumentToMap() {
+    Document document = new Document().append("a", "b").append("c", 1);
+
+    //noinspection unchecked
+    Map<String, Object> transformed = documentTransformer.transform(Map.class, document);
+
+    assertThat(transformed.size(), is(document.size()));
+
+    for (Map.Entry<String, Object> entry : document.entrySet()) {
+      assertThat(transformed, hasKey(entry.getKey()));
+      assertThat(transformed.get(entry.getKey()), is(entry.getValue()));
     }
+  }
 
-    @Test
-    public void canTransformJsonToDocument() {
-        String json = "{\"a\": \"b\", \"c\": 1}";
+  @Test
+  public void willDiscardTheMongoIdentifier() {
+    Document document = new Document("_id", "abc").append("a", "b").append("c", 1);
 
-        Document transformed = documentTransformer.transform(json);
+    //noinspection unchecked
+    Map<String, Object> actual = documentTransformer.transform(Map.class, document);
 
-        assertThat(transformed.size(), is(2));
-        assertThat(transformed, hasKey("a"));
-        assertThat(transformed.get("a"), is("b"));
-        assertThat(transformed, hasKey("c"));
-        assertThat(transformed.get("c"), is(1));
-    }
+    assertThat(actual, not(hasKey("_id")));
+  }
 
-    @Test
-    public void canTransformDocumentToMap() {
-        Document document = new Document().append("a", "b").append("c", 1);
+  @Test
+  public void canPerformTwoWayTransform() {
+    Dataset dataset = aPersistedDataset();
 
-        //noinspection unchecked
-        Map<String, Object> transformed = documentTransformer.transform(Map.class, document);
+    Document document = documentTransformer.transform(dataset);
 
-        assertThat(transformed.size(), is(document.size()));
+    Dataset actual = documentTransformer.transform(Dataset.class, document);
 
-        for (Map.Entry<String, Object> entry : document.entrySet()) {
-            assertThat(transformed, hasKey(entry.getKey()));
-            assertThat(transformed.get(entry.getKey()), is(entry.getValue()));
-        }
-    }
-
-    @Test
-    public void willDiscardTheMongoIdentifier() {
-        Document document = new Document("_id", "abc").append("a", "b").append("c", 1);
-
-        //noinspection unchecked
-        Map<String, Object> actual = documentTransformer.transform(Map.class, document);
-
-        assertThat(actual, not(hasKey("_id")));
-    }
-
-    @Test
-    public void canPerformTwoWayTransform() {
-        Dataset dataset = aPersistedDataset();
-
-        Document document = documentTransformer.transform(dataset);
-
-        Dataset actual = documentTransformer.transform(Dataset.class, document);
-
-        assertThat(actual, is(dataset));
-    }
+    assertThat(actual, is(dataset));
+  }
 }

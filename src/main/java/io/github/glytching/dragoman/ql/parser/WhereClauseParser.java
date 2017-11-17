@@ -42,44 +42,43 @@ import static java.lang.String.format;
  */
 public class WhereClauseParser extends BaseParser {
 
-    /**
-     * Get a deserialised form of the given {@code expression}, deserialised into the type {@code T}.
-     * See {@link #getListener(Class)} to understand what target types are supported.
-     *
-     * @param clazz the target type e.g. Bson if you want to apply the {@code expression} to a MongoDB
-     * store
-     * @param expression the where expression
-     * @param <T>
-     *
-     * @return a deserialised form of the given {@code expression}, deserialised into the type {@code
-     * T}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T get(Class<T> clazz, String expression) {
-        AbstractWhereClauseListener<T> listener = getListener(clazz);
+  /**
+   * Get a deserialised form of the given {@code expression}, deserialised into the type {@code T}.
+   * See {@link #getListener(Class)} to understand what target types are supported.
+   *
+   * @param clazz the target type e.g. Bson if you want to apply the {@code expression} to a MongoDB
+   *     store
+   * @param expression the where expression
+   * @param <T>
+   * @return a deserialised form of the given {@code expression}, deserialised into the type {@code
+   *     T}
+   */
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> T get(Class<T> clazz, String expression) {
+    AbstractWhereClauseListener<T> listener = getListener(clazz);
 
-        parse(expression, listener);
+    parse(expression, listener);
 
-        return listener.get();
+    return listener.get();
+  }
+
+  @Override
+  protected ParserRuleContext getParserContext(SQLParser parser) {
+    // this is the entry point for a where clause
+    return parser.search_condition();
+  }
+
+  private <T> AbstractWhereClauseListener getListener(Class<T> clazz) {
+    if (String.class == clazz) {
+      return new GroovyWhereClauseListener();
+    } else if (Bson.class == clazz) {
+      return new MongoWhereClauseListener();
+    } else {
+      throw new IllegalArgumentException(
+          format(
+              "Type: '%s' is not supported, the supported types are: [%s, %s]",
+              clazz.getSimpleName(), String.class.getSimpleName(), Bson.class.getSimpleName()));
     }
-
-    @Override
-    protected ParserRuleContext getParserContext(SQLParser parser) {
-        // this is the entry point for a where clause
-        return parser.search_condition();
-    }
-
-    private <T> AbstractWhereClauseListener getListener(Class<T> clazz) {
-        if (String.class == clazz) {
-            return new GroovyWhereClauseListener();
-        } else if (Bson.class == clazz) {
-            return new MongoWhereClauseListener();
-        } else {
-            throw new IllegalArgumentException(
-                    format(
-                            "Type: '%s' is not supported, the supported types are: [%s, %s]",
-                            clazz.getSimpleName(), String.class.getSimpleName(), Bson.class.getSimpleName()));
-        }
-    }
+  }
 }

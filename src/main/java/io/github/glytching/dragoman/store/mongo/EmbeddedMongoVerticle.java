@@ -42,77 +42,77 @@ import javax.inject.Inject;
  * A {@link io.vertx.core.Verticle} which controls the lifecycle of the embedded MongoDB instance.
  */
 public class EmbeddedMongoVerticle extends AbstractVerticle {
-    private static final Logger logger = LoggerFactory.getLogger(MongoModule.class);
-    private static final Logger mongoLogger = LoggerFactory.getLogger("embedded-mongo");
+  private static final Logger logger = LoggerFactory.getLogger(MongoModule.class);
+  private static final Logger mongoLogger = LoggerFactory.getLogger("embedded-mongo");
 
-    private final int port;
-    private final CannedDatasetsWriter cannedDatasetsWriter;
-    private MongodExecutable mongodExe;
-    private MongodProcess mongod;
+  private final int port;
+  private final CannedDatasetsWriter cannedDatasetsWriter;
+  private MongodExecutable mongodExe;
+  private MongodProcess mongod;
 
-    @Inject
-    public EmbeddedMongoVerticle(
-            ApplicationConfiguration configuration, CannedDatasetsWriter cannedDatasetsWriter) {
-        this.port = configuration.getMongoPort();
-        this.cannedDatasetsWriter = cannedDatasetsWriter;
-    }
+  @Inject
+  public EmbeddedMongoVerticle(
+      ApplicationConfiguration configuration, CannedDatasetsWriter cannedDatasetsWriter) {
+    this.port = configuration.getMongoPort();
+    this.cannedDatasetsWriter = cannedDatasetsWriter;
+  }
 
-    @Override
-    public void start(Future<Void> future) throws Exception {
-        // take the (rather slow) call to start embedded Mongo off the event loop thread
-        vertx.executeBlocking(
-                (Handler<Future<Void>>)
-                        blockingFuture -> {
-                            try {
+  @Override
+  public void start(Future<Void> future) throws Exception {
+    // take the (rather slow) call to start embedded Mongo off the event loop thread
+    vertx.executeBlocking(
+        (Handler<Future<Void>>)
+            blockingFuture -> {
+              try {
                 StopWatch stopWatch = StopWatch.startForSplits();
-                                MongodStarter starter =
-                                        MongodStarter.getInstance(
+                MongodStarter starter =
+                    MongodStarter.getInstance(
                         new RuntimeConfigBuilder()
-                                .defaults(Command.MongoD)
-                                .processOutput(ProcessOutput.getInstance("embedded-mongo", mongoLogger))
-                                .build());
+                            .defaults(Command.MongoD)
+                            .processOutput(ProcessOutput.getInstance("embedded-mongo", mongoLogger))
+                            .build());
 
-                                mongodExe =
-                                        starter.prepare(
-                                                new MongodConfigBuilder()
-                                                        .version(Version.Main.PRODUCTION)
-                                                        .net(new Net("localhost", port, Network.localhostIsIPv6()))
-                                                        .build());
+                mongodExe =
+                    starter.prepare(
+                        new MongodConfigBuilder()
+                            .version(Version.Main.PRODUCTION)
+                            .net(new Net("localhost", port, Network.localhostIsIPv6()))
+                            .build());
                 logger.info("Prepared embedded Mongo starter in {}ms", stopWatch.split());
 
                 mongod = mongodExe.start();
                 logger.info("Started embedded Mongo in {}ms in port: {}", stopWatch.split(), port);
 
                 blockingFuture.complete();
-                            } catch (Exception ex) {
+              } catch (Exception ex) {
                 logger.warn("Exception occurred when starting embedded Mongo!", ex);
                 future.fail(ex);
                 return;
-                            }
-                        },
-                blockingFuture -> {
-                    if (blockingFuture.succeeded()) {
-                        // if embedded Mongo started succssfully then let's populate it with canned datasets (if
-                        // any)
-                        StopWatch stopWatch = StopWatch.start();
-                        int count = cannedDatasetsWriter.write();
-                        logger.info(
-                                "Loaded {} canned datasets into embedded Mongo in {}ms", count, stopWatch.stop());
-                    }
-                    future.complete();
+              }
+            },
+        blockingFuture -> {
+          if (blockingFuture.succeeded()) {
+            // if embedded Mongo started succssfully then let's populate it with canned datasets (if
+            // any)
+            StopWatch stopWatch = StopWatch.start();
+            int count = cannedDatasetsWriter.write();
+            logger.info(
+                "Loaded {} canned datasets into embedded Mongo in {}ms", count, stopWatch.stop());
+          }
+          future.complete();
         });
-    }
+  }
 
-    @Override
-    public void stop(Future<Void> future) throws Exception {
-        if (mongod != null) {
-            mongod.stop();
-            mongod = null;
-        }
-        if (mongodExe != null) {
-            mongodExe.stop();
-            mongodExe = null;
-        }
-        future.complete();
+  @Override
+  public void stop(Future<Void> future) throws Exception {
+    if (mongod != null) {
+      mongod.stop();
+      mongod = null;
     }
+    if (mongodExe != null) {
+      mongodExe.stop();
+      mongodExe = null;
+    }
+    future.complete();
+  }
 }

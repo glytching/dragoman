@@ -33,33 +33,32 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(RandomBeansExtension.class)
 public class ViewTransformerTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    @Random
-    private Dataset dataset;
-    private ViewTransformer documentTransformer;
+  private final ObjectMapper objectMapper = new ObjectMapper();
+  @Random private Dataset dataset;
+  private ViewTransformer documentTransformer;
 
-    @BeforeEach
-    public void setUp() {
-        documentTransformer = new ViewTransformer(objectMapper);
-    }
+  @BeforeEach
+  public void setUp() {
+    documentTransformer = new ViewTransformer(objectMapper);
+  }
 
-    @Test
-    public void canPerformTwoWayTransform() {
-        String json = documentTransformer.transform(dataset);
+  @Test
+  public void canPerformTwoWayTransform() {
+    String json = documentTransformer.transform(dataset);
 
-        Dataset actual = documentTransformer.transform(Dataset.class, json);
+    Dataset actual = documentTransformer.transform(Dataset.class, json);
 
-        assertThat(actual, is(dataset));
-    }
+    assertThat(actual, is(dataset));
+  }
 
-    @Test
-    public void willThrowAnInvalidRequestExceptionIfTheGivenJsonCannotBeDeserialised() {
-        String json = "{\"a\": \"b\", \"c\": 1}";
+  @Test
+  public void willThrowAnInvalidRequestExceptionIfTheGivenJsonCannotBeDeserialised() {
+    String json = "{\"a\": \"b\", \"c\": 1}";
 
-        InvalidRequestException actual =
-                assertThrows(
-                        InvalidRequestException.class,
-                        () -> documentTransformer.transform(Dataset.class, json));
-        assertThat(actual.getMessage(), startsWith("Failed to deserialise request body"));
-    }
+    InvalidRequestException actual =
+        assertThrows(
+            InvalidRequestException.class,
+            () -> documentTransformer.transform(Dataset.class, json));
+    assertThat(actual.getMessage(), startsWith("Failed to deserialise request body"));
+  }
 }

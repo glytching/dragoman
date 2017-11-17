@@ -41,40 +41,37 @@ import static org.mockito.Mockito.when;
 @ExtendWith(RandomBeansExtension.class)
 public class MongoReaderTest {
 
-    private final String select = "aSelect";
-    private final String where = "aWhere";
-    private final String orderBy = "anOrderBy";
-    @Mock
-    private RepositoryRouter repositoryRouter;
-    @Mock
-    private Repository<Map<String, Object>> repository;
-    @Random
-    private Dataset dataset;
-    private Reader reader;
+  private final String select = "aSelect";
+  private final String where = "aWhere";
+  private final String orderBy = "anOrderBy";
+  @Mock private RepositoryRouter repositoryRouter;
+  @Mock private Repository<Map<String, Object>> repository;
+  @Random private Dataset dataset;
+  private Reader reader;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
 
-        when(repositoryRouter.get(dataset)).thenReturn(repository);
+    when(repositoryRouter.get(dataset)).thenReturn(repository);
 
-        reader = new ReaderImpl(repositoryRouter);
-    }
+    reader = new ReaderImpl(repositoryRouter);
+  }
 
-    @Test
-    public void canRead() {
-        Map<String, Object> one = anyMap();
-        Map<String, Object> two = anyMap();
+  @Test
+  public void canRead() {
+    Map<String, Object> one = anyMap();
+    Map<String, Object> two = anyMap();
 
-        Observable<Map<String, Object>> response = Observable.just(one, two);
+    Observable<Map<String, Object>> response = Observable.just(one, two);
 
-        when(repository.find(dataset, select, where, orderBy, -1)).thenReturn(response);
+    when(repository.find(dataset, select, where, orderBy, -1)).thenReturn(response);
 
-        List<DataEnvelope> dataEnvelopes =
-                reader.read(dataset, select, where, orderBy, -1).toList().toBlocking().single();
+    List<DataEnvelope> dataEnvelopes =
+        reader.read(dataset, select, where, orderBy, -1).toList().toBlocking().single();
 
-        assertThat(dataEnvelopes.size(), is(2));
-        assertThat(dataEnvelopes, hasItem(new DataEnvelope(dataset.getSource(), one)));
-        assertThat(dataEnvelopes, hasItem(new DataEnvelope(dataset.getSource(), two)));
-    }
+    assertThat(dataEnvelopes.size(), is(2));
+    assertThat(dataEnvelopes, hasItem(new DataEnvelope(dataset.getSource(), one)));
+    assertThat(dataEnvelopes, hasItem(new DataEnvelope(dataset.getSource(), two)));
+  }
 }

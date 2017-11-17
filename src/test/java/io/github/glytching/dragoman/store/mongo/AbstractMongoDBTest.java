@@ -49,113 +49,113 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public abstract class AbstractMongoDBTest {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractMongoDBTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(AbstractMongoDBTest.class);
 
-    private static final AtomicInteger nextId = new AtomicInteger();
+  private static final AtomicInteger nextId = new AtomicInteger();
 
-    private static final MongodStarter starter =
-            MongodStarter.getInstance(
-                    new RuntimeConfigBuilder()
-                            .defaults(Command.MongoD)
-                            .processOutput(ProcessOutput.getDefaultInstanceSilent())
-                            .build());
+  private static final MongodStarter starter =
+      MongodStarter.getInstance(
+          new RuntimeConfigBuilder()
+              .defaults(Command.MongoD)
+              .processOutput(ProcessOutput.getDefaultInstanceSilent())
+              .build());
 
-    private static MongodExecutable mongodExe;
-    private static MongodProcess mongod;
-    private static int port;
-    private static MongodForTestsFactory factory;
+  private static MongodExecutable mongodExe;
+  private static MongodProcess mongod;
+  private static int port;
+  private static MongodForTestsFactory factory;
 
-    private MongoClient mongoClient;
+  private MongoClient mongoClient;
 
-    //
-    // we create a single embedded mongo instance for all tests because we do not want to incur the
-    // creation cost
-    // _per test_
-    //
+  //
+  // we create a single embedded mongo instance for all tests because we do not want to incur the
+  // creation cost
+  // _per test_
+  //
 
-    @BeforeAll
-    public static void start() throws Exception {
-        StopWatch stopWatch = StopWatch.startForSplits();
-        port = Network.getFreeServerPort();
-        mongodExe =
-                starter.prepare(
-                        new MongodConfigBuilder()
+  @BeforeAll
+  public static void start() throws Exception {
+    StopWatch stopWatch = StopWatch.startForSplits();
+    port = Network.getFreeServerPort();
+    mongodExe =
+        starter.prepare(
+            new MongodConfigBuilder()
                 .version(Version.Main.DEVELOPMENT)
                 .net(new Net("localhost", port, Network.localhostIsIPv6()))
                 .build());
-        long prepareElapsedTime = stopWatch.split();
-        mongod = mongodExe.start();
-        long startElapsedTime = stopWatch.split();
-        logger.info(
-                "Started embedded Mongo in {}ms (prepareElapsedTime={}ms, startElapsedTime={}ms)",
-                stopWatch.stop(),
-                prepareElapsedTime,
-                startElapsedTime);
+    long prepareElapsedTime = stopWatch.split();
+    mongod = mongodExe.start();
+    long startElapsedTime = stopWatch.split();
+    logger.info(
+        "Started embedded Mongo in {}ms (prepareElapsedTime={}ms, startElapsedTime={}ms)",
+        stopWatch.stop(),
+        prepareElapsedTime,
+        startElapsedTime);
+  }
+
+  @AfterAll
+  public static void stop() {
+    StopWatch stopWatch = StopWatch.startForSplits();
+    try {
+      logger.info("Stopping embedded mongod");
+      mongod.stop();
+      long stopMongodElapsedTime = stopWatch.split();
+      mongodExe.stop();
+      long stopMongoExeElapsedTime = stopWatch.split();
+      logger.info(
+          "Stopped embedded Mongo in {}ms (stopMongodElapsedTime={}ms, stopMongoExeElapsedTime={}ms)",
+          stopWatch.stop(),
+          stopMongodElapsedTime,
+          stopMongoExeElapsedTime);
+    } catch (Exception ex) {
+      logger.warn("Failed to stop embedded mongod!", ex);
+    }
+  }
+
+  protected MongoClient getMongoClient() {
+    if (mongoClient == null) {
+      mongoClient = MongoClients.create("mongodb://localhost:" + port);
+    }
+    return mongoClient;
+  }
+
+  protected MongoStorageCoordinates seed(Document... documents) {
+    String databaseName = createDatabaseName();
+    String collectionName = createCollectionName();
+    MongoCollection<Document> mongoCollection =
+        getMongoClient().getDatabase(databaseName).getCollection(collectionName);
+
+    mongoCollection
+        .insertMany(Lists.newArrayList(documents))
+        .timeout(10, SECONDS)
+        .toBlocking()
+        .single();
+
+    for (Document document : documents) {
+      document.remove("_id");
     }
 
-    @AfterAll
-    public static void stop() {
-        StopWatch stopWatch = StopWatch.startForSplits();
-        try {
-            logger.info("Stopping embedded mongod");
-            mongod.stop();
-            long stopMongodElapsedTime = stopWatch.split();
-            mongodExe.stop();
-            long stopMongoExeElapsedTime = stopWatch.split();
-            logger.info(
-                    "Stopped embedded Mongo in {}ms (stopMongodElapsedTime={}ms, stopMongoExeElapsedTime={}ms)",
-                    stopWatch.stop(),
-                    stopMongodElapsedTime,
-                    stopMongoExeElapsedTime);
-        } catch (Exception ex) {
-            logger.warn("Failed to stop embedded mongod!", ex);
-        }
-    }
+    assertThat(
+        "Failed to seed the given documents!",
+        mongoCollection.count().toBlocking().single(),
+        is((long) documents.length));
 
-    protected MongoClient getMongoClient() {
-        if (mongoClient == null) {
-            mongoClient = MongoClients.create("mongodb://localhost:" + port);
-        }
-        return mongoClient;
-    }
+    return new MongoStorageCoordinates(databaseName, collectionName);
+  }
 
-    protected MongoStorageCoordinates seed(Document... documents) {
-        String databaseName = createDatabaseName();
-        String collectionName = createCollectionName();
-        MongoCollection<Document> mongoCollection =
-                getMongoClient().getDatabase(databaseName).getCollection(collectionName);
+  protected Date toDate(LocalDateTime localDateTime) {
+    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
+  }
 
-        mongoCollection
-                .insertMany(Lists.newArrayList(documents))
-                .timeout(10, SECONDS)
-                .toBlocking()
-                .single();
+  protected Date toDate(LocalDate localDate) {
+    return Date.from(localDate.atStartOfDay().toInstant(ZoneOffset.UTC));
+  }
 
-        for (Document document : documents) {
-            document.remove("_id");
-        }
+  private String createDatabaseName() {
+    return "database" + nextId.getAndIncrement();
+  }
 
-        assertThat(
-                "Failed to seed the given documents!",
-                mongoCollection.count().toBlocking().single(),
-                is((long) documents.length));
-
-        return new MongoStorageCoordinates(databaseName, collectionName);
-    }
-
-    protected Date toDate(LocalDateTime localDateTime) {
-        return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
-    }
-
-    protected Date toDate(LocalDate localDate) {
-        return Date.from(localDate.atStartOfDay().toInstant(ZoneOffset.UTC));
-    }
-
-    private String createDatabaseName() {
-        return "database" + nextId.getAndIncrement();
-    }
-
-    private String createCollectionName() {
-        return "collection" + nextId.getAndIncrement();
-    }
+  private String createCollectionName() {
+    return "collection" + nextId.getAndIncrement();
+  }
 }

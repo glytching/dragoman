@@ -22,8 +22,8 @@ import io.github.glytching.dragoman.store.mongo.dataset.MongoDatasetDao;
 
 public class DatasetModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        bind(DatasetDao.class).to(MongoDatasetDao.class);
-    }
+  @Override
+  protected void configure() {
+    bind(DatasetDao.class).to(MongoDatasetDao.class);
+  }
 }

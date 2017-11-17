@@ -45,110 +45,110 @@ import static java.lang.String.format;
  * {@link HandlebarsTemplateEngine} does not expose a hook for overriding the loader.
  */
 public class ClasspathAwareHandlebarsTemplateEngine extends HandlebarsTemplateEngineImpl {
-    private static final Logger logger =
-            LoggerFactory.getLogger(ClasspathAwareHandlebarsTemplateEngine.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(ClasspathAwareHandlebarsTemplateEngine.class);
 
-    private final Handlebars handlebars;
-    private final Loader loader = new Loader();
+  private final Handlebars handlebars;
+  private final Loader loader = new Loader();
 
-    public ClasspathAwareHandlebarsTemplateEngine() {
-        super();
-        handlebars = new Handlebars(loader);
+  public ClasspathAwareHandlebarsTemplateEngine() {
+    super();
+    handlebars = new Handlebars(loader);
+  }
+
+  @Override
+  public void render(
+      RoutingContext context, String templateFileName, Handler<AsyncResult<Buffer>> handler) {
+    try {
+      Template template = cache.get(templateFileName);
+      if (template == null) {
+        synchronized (this) {
+          loader.setVertx(context.vertx());
+          template = handlebars.compile(templateFileName);
+          cache.put(templateFileName, template);
+        }
+      }
+      Context engineContext = Context.newBuilder(context.data()).resolver(getResolvers()).build();
+      handler.handle(Future.succeededFuture(Buffer.buffer(template.apply(engineContext))));
+    } catch (Exception ex) {
+      handler.handle(Future.failedFuture(ex));
+    }
+  }
+
+  private class Loader implements TemplateLoader {
+
+    private Vertx vertx;
+
+    void setVertx(Vertx vertx) {
+      this.vertx = vertx;
     }
 
     @Override
-    public void render(
-            RoutingContext context, String templateFileName, Handler<AsyncResult<Buffer>> handler) {
-        try {
-            Template template = cache.get(templateFileName);
-            if (template == null) {
-                synchronized (this) {
-                    loader.setVertx(context.vertx());
-                    template = handlebars.compile(templateFileName);
-                    cache.put(templateFileName, template);
-                }
-            }
-            Context engineContext = Context.newBuilder(context.data()).resolver(getResolvers()).build();
-            handler.handle(Future.succeededFuture(Buffer.buffer(template.apply(engineContext))));
-        } catch (Exception ex) {
-            handler.handle(Future.failedFuture(ex));
+    public TemplateSource sourceAt(String location) throws IOException {
+      String loc = adjustLocation(location);
+
+      logger.debug("Loading template from: {}", loc);
+
+      AtomicReference<String> templ = new AtomicReference<>();
+
+      try {
+        // find the template on the classpath
+        Buffer buffer = Utils.readResourceToBuffer(loc);
+        if (buffer != null) {
+          templ.set(buffer.toString());
         }
+      } catch (Exception ex) {
+        logger.warn(
+            format("Cannot find template: %s on classpath due to: %s!", loc, ex.getMessage()), ex);
+      }
+
+      if (templ.get() == null) {
+        throw new IllegalArgumentException("Cannot find resource " + loc);
+      }
+
+      long lastMod = System.currentTimeMillis();
+
+      return new TemplateSource() {
+        @Override
+        public String content() throws IOException {
+          return templ.get();
+        }
+
+        @Override
+        public String filename() {
+          return loc;
+        }
+
+        @Override
+        public long lastModified() {
+          return lastMod;
+        }
+      };
     }
 
-    private class Loader implements TemplateLoader {
-
-        private Vertx vertx;
-
-        void setVertx(Vertx vertx) {
-            this.vertx = vertx;
-        }
-
-        @Override
-        public TemplateSource sourceAt(String location) throws IOException {
-            String loc = adjustLocation(location);
-
-            logger.debug("Loading template from: {}", loc);
-
-            AtomicReference<String> templ = new AtomicReference<>();
-
-            try {
-                // find the template on the classpath
-                Buffer buffer = Utils.readResourceToBuffer(loc);
-                if (buffer != null) {
-                    templ.set(buffer.toString());
-                }
-            } catch (Exception ex) {
-                logger.warn(
-                        format("Cannot find template: %s on classpath due to: %s!", loc, ex.getMessage()), ex);
-            }
-
-            if (templ.get() == null) {
-                throw new IllegalArgumentException("Cannot find resource " + loc);
-            }
-
-            long lastMod = System.currentTimeMillis();
-
-            return new TemplateSource() {
-                @Override
-                public String content() throws IOException {
-                    return templ.get();
-                }
-
-                @Override
-                public String filename() {
-                    return loc;
-                }
-
-                @Override
-                public long lastModified() {
-                    return lastMod;
-                }
-            };
-        }
-
-        @Override
-        public String resolve(String location) {
-            return location;
-        }
-
-        @Override
-        public String getPrefix() {
-            return null;
-        }
-
-        @Override
-        public void setPrefix(String prefix) {
-            // does nothing since TemplateLoader handles the prefix
-        }
-
-        @Override
-        public String getSuffix() {
-            return extension;
-        }
-
-        @Override
-        public void setSuffix(String suffix) {
-            extension = suffix;
-        }
+    @Override
+    public String resolve(String location) {
+      return location;
     }
+
+    @Override
+    public String getPrefix() {
+      return null;
+    }
+
+    @Override
+    public void setPrefix(String prefix) {
+      // does nothing since TemplateLoader handles the prefix
+    }
+
+    @Override
+    public String getSuffix() {
+      return extension;
+    }
+
+    @Override
+    public void setSuffix(String suffix) {
+      extension = suffix;
+    }
+  }
 }

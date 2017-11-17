@@ -22,39 +22,35 @@ package io.github.glytching.dragoman.http;
  */
 public interface HttpClient {
 
-    /**
-     * Executes a {@code get} against the goven {@code url}.
-     *
-     * @param url the url to be addressed
-     *
-     * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
-     */
-    HttpResponse get(String url);
+  /**
+   * Executes a {@code get} against the goven {@code url}.
+   *
+   * @param url the url to be addressed
+   * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
+   */
+  HttpResponse get(String url);
 
-    /**
-     * Executes a {@code delete} against the goven {@code url}.
-     *
-     * @param url the url to be addressed
-     *
-     * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
-     */
-    HttpResponse delete(String url);
+  /**
+   * Executes a {@code delete} against the goven {@code url}.
+   *
+   * @param url the url to be addressed
+   * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
+   */
+  HttpResponse delete(String url);
 
-    /**
-     * Executes a {@code post} against the goven {@code url}.
-     *
-     * @param url the url to be addressed
-     *
-     * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
-     */
-    HttpResponse post(String url, String json);
+  /**
+   * Executes a {@code post} against the goven {@code url}.
+   *
+   * @param url the url to be addressed
+   * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
+   */
+  HttpResponse post(String url, String json);
 
-    /**
-     * Executes a {@code put} against the goven {@code url}.
-     *
-     * @param url the url to be addressed
-     *
-     * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
-     */
-    HttpResponse put(String url, String json);
+  /**
+   * Executes a {@code put} against the goven {@code url}.
+   *
+   * @param url the url to be addressed
+   * @return a {@link HttpResponse} wrapping the details from the raw HTTP response
+   */
+  HttpResponse put(String url, String json);
 }

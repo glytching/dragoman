@@ -21,11 +21,11 @@ package io.github.glytching.dragoman.ql;
  * arise when parsing SQL expressions.
  */
 public class SqlParserException extends RuntimeException {
-    public SqlParserException(String message) {
-        super(message);
-    }
+  public SqlParserException(String message) {
+    super(message);
+  }
 
-    public SqlParserException(String message, Exception exception) {
-        super(message, exception);
-    }
+  public SqlParserException(String message, Exception exception) {
+    super(message, exception);
+  }
 }

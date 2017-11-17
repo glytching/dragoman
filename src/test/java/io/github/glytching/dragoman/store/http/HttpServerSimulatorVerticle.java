@@ -30,53 +30,53 @@ import java.util.List;
 import java.util.Map;
 
 public class HttpServerSimulatorVerticle extends AbstractVerticle {
-    public static final String QUERY_ADDRESS = "/simulator";
-    private static final Logger logger = LoggerFactory.getLogger(HttpServerSimulatorVerticle.class);
-    private final HttpDataProvider httpDataProvider;
-    private final ObjectMapper objectMapper;
+  public static final String QUERY_ADDRESS = "/simulator";
+  private static final Logger logger = LoggerFactory.getLogger(HttpServerSimulatorVerticle.class);
+  private final HttpDataProvider httpDataProvider;
+  private final ObjectMapper objectMapper;
 
-    public HttpServerSimulatorVerticle(HttpDataProvider httpDataProvider) {
-        this.httpDataProvider = httpDataProvider;
-        this.objectMapper = createObjectMapper();
+  public HttpServerSimulatorVerticle(HttpDataProvider httpDataProvider) {
+    this.httpDataProvider = httpDataProvider;
+    this.objectMapper = createObjectMapper();
+  }
+
+  @Override
+  public void stop() throws Exception {
+    vertx.close();
+  }
+
+  @Override
+  public void start() {
+    Router router = Router.router(vertx);
+
+    router.get(QUERY_ADDRESS).blockingHandler(this::getAll);
+
+    vertx
+        .createHttpServer()
+        .requestHandler(router::accept)
+        .listen(config().getInteger("http.port", 8080));
+  }
+
+  private void getAll(RoutingContext routingContext) {
+    WebServerUtils.jsonContentType(routingContext.response())
+        .end(serialise(httpDataProvider.getAll()));
+  }
+
+  private String serialise(List<Map<String, Object>> value) {
+    logger.info("Serialising HTTP server simulator response");
+
+    try {
+      return objectMapper.writeValueAsString(value);
+    } catch (JsonProcessingException ex) {
+      throw new RuntimeException("Failed to serialise response!", ex);
     }
+  }
 
-    @Override
-    public void stop() throws Exception {
-        vertx.close();
-    }
+  private ObjectMapper createObjectMapper() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
 
-    @Override
-    public void start() {
-        Router router = Router.router(vertx);
-
-        router.get(QUERY_ADDRESS).blockingHandler(this::getAll);
-
-        vertx
-                .createHttpServer()
-                .requestHandler(router::accept)
-                .listen(config().getInteger("http.port", 8080));
-    }
-
-    private void getAll(RoutingContext routingContext) {
-        WebServerUtils.jsonContentType(routingContext.response())
-                .end(serialise(httpDataProvider.getAll()));
-    }
-
-    private String serialise(List<Map<String, Object>> value) {
-        logger.info("Serialising HTTP server simulator response");
-
-        try {
-            return objectMapper.writeValueAsString(value);
-        } catch (JsonProcessingException ex) {
-            throw new RuntimeException("Failed to serialise response!", ex);
-        }
-    }
-
-    private ObjectMapper createObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
-
-        return objectMapper;
-    }
+    return objectMapper;
+  }
 }

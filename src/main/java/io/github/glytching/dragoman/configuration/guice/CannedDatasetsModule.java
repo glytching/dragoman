@@ -24,9 +24,9 @@ import io.github.glytching.dragoman.store.mongo.canned.MongoCannedDatasetsWriter
 
 public class CannedDatasetsModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        bind(CannedDatasetsLoader.class).to(CannedDatasetsLoaderImpl.class);
-        bind(CannedDatasetsWriter.class).to(MongoCannedDatasetsWriter.class);
-    }
+  @Override
+  protected void configure() {
+    bind(CannedDatasetsLoader.class).to(CannedDatasetsLoaderImpl.class);
+    bind(CannedDatasetsWriter.class).to(MongoCannedDatasetsWriter.class);
+  }
 }

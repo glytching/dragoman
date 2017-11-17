@@ -21,17 +21,15 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 
-/**
- * A simple {@link RestResource} which returns {@code pong} when invoked.
- */
+/** A simple {@link RestResource} which returns {@code pong} when invoked. */
 public class PingResource implements RestResource {
 
-    @Override
-    public void configure(Vertx vertx, HttpServer httpServer, Router router) {
-        router
-                .get(WebServerUtils.withApplicationName("ping"))
-                .handler(
-                        routingContext ->
-                                WebServerUtils.plainContentType(routingContext.response()).end("pong"));
-    }
+  @Override
+  public void configure(Vertx vertx, HttpServer httpServer, Router router) {
+    router
+        .get(WebServerUtils.withApplicationName("ping"))
+        .handler(
+            routingContext ->
+                WebServerUtils.plainContentType(routingContext.response()).end("pong"));
+  }
 }

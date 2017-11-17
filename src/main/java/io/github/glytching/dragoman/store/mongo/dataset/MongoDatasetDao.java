@@ -37,83 +37,81 @@ import javax.inject.Inject;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-/**
- * An implementation of {@link DatasetDao} for a MongoDB dataset store.
- */
+/** An implementation of {@link DatasetDao} for a MongoDB dataset store. */
 public class MongoDatasetDao implements DatasetDao {
 
-    private final MongoProvider mongoProvider;
-    private final DocumentTransformer documentTransformer;
-    private final MongoStorageCoordinates storageCoordinates;
+  private final MongoProvider mongoProvider;
+  private final DocumentTransformer documentTransformer;
+  private final MongoStorageCoordinates storageCoordinates;
 
-    @Inject
-    public MongoDatasetDao(
-            MongoProvider mongoProvider,
-            DocumentTransformer documentTransformer,
-            ApplicationConfiguration configuration) {
-        this.mongoProvider = mongoProvider;
-        this.documentTransformer = documentTransformer;
-        this.storageCoordinates =
-                new MongoStorageCoordinates(
-                        configuration.getDatabaseName(), configuration.getDatasetStorageName());
+  @Inject
+  public MongoDatasetDao(
+      MongoProvider mongoProvider,
+      DocumentTransformer documentTransformer,
+      ApplicationConfiguration configuration) {
+    this.mongoProvider = mongoProvider;
+    this.documentTransformer = documentTransformer;
+    this.storageCoordinates =
+        new MongoStorageCoordinates(
+            configuration.getDatabaseName(), configuration.getDatasetStorageName());
+  }
+
+  @Override
+  public Observable<Dataset> getAll(String userName) {
+    FindObservable<Document> findObservable = getCollection().find(Filters.eq("owner", userName));
+
+    return findObservable.toObservable().map(toDataset());
+  }
+
+  @Override
+  public Dataset get(String id) {
+    FindObservable<Document> findObservable = getCollection().find(Filters.eq("id", id)).limit(1);
+
+    return findObservable.first().map(toDataset()).toBlocking().singleOrDefault(null);
+  }
+
+  @Override
+  public boolean exists(String id) {
+    Observable<Long> count =
+        getCollection().count(Filters.eq("id", id), new CountOptions().limit(1));
+
+    return count.toBlocking().single() > 0;
+  }
+
+  @Override
+  public long delete(String id) {
+    Observable<Document> deleted = getCollection().findOneAndDelete(Filters.eq("id", id));
+
+    Document document = deleted.toBlocking().singleOrDefault(null);
+
+    return document != null ? 1 : 0;
+  }
+
+  @Override
+  public Dataset write(Dataset dataset) {
+    // we populate this on first write and retain it thereafter
+    if (isBlank(dataset.getId())) {
+      dataset.setId(ObjectId.get().toString());
     }
 
-    @Override
-    public Observable<Dataset> getAll(String userName) {
-        FindObservable<Document> findObservable = getCollection().find(Filters.eq("owner", userName));
+    Observable<Document> observable =
+        getCollection()
+            .findOneAndReplace(
+                Filters.eq("id", dataset.getId()),
+                documentTransformer.transform(dataset),
+                new FindOneAndReplaceOptions().upsert(true).returnDocument(ReturnDocument.AFTER));
 
-        return findObservable.toObservable().map(toDataset());
-    }
+    return documentTransformer.transform(Dataset.class, observable.toBlocking().single());
+  }
 
-    @Override
-    public Dataset get(String id) {
-        FindObservable<Document> findObservable = getCollection().find(Filters.eq("id", id)).limit(1);
+  private Func1<Document, Dataset> toDataset() {
+    return document -> documentTransformer.transform(Dataset.class, document);
+  }
 
-        return findObservable.first().map(toDataset()).toBlocking().singleOrDefault(null);
-    }
-
-    @Override
-    public boolean exists(String id) {
-        Observable<Long> count =
-                getCollection().count(Filters.eq("id", id), new CountOptions().limit(1));
-
-        return count.toBlocking().single() > 0;
-    }
-
-    @Override
-    public long delete(String id) {
-        Observable<Document> deleted = getCollection().findOneAndDelete(Filters.eq("id", id));
-
-        Document document = deleted.toBlocking().singleOrDefault(null);
-
-        return document != null ? 1 : 0;
-    }
-
-    @Override
-    public Dataset write(Dataset dataset) {
-        // we populate this on first write and retain it thereafter
-        if (isBlank(dataset.getId())) {
-            dataset.setId(ObjectId.get().toString());
-        }
-
-        Observable<Document> observable =
-                getCollection()
-                        .findOneAndReplace(
-                                Filters.eq("id", dataset.getId()),
-                                documentTransformer.transform(dataset),
-                                new FindOneAndReplaceOptions().upsert(true).returnDocument(ReturnDocument.AFTER));
-
-        return documentTransformer.transform(Dataset.class, observable.toBlocking().single());
-    }
-
-    private Func1<Document, Dataset> toDataset() {
-        return document -> documentTransformer.transform(Dataset.class, document);
-    }
-
-    private MongoCollection<Document> getCollection() {
-        return mongoProvider
-                .provide()
-                .getDatabase(storageCoordinates.getDatabaseName())
-                .getCollection(storageCoordinates.getCollectionName());
-    }
+  private MongoCollection<Document> getCollection() {
+    return mongoProvider
+        .provide()
+        .getDatabase(storageCoordinates.getDatabaseName())
+        .getCollection(storageCoordinates.getCollectionName());
+  }
 }

@@ -22,8 +22,8 @@ import io.github.glytching.dragoman.store.mongo.authentication.MongoAuthenticati
 
 public class AuthenticationModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        bind(AuthenticationDao.class).to(MongoAuthenticationDao.class);
-    }
+  @Override
+  protected void configure() {
+    bind(AuthenticationDao.class).to(MongoAuthenticationDao.class);
+  }
 }

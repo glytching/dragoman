@@ -22,8 +22,8 @@ import io.github.glytching.dragoman.reader.ReaderImpl;
 
 public class ReaderModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        bind(Reader.class).to(ReaderImpl.class);
-    }
+  @Override
+  protected void configure() {
+    bind(Reader.class).to(ReaderImpl.class);
+  }
 }

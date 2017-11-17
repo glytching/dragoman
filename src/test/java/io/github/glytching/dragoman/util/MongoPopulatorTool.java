@@ -32,24 +32,24 @@ import java.util.Date;
  * subscription feature for MongoDB datasets.
  */
 public class MongoPopulatorTool {
-    private static final Logger logger = LoggerFactory.getLogger(MongoPopulatorTool.class);
+  private static final Logger logger = LoggerFactory.getLogger(MongoPopulatorTool.class);
 
-    //  quick tool which writes data into a named db.coll in MongoDB
-    private final String databaseName = "dragoman";
-    private final String sample = "sample5";
+  //  quick tool which writes data into a named db.coll in MongoDB
+  private final String databaseName = "dragoman";
+  private final String sample = "sample5";
 
-    @Test
-    public void populate() {
-        int simulationCount = 1;
+  @Test
+  public void populate() {
+    int simulationCount = 1;
 
-        MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
+    MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
 
-        MongoDatabase database = mongoClient.getDatabase(databaseName);
-        MongoCollection<Document> collection = database.getCollection(sample);
+    MongoDatabase database = mongoClient.getDatabase(databaseName);
+    MongoCollection<Document> collection = database.getCollection(sample);
 
-        for (int i = 0; i < simulationCount; i++) {
-            Document d = new Document("name", "Person " + i).append("updatedAt", new Date());
-            collection.insertOne(d).toList().toBlocking().single();
-        }
+    for (int i = 0; i < simulationCount; i++) {
+      Document d = new Document("name", "Person " + i).append("updatedAt", new Date());
+      collection.insertOne(d).toList().toBlocking().single();
     }
+  }
 }

@@ -24,13 +24,12 @@ import java.util.List;
  */
 public interface CannedDatasetsLoader {
 
-    /**
-     * Load a collection of {@link CannedDataset} instances.
-     *
-     * @param rootAddress the root address for the serialised representations of the {@link
-     * CannedDataset} instances
-     *
-     * @return deserialised {@link CannedDataset} representations
-     */
-    List<CannedDataset> load(String rootAddress);
+  /**
+   * Load a collection of {@link CannedDataset} instances.
+   *
+   * @param rootAddress the root address for the serialised representations of the {@link
+   *     CannedDataset} instances
+   * @return deserialised {@link CannedDataset} representations
+   */
+  List<CannedDataset> load(String rootAddress);
 }

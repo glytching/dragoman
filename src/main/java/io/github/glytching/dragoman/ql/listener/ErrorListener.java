@@ -30,32 +30,32 @@ import java.util.Optional;
  * Implementation of the ANTLR error listener hook. Gathers and reports failures in a parser call.
  */
 public class ErrorListener extends BaseErrorListener {
-    private final List<String> errorMessages = Lists.newArrayList();
+  private final List<String> errorMessages = Lists.newArrayList();
 
-    @Override
-    public void syntaxError(
-            Recognizer<?, ?> recognizer,
-            Object offendingSymbol,
-            int lineNumber,
-            int positionInLine,
-            String message,
-            RecognitionException e) {
-        errorMessages.add(asMessage(lineNumber, positionInLine, message));
-    }
+  @Override
+  public void syntaxError(
+      Recognizer<?, ?> recognizer,
+      Object offendingSymbol,
+      int lineNumber,
+      int positionInLine,
+      String message,
+      RecognitionException e) {
+    errorMessages.add(asMessage(lineNumber, positionInLine, message));
+  }
 
-    private String asMessage(int lineNumber, int positionInLine, String message) {
-        return "Line: " + lineNumber + ", Position: " + positionInLine + ": " + message;
-    }
+  private String asMessage(int lineNumber, int positionInLine, String message) {
+    return "Line: " + lineNumber + ", Position: " + positionInLine + ": " + message;
+  }
 
-    public Optional<SqlParserException> getException() {
-        if (!errorMessages.isEmpty()) {
-            Joiner joiner = Joiner.on(", ").skipNulls();
-            return Optional.of(new SqlParserException(joiner.join(errorMessages)));
-        }
-        return Optional.empty();
+  public Optional<SqlParserException> getException() {
+    if (!errorMessages.isEmpty()) {
+      Joiner joiner = Joiner.on(", ").skipNulls();
+      return Optional.of(new SqlParserException(joiner.join(errorMessages)));
     }
+    return Optional.empty();
+  }
 
-    public boolean hasErrors() {
-        return !errorMessages.isEmpty();
-    }
+  public boolean hasErrors() {
+    return !errorMessages.isEmpty();
+  }
 }

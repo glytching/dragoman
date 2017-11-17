@@ -35,14 +35,13 @@ import java.util.Map;
  */
 public interface HttpClientAdapter {
 
-    /**
-     * Read data from the given {@code url} and map it to an observable.
-     *
-     * @param url the HTTP address from which to read
-     * @param responsePostProcessor a processor to be applied to the raw HTTP response before
-     * transforming into an {@link Observable}
-     *
-     * @return an observable over the deserialised HTTP response
-     */
-    Observable<Map<String, Object>> read(String url, ResponsePostProcessor responsePostProcessor);
+  /**
+   * Read data from the given {@code url} and map it to an observable.
+   *
+   * @param url the HTTP address from which to read
+   * @param responsePostProcessor a processor to be applied to the raw HTTP response before
+   *     transforming into an {@link Observable}
+   * @return an observable over the deserialised HTTP response
+   */
+  Observable<Map<String, Object>> read(String url, ResponsePostProcessor responsePostProcessor);
 }

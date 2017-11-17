@@ -19,26 +19,24 @@ package io.github.glytching.dragoman.util;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-/**
- * Utility class for network related code.
- */
+/** Utility class for network related code. */
 public class NetworkUtils {
 
-    /**
-     * Gets a free port. Note: although the returned port is free immediately after this method
-     * completes there is no guarantee that it will remain free so callers are advised to use it as
-     * soon as posisble after getting it.
-     *
-     * @return a free port
-     */
-    public static int getFreePort() {
-        try {
-            ServerSocket socket = new ServerSocket(0);
-            int port = socket.getLocalPort();
-            socket.close();
-            return port;
-        } catch (IOException ex) {
-            throw new RuntimeException("Failed to get free port!", ex);
-        }
+  /**
+   * Gets a free port. Note: although the returned port is free immediately after this method
+   * completes there is no guarantee that it will remain free so callers are advised to use it as
+   * soon as posisble after getting it.
+   *
+   * @return a free port
+   */
+  public static int getFreePort() {
+    try {
+      ServerSocket socket = new ServerSocket(0);
+      int port = socket.getLocalPort();
+      socket.close();
+      return port;
+    } catch (IOException ex) {
+      throw new RuntimeException("Failed to get free port!", ex);
     }
+  }
 }

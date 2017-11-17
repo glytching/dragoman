@@ -34,37 +34,30 @@ import static io.vertx.core.logging.LoggerFactory.LOGGER_DELEGATE_FACTORY_CLASS_
  * {@code Guice} is our DI mechanism this class is very much aware of those technologies.
  */
 public class Dragoman {
-    private static final Logger logger = LoggerFactory.getLogger(Dragoman.class);
+  private static final Logger logger = LoggerFactory.getLogger(Dragoman.class);
 
-    @Inject
-    private Vertx vertx;
-    @Inject
-    private DeploymentOptions deploymentOptions;
-    @Inject
-    private DragomanVerticle dragomanVerticle;
+  @Inject private Vertx vertx;
+  @Inject private DeploymentOptions deploymentOptions;
+  @Inject private DragomanVerticle dragomanVerticle;
 
-    /**
-     * Instances the Guice injector, passing in the main configuration module.
-     */
-    private Dragoman() {
-        Injector injector = Guice.createInjector(new DragomanModule());
-        injector.injectMembers(this);
-    }
+  /** Instances the Guice injector, passing in the main configuration module. */
+  private Dragoman() {
+    Injector injector = Guice.createInjector(new DragomanModule());
+    injector.injectMembers(this);
+  }
 
-    public static void main(String[] args) {
-        // establish the bridge from vert.x JUL -> SLF4J -> Logback
-        System.setProperty(LOGGER_DELEGATE_FACTORY_CLASS_NAME, SLF4JLogDelegateFactory.class.getName());
+  public static void main(String[] args) {
+    // establish the bridge from vert.x JUL -> SLF4J -> Logback
+    System.setProperty(LOGGER_DELEGATE_FACTORY_CLASS_NAME, SLF4JLogDelegateFactory.class.getName());
 
-        new Dragoman().start();
-    }
+    new Dragoman().start();
+  }
 
-    /**
-     * Deploys the main verticle.
-     */
-    private void start() {
-        vertx.deployVerticle(
-                dragomanVerticle,
-                deploymentOptions,
-                stringAsyncResult -> logger.info("Started application: {}", stringAsyncResult.result()));
-    }
+  /** Deploys the main verticle. */
+  private void start() {
+    vertx.deployVerticle(
+        dragomanVerticle,
+        deploymentOptions,
+        stringAsyncResult -> logger.info("Started application: {}", stringAsyncResult.result()));
+  }
 }

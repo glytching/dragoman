@@ -33,108 +33,108 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CannedDatasetsLoaderTest {
 
-    //    @Rule
-    //    public final ExpectedException expectedException = ExpectedException.none();
+  //    @Rule
+  //    public final ExpectedException expectedException = ExpectedException.none();
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private final ObjectMapper mapper = new ObjectMapper();
+  @SuppressWarnings("FieldCanBeLocal")
+  private final ObjectMapper mapper = new ObjectMapper();
 
-    private CannedDatasetsLoaderImpl loader;
+  private CannedDatasetsLoaderImpl loader;
 
-    @BeforeEach
-    public void setUp() {
-        loader = new CannedDatasetsLoaderImpl(new JsonTransformer(mapper));
+  @BeforeEach
+  public void setUp() {
+    loader = new CannedDatasetsLoaderImpl(new JsonTransformer(mapper));
+  }
+
+  @Test
+  public void canLoadCannedDatasets() {
+    List<CannedDataset> actual = loader.load("/cannedDatasets");
+
+    assertThat(actual.size(), is(2));
+
+    Map<String, CannedDataset> byName =
+        actual
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    cannedDataset ->
+                        cannedDataset.getDataset() != null
+                            ? cannedDataset.getDataset().getName()
+                            : "UNKNOWN",
+                    Function.identity()));
+
+    assertThat(byName, hasKey("This"));
+    Dataset thisDataset = byName.get("This").getDataset();
+    assertThat(thisDataset.getOwner(), is("Me"));
+    assertThat(thisDataset.getSource(), is("a:b"));
+    assertThat(thisDataset.getSubscriptionControlField(), is("updatedAt"));
+    List<Map<String, Object>> theseDocuments = byName.get("This").getDocuments();
+    assertThat(theseDocuments, hasSize(2));
+    for (Map<String, Object> d : theseDocuments) {
+      assertThat(d, hasKey(thisDataset.getSubscriptionControlField()));
     }
 
-    @Test
-    public void canLoadCannedDatasets() {
-        List<CannedDataset> actual = loader.load("/cannedDatasets");
+    assertThat(byName, hasKey("That"));
+    Dataset thatDataset = byName.get("That").getDataset();
+    assertThat(thatDataset.getOwner(), is("You"));
+    assertThat(thatDataset.getSource(), is("http://host:1234/some/end/point"));
+    assertThat(thatDataset.getSubscriptionControlField(), is("updatedAt"));
+    assertThat(thatDataset.getSubscriptionControlFieldPattern(), is("L"));
+    assertThat(byName.get("That").getDocuments(), nullValue());
+  }
 
-        assertThat(actual.size(), is(2));
+  @Test
+  public void willNotLoadAnythingIfTheCannedDatasetsDirectoryHasNoTableOfContents() {
+    List<CannedDataset> actual = loader.load("/cannedDatasetWithNoTableOfContents");
 
-        Map<String, CannedDataset> byName =
-                actual
-                        .stream()
-                        .collect(
-                                Collectors.toMap(
-                                        cannedDataset ->
-                                                cannedDataset.getDataset() != null
-                                                        ? cannedDataset.getDataset().getName()
-                                                        : "UNKNOWN",
-                                        Function.identity()));
+    assertThat(actual.size(), is(0));
+  }
 
-        assertThat(byName, hasKey("This"));
-        Dataset thisDataset = byName.get("This").getDataset();
-        assertThat(thisDataset.getOwner(), is("Me"));
-        assertThat(thisDataset.getSource(), is("a:b"));
-        assertThat(thisDataset.getSubscriptionControlField(), is("updatedAt"));
-        List<Map<String, Object>> theseDocuments = byName.get("This").getDocuments();
-        assertThat(theseDocuments, hasSize(2));
-        for (Map<String, Object> d : theseDocuments) {
-            assertThat(d, hasKey(thisDataset.getSubscriptionControlField()));
-        }
+  @Test
+  public void willIgnoreIfTheTableOfContentsRefersToANonExistentCannedDataset() {
+    List<CannedDataset> actual = loader.load("/cannedDatasetWithTableOfContentsButNoDataset");
 
-        assertThat(byName, hasKey("That"));
-        Dataset thatDataset = byName.get("That").getDataset();
-        assertThat(thatDataset.getOwner(), is("You"));
-        assertThat(thatDataset.getSource(), is("http://host:1234/some/end/point"));
-        assertThat(thatDataset.getSubscriptionControlField(), is("updatedAt"));
-        assertThat(thatDataset.getSubscriptionControlFieldPattern(), is("L"));
-        assertThat(byName.get("That").getDocuments(), nullValue());
-    }
+    assertThat(actual.size(), is(0));
+  }
 
-    @Test
-    public void willNotLoadAnythingIfTheCannedDatasetsDirectoryHasNoTableOfContents() {
-        List<CannedDataset> actual = loader.load("/cannedDatasetWithNoTableOfContents");
+  @Test
+  public void willIgnoreAnUnlistedFileInACannedDatasetsDirectory() {
+    List<CannedDataset> actual = loader.load("/cannedDatasetWithUnlistedFile");
 
-        assertThat(actual.size(), is(0));
-    }
+    assertThat(actual.size(), is(1));
 
-    @Test
-    public void willIgnoreIfTheTableOfContentsRefersToANonExistentCannedDataset() {
-        List<CannedDataset> actual = loader.load("/cannedDatasetWithTableOfContentsButNoDataset");
+    Map<String, CannedDataset> byName =
+        actual
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    cannedDataset ->
+                        cannedDataset.getDataset() != null
+                            ? cannedDataset.getDataset().getName()
+                            : "UNKNOWN",
+                    Function.identity()));
 
-        assertThat(actual.size(), is(0));
-    }
+    assertThat(byName, hasKey("This"));
+    Dataset thisDataset = byName.get("This").getDataset();
+    assertThat(thisDataset.getOwner(), is("Me"));
+    assertThat(thisDataset.getSource(), is("http://host:1234/some/end/point"));
+    assertThat(thisDataset.getSubscriptionControlField(), nullValue());
+    assertThat(thisDataset.getSubscriptionControlFieldPattern(), nullValue());
+  }
 
-    @Test
-    public void willIgnoreAnUnlistedFileInACannedDatasetsDirectory() {
-        List<CannedDataset> actual = loader.load("/cannedDatasetWithUnlistedFile");
+  @Test
+  public void cannotReadDodgyDescriptor() {
+    RuntimeException actual =
+        assertThrows(RuntimeException.class, () -> loader.load("/cannedDatasetWithDodgyContent"));
+    assertThat(actual.getMessage(), startsWith("Failed to read files from"));
+  }
 
-        assertThat(actual.size(), is(1));
-
-        Map<String, CannedDataset> byName =
-                actual
-                        .stream()
-                        .collect(
-                                Collectors.toMap(
-                                        cannedDataset ->
-                                                cannedDataset.getDataset() != null
-                                                        ? cannedDataset.getDataset().getName()
-                                                        : "UNKNOWN",
-                                        Function.identity()));
-
-        assertThat(byName, hasKey("This"));
-        Dataset thisDataset = byName.get("This").getDataset();
-        assertThat(thisDataset.getOwner(), is("Me"));
-        assertThat(thisDataset.getSource(), is("http://host:1234/some/end/point"));
-        assertThat(thisDataset.getSubscriptionControlField(), nullValue());
-        assertThat(thisDataset.getSubscriptionControlFieldPattern(), nullValue());
-    }
-
-    @Test
-    public void cannotReadDodgyDescriptor() {
-        RuntimeException actual =
-                assertThrows(RuntimeException.class, () -> loader.load("/cannedDatasetWithDodgyContent"));
-        assertThat(actual.getMessage(), startsWith("Failed to read files from"));
-    }
-
-    @Test
-    public void cannotReadADatasetWhichContainsDocumentsButNoDescriptor() {
-        RuntimeException actual =
-                assertThrows(
-                        RuntimeException.class,
-                        () -> loader.load("/cannedDatasetWithDocumentsButNoDescriptor"));
-        assertThat(actual.getMessage(), startsWith("Failed to read files from"));
-    }
+  @Test
+  public void cannotReadADatasetWhichContainsDocumentsButNoDescriptor() {
+    RuntimeException actual =
+        assertThrows(
+            RuntimeException.class,
+            () -> loader.load("/cannedDatasetWithDocumentsButNoDescriptor"));
+    assertThat(actual.getMessage(), startsWith("Failed to read files from"));
+  }
 }

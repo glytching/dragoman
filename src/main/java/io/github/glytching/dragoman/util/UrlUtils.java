@@ -19,25 +19,22 @@ package io.github.glytching.dragoman.util;
 import org.apache.commons.validator.routines.RegexValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
-/**
- * Utility class for URL related code.
- */
+/** Utility class for URL related code. */
 public class UrlUtils {
 
-    private final UrlValidator urlValidator;
+  private final UrlValidator urlValidator;
 
-    public UrlUtils() {
-        this.urlValidator = new UrlValidator(new RegexValidator(".*"), 0L);
-    }
+  public UrlUtils() {
+    this.urlValidator = new UrlValidator(new RegexValidator(".*"), 0L);
+  }
 
-    /**
-     * Is the given {@code incoming} a valid URL?
-     *
-     * @param incoming a (putative) URL-as-string
-     *
-     * @return true if the {@code incoming} is a valid URL, false otherwise
-     */
-    public boolean isUrl(String incoming) {
-        return urlValidator.isValid(incoming);
-    }
+  /**
+   * Is the given {@code incoming} a valid URL?
+   *
+   * @param incoming a (putative) URL-as-string
+   * @return true if the {@code incoming} is a valid URL, false otherwise
+   */
+  public boolean isUrl(String incoming) {
+    return urlValidator.isValid(incoming);
+  }
 }

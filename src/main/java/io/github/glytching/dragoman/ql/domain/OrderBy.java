@@ -19,39 +19,37 @@ package io.github.glytching.dragoman.ql.domain;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-/**
- * Class representation of an {@code orderBy} expression.
- */
+/** Class representation of an {@code orderBy} expression. */
 public class OrderBy {
-    private final String name;
-    private final boolean ascending;
+  private final String name;
+  private final boolean ascending;
 
-    public OrderBy(String name, boolean ascending) {
-        this.name = name;
-        this.ascending = ascending;
-    }
+  public OrderBy(String name, boolean ascending) {
+    this.name = name;
+    this.ascending = ascending;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public boolean isAscending() {
-        return ascending;
-    }
+  public boolean isAscending() {
+    return ascending;
+  }
 
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
+  @Override
+  public int hashCode() {
+    return HashCodeBuilder.reflectionHashCode(this);
+  }
 
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
-    }
+  @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+  @Override
+  public boolean equals(Object obj) {
+    return EqualsBuilder.reflectionEquals(this, obj);
+  }
 
-    @Override
-    public String toString() {
-        return name + " " + (isAscending() ? "asc" : "desc");
-    }
+  @Override
+  public String toString() {
+    return name + " " + (isAscending() ? "asc" : "desc");
+  }
 }

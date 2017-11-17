@@ -29,46 +29,46 @@ import static io.github.benas.randombeans.api.EnhancedRandom.random;
 
 public class TestFixture {
 
-    public static Dataset anyDataset() {
-        return random(Dataset.class);
-    }
+  public static Dataset anyDataset() {
+    return random(Dataset.class);
+  }
 
-    public static Dataset anyDataset(String user) {
-        Dataset dataset = random(Dataset.class, "user");
-        dataset.setOwner(user);
-        return dataset;
-    }
+  public static Dataset anyDataset(String user) {
+    Dataset dataset = random(Dataset.class, "user");
+    dataset.setOwner(user);
+    return dataset;
+  }
 
-    public static Dataset anyDataset(MongoStorageCoordinates storageCoordinates) {
-        Dataset dataset = random(Dataset.class, "source");
-        dataset.setSource(
-                storageCoordinates.getDatabaseName() + ":" + storageCoordinates.getCollectionName());
-        return dataset;
-    }
+  public static Dataset anyDataset(MongoStorageCoordinates storageCoordinates) {
+    Dataset dataset = random(Dataset.class, "source");
+    dataset.setSource(
+        storageCoordinates.getDatabaseName() + ":" + storageCoordinates.getCollectionName());
+    return dataset;
+  }
 
-    public static Dataset aPersistedDataset() {
-        Dataset dataset = new Dataset(aString(), aString(), aString(), "aSubscriptionControlField", "");
-        dataset.setId(UUID.randomUUID().toString());
-        return dataset;
-    }
+  public static Dataset aPersistedDataset() {
+    Dataset dataset = new Dataset(aString(), aString(), aString(), "aSubscriptionControlField", "");
+    dataset.setId(UUID.randomUUID().toString());
+    return dataset;
+  }
 
-    public static DataEnvelope anyDataEnvelope() {
-        return new DataEnvelope(aString(), anyMap());
-    }
+  public static DataEnvelope anyDataEnvelope() {
+    return new DataEnvelope(aString(), anyMap());
+  }
 
-    public static Document anyDocument() {
-        return new Document(anyMap());
-    }
+  public static Document anyDocument() {
+    return new Document(anyMap());
+  }
 
-    public static Map<String, Object> anyMap() {
-        return new HashMap<String, Object>() {
-            {
-                put("aKey", aString());
-            }
-        };
-    }
+  public static Map<String, Object> anyMap() {
+    return new HashMap<String, Object>() {
+      {
+        put("aKey", aString());
+      }
+    };
+  }
 
-    public static String aString() {
-        return random(String.class);
-    }
+  public static String aString() {
+    return random(String.class);
+  }
 }

@@ -30,13 +30,13 @@ import java.util.List;
  */
 public class MongoOrderByClauseListener extends AbstractOrderByClauseListener<Bson> {
 
-    @Override
-    public Bson get() {
-        BsonDocument orderByObject = new BsonDocument();
-        List<OrderBy> orderBys = getOrderBys();
-        for (OrderBy orderBy : orderBys) {
-            orderByObject.put(orderBy.getName(), new BsonInt32(orderBy.isAscending() ? 1 : -1));
-        }
-        return orderByObject;
+  @Override
+  public Bson get() {
+    BsonDocument orderByObject = new BsonDocument();
+    List<OrderBy> orderBys = getOrderBys();
+    for (OrderBy orderBy : orderBys) {
+      orderByObject.put(orderBy.getName(), new BsonInt32(orderBy.isAscending() ? 1 : -1));
     }
+    return orderByObject;
+  }
 }

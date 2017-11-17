@@ -38,49 +38,50 @@ import java.util.Optional;
  */
 public abstract class AbstractOrderByClauseListener<T> extends LoggingListener {
 
-    // final results
-    private final List<OrderBy> orderBys;
-    // intermediate state
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private Optional<String> currentOrderByField;
-    private boolean currentOrderBySpecifier;
+  // final results
+  private final List<OrderBy> orderBys;
+  // intermediate state
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+  private Optional<String> currentOrderByField;
 
-    public AbstractOrderByClauseListener() {
-        this.orderBys = Lists.newArrayList();
-        this.currentOrderByField = Optional.empty();
-    }
+  private boolean currentOrderBySpecifier;
 
-    @Override
-    public void enterIdentifier(SQLParser.IdentifierContext ctx) {
-        super.enterIdentifier(ctx);
-        currentOrderByField =
-                currentOrderByField
-                        .map(s -> Optional.of(s + '.' + ctx.start.getText()))
-                        .orElseGet(() -> Optional.of(ctx.start.getText()));
-    }
+  public AbstractOrderByClauseListener() {
+    this.orderBys = Lists.newArrayList();
+    this.currentOrderByField = Optional.empty();
+  }
 
-    @Override
-    public void enterSort_specifier(SQLParser.Sort_specifierContext ctx) {
-        super.enterSort_specifier(ctx);
-        currentOrderByField = Optional.empty();
-        currentOrderBySpecifier = false;
-    }
+  @Override
+  public void enterIdentifier(SQLParser.IdentifierContext ctx) {
+    super.enterIdentifier(ctx);
+    currentOrderByField =
+        currentOrderByField
+            .map(s -> Optional.of(s + '.' + ctx.start.getText()))
+            .orElseGet(() -> Optional.of(ctx.start.getText()));
+  }
 
-    @Override
-    public void exitSort_specifier(SQLParser.Sort_specifierContext ctx) {
-        super.exitSort_specifier(ctx);
-        orderBys.add(new OrderBy(currentOrderByField.get(), currentOrderBySpecifier));
-    }
+  @Override
+  public void enterSort_specifier(SQLParser.Sort_specifierContext ctx) {
+    super.enterSort_specifier(ctx);
+    currentOrderByField = Optional.empty();
+    currentOrderBySpecifier = false;
+  }
 
-    @Override
-    public void enterOrder_specification(SQLParser.Order_specificationContext ctx) {
-        super.enterOrder_specification(ctx);
-        currentOrderBySpecifier = ctx.getText().equalsIgnoreCase("asc");
-    }
+  @Override
+  public void exitSort_specifier(SQLParser.Sort_specifierContext ctx) {
+    super.exitSort_specifier(ctx);
+    orderBys.add(new OrderBy(currentOrderByField.get(), currentOrderBySpecifier));
+  }
 
-    protected List<OrderBy> getOrderBys() {
-        return Collections.unmodifiableList(orderBys);
-    }
+  @Override
+  public void enterOrder_specification(SQLParser.Order_specificationContext ctx) {
+    super.enterOrder_specification(ctx);
+    currentOrderBySpecifier = ctx.getText().equalsIgnoreCase("asc");
+  }
 
-    public abstract T get();
+  protected List<OrderBy> getOrderBys() {
+    return Collections.unmodifiableList(orderBys);
+  }
+
+  public abstract T get();
 }

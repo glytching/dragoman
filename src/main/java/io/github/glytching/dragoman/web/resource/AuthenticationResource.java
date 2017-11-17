@@ -30,63 +30,61 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
-/**
- * A {@link RestResource} which exposes login/logout functionality.
- */
+/** A {@link RestResource} which exposes login/logout functionality. */
 public class AuthenticationResource implements RestResource {
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationResource.class);
+  private static final Logger logger = LoggerFactory.getLogger(AuthenticationResource.class);
 
-    private final AuthenticationDao authenticationDao;
+  private final AuthenticationDao authenticationDao;
 
-    @Inject
-    public AuthenticationResource(AuthenticationDao authenticationDao) {
-        this.authenticationDao = authenticationDao;
+  @Inject
+  public AuthenticationResource(AuthenticationDao authenticationDao) {
+    this.authenticationDao = authenticationDao;
+  }
+
+  @Override
+  public void configure(Vertx vertx, HttpServer httpServer, Router router) {
+    router.post(WebServerUtils.withApplicationName("login")).blockingHandler(this::login);
+    router.post(WebServerUtils.withApplicationName("logout")).blockingHandler(this::logout);
+  }
+
+  private void login(RoutingContext routingContext) {
+    JsonObject bodyAsJson = routingContext.getBodyAsJson();
+    final String login = bodyAsJson.getString("username");
+    final String password = bodyAsJson.getString("password");
+
+    logger.info("Attempting to login for user: {}", login);
+
+    // if a user exists then
+    //      test password match
+    //      fail if unmatched
+    // else
+    //      create a new user
+    // end
+    if (authenticationDao.exists(login)) {
+      if (authenticationDao.isValid(login, password)) {
+        WebServerUtils.assignUserToSession(routingContext.session(), login);
+      } else {
+        throw new InvalidCredentialsException();
+      }
+    } else {
+      logger.info("Creating a new user for: {}", login);
+      authenticationDao.createUser(login, password);
+      WebServerUtils.assignUserToSession(routingContext.session(), login);
     }
 
-    @Override
-    public void configure(Vertx vertx, HttpServer httpServer, Router router) {
-        router.post(WebServerUtils.withApplicationName("login")).blockingHandler(this::login);
-        router.post(WebServerUtils.withApplicationName("logout")).blockingHandler(this::logout);
-    }
+    redirectToLandingPage(routingContext);
+  }
 
-    private void login(RoutingContext routingContext) {
-        JsonObject bodyAsJson = routingContext.getBodyAsJson();
-        final String login = bodyAsJson.getString("username");
-        final String password = bodyAsJson.getString("password");
+  public void logout(RoutingContext routingContext) {
+    WebServerUtils.removeUserFromSession(routingContext.session());
 
-        logger.info("Attempting to login for user: {}", login);
+    redirectToLandingPage(routingContext);
+  }
 
-        // if a user exists then
-        //      test password match
-        //      fail if unmatched
-        // else
-        //      create a new user
-        // end
-        if (authenticationDao.exists(login)) {
-            if (authenticationDao.isValid(login, password)) {
-                WebServerUtils.assignUserToSession(routingContext.session(), login);
-            } else {
-                throw new InvalidCredentialsException();
-            }
-        } else {
-            logger.info("Creating a new user for: {}", login);
-            authenticationDao.createUser(login, password);
-            WebServerUtils.assignUserToSession(routingContext.session(), login);
-        }
-
-        redirectToLandingPage(routingContext);
-    }
-
-    public void logout(RoutingContext routingContext) {
-        WebServerUtils.removeUserFromSession(routingContext.session());
-
-        redirectToLandingPage(routingContext);
-    }
-
-    private void redirectToLandingPage(RoutingContext context) {
-        HttpServerResponse response = context.response();
-        response.setStatusCode(303);
-        response.headers().add("Location", WebServerUtils.withApplicationName("about.hbs"));
-        response.end();
-    }
+  private void redirectToLandingPage(RoutingContext context) {
+    HttpServerResponse response = context.response();
+    response.setStatusCode(303);
+    response.headers().add("Location", WebServerUtils.withApplicationName("about.hbs"));
+    response.end();
+  }
 }

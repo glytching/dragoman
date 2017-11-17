@@ -31,54 +31,54 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoOrderByClauseListenerTest {
 
-    private final OrderByClauseParser sqlParser = new OrderByClauseParser();
+  private final OrderByClauseParser sqlParser = new OrderByClauseParser();
 
-    @Test
-    public void testSingleField() {
-        String orderBy = "a desc";
+  @Test
+  public void testSingleField() {
+    String orderBy = "a desc";
 
-        BsonDocument bsonDocument = parse(orderBy);
+    BsonDocument bsonDocument = parse(orderBy);
 
-        assertThat(bsonDocument.size(), is(1));
-        assertThat(bsonDocument, hasEntry("a", new BsonInt32(-1)));
-    }
+    assertThat(bsonDocument.size(), is(1));
+    assertThat(bsonDocument, hasEntry("a", new BsonInt32(-1)));
+  }
 
-    @Test
-    public void testMultipleFields() {
-        String orderBy = "a asc, b desc, c.d.e asc";
+  @Test
+  public void testMultipleFields() {
+    String orderBy = "a asc, b desc, c.d.e asc";
 
-        BsonDocument bsonDocument = parse(orderBy);
+    BsonDocument bsonDocument = parse(orderBy);
 
-        assertThat(bsonDocument.size(), is(3));
-        assertThat(bsonDocument, hasEntry("a", new BsonInt32(1)));
-        assertThat(bsonDocument, hasEntry("b", new BsonInt32(-1)));
-        assertThat(bsonDocument, hasEntry("c.d.e", new BsonInt32(1)));
-    }
+    assertThat(bsonDocument.size(), is(3));
+    assertThat(bsonDocument, hasEntry("a", new BsonInt32(1)));
+    assertThat(bsonDocument, hasEntry("b", new BsonInt32(-1)));
+    assertThat(bsonDocument, hasEntry("c.d.e", new BsonInt32(1)));
+  }
 
-    @Test
-    public void testDefaultOrderIsDescending() {
-        String orderBy = "a, b.c";
+  @Test
+  public void testDefaultOrderIsDescending() {
+    String orderBy = "a, b.c";
 
-        BsonDocument bsonDocument = parse(orderBy);
+    BsonDocument bsonDocument = parse(orderBy);
 
-        assertThat(bsonDocument.size(), is(2));
-        assertThat(bsonDocument, hasEntry("a", new BsonInt32(-1)));
-        assertThat(bsonDocument, hasEntry("b.c", new BsonInt32(-1)));
-    }
+    assertThat(bsonDocument.size(), is(2));
+    assertThat(bsonDocument, hasEntry("a", new BsonInt32(-1)));
+    assertThat(bsonDocument, hasEntry("b.c", new BsonInt32(-1)));
+  }
 
-    @Test
-    public void testInvalidOrderBy() {
-        SqlParserException actual =
-                assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a, "));
-        assertThat(
-                actual.getMessage(),
-                containsString("Line: 1, Position: 3: no viable alternative at input '<EOF>'"));
-    }
+  @Test
+  public void testInvalidOrderBy() {
+    SqlParserException actual =
+        assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a, "));
+    assertThat(
+        actual.getMessage(),
+        containsString("Line: 1, Position: 3: no viable alternative at input '<EOF>'"));
+  }
 
-    private BsonDocument parse(String orderBy) {
-        Bson bson = sqlParser.get(Bson.class, orderBy);
+  private BsonDocument parse(String orderBy) {
+    Bson bson = sqlParser.get(Bson.class, orderBy);
 
-        return bson.toBsonDocument(
-                BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
-    }
+    return bson.toBsonDocument(
+        BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
+  }
 }

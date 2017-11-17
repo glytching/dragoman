@@ -29,77 +29,77 @@ import static org.hamcrest.Matchers.*;
 @SystemProperty(name = "env", value = "embedded")
 public class ActuatorResourceTest extends AbstractResourceTest {
 
-    @Test
-    public void canPing() {
-        HttpResponse response = read("ping");
+  @Test
+  public void canPing() {
+    HttpResponse response = read("ping");
 
-        assertResponseBasics(response, 200, "text/plain");
+    assertResponseBasics(response, 200, "text/plain");
 
-        assertThat(response.getPayload(), is("pong"));
-    }
+    assertThat(response.getPayload(), is("pong"));
+  }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void canGetHealthCheck() {
-        HttpResponse response = read("healthcheck");
+  @SuppressWarnings("unchecked")
+  @Test
+  public void canGetHealthCheck() {
+    HttpResponse response = read("healthcheck");
 
-        assertResponseBasics(response, 200, "application/json");
+    assertResponseBasics(response, 200, "application/json");
 
-        Map<String, Object> transformed = viewTransformer.transform(Map.class, response.getPayload());
+    Map<String, Object> transformed = viewTransformer.transform(Map.class, response.getPayload());
 
-        // spot check
-        assertThat(transformed, hasKey(IsMongoConnected.class.getSimpleName()));
-    }
+    // spot check
+    assertThat(transformed, hasKey(IsMongoConnected.class.getSimpleName()));
+  }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void canGetMetrics() {
-        HttpResponse response = read("metrics");
+  @SuppressWarnings("unchecked")
+  @Test
+  public void canGetMetrics() {
+    HttpResponse response = read("metrics");
 
-        assertResponseBasics(response, 200, "application/json");
+    assertResponseBasics(response, 200, "application/json");
 
-        Map<String, Object> transformed = viewTransformer.transform(Map.class, response.getPayload());
+    Map<String, Object> transformed = viewTransformer.transform(Map.class, response.getPayload());
 
-        assertThat(transformed.size(), is(greaterThan(0)));
-        // spot check a few
-        assertThat(transformed, hasKey("post-requests"));
-        assertThat(transformed, hasKey("get-requests"));
-    }
+    assertThat(transformed.size(), is(greaterThan(0)));
+    // spot check a few
+    assertThat(transformed, hasKey("post-requests"));
+    assertThat(transformed, hasKey("get-requests"));
+  }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void canGetSpecificMetric() {
-        HttpResponse response = read("metrics/get-requests");
+  @SuppressWarnings("unchecked")
+  @Test
+  public void canGetSpecificMetric() {
+    HttpResponse response = read("metrics/get-requests");
 
-        assertResponseBasics(response, 200, "application/json");
+    assertResponseBasics(response, 200, "application/json");
 
-        Map<String, Object> transformed = viewTransformer.transform(Map.class, response.getPayload());
+    Map<String, Object> transformed = viewTransformer.transform(Map.class, response.getPayload());
 
-        // the number of elements in each metric
-        assertThat(transformed.size(), is(19));
-        // spot check a few
-        assertThat(transformed, hasKey("type"));
-        assertThat(transformed, hasKey("count"));
-        assertThat(transformed, hasKey("meanRate"));
-    }
+    // the number of elements in each metric
+    assertThat(transformed.size(), is(19));
+    // spot check a few
+    assertThat(transformed, hasKey("type"));
+    assertThat(transformed, hasKey("count"));
+    assertThat(transformed, hasKey("meanRate"));
+  }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void canGetSpecificMetricByRegex() {
-        HttpResponse response = read("metrics?regex=get");
+  @SuppressWarnings("unchecked")
+  @Test
+  public void canGetSpecificMetricByRegex() {
+    HttpResponse response = read("metrics?regex=get");
 
-        assertResponseBasics(response, 200, "application/json");
+    assertResponseBasics(response, 200, "application/json");
 
-        Map<String, Object> transformed = viewTransformer.transform(Map.class, response.getPayload());
+    Map<String, Object> transformed = viewTransformer.transform(Map.class, response.getPayload());
 
-        assertThat(transformed.size(), is(1));
-        assertThat(transformed, hasKey("get-requests"));
-    }
+    assertThat(transformed.size(), is(1));
+    assertThat(transformed, hasKey("get-requests"));
+  }
 
-    @SuppressWarnings("SameParameterValue")
-    private void assertResponseBasics(HttpResponse response, int statusCode, String contentType) {
-        assertThat(response.getStatusCode(), is(statusCode));
-        assertThat(response.getHeaders(), hasKey("content-type"));
-        assertThat(response.getHeaders().get("content-type"), hasItem(contentType));
-    }
+  @SuppressWarnings("SameParameterValue")
+  private void assertResponseBasics(HttpResponse response, int statusCode, String contentType) {
+    assertThat(response.getStatusCode(), is(statusCode));
+    assertThat(response.getHeaders(), hasKey("content-type"));
+    assertThat(response.getHeaders().get("content-type"), hasItem(contentType));
+  }
 }

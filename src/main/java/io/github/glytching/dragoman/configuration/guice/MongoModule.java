@@ -23,10 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MongoModule extends AbstractModule {
-    private static final Logger logger = LoggerFactory.getLogger(MongoModule.class);
+  private static final Logger logger = LoggerFactory.getLogger(MongoModule.class);
 
-    @Override
-    protected void configure() {
-        bind(MongoProvider.class).to(MongoProviderImpl.class);
-    }
+  @Override
+  protected void configure() {
+    bind(MongoProvider.class).to(MongoProviderImpl.class);
+  }
 }

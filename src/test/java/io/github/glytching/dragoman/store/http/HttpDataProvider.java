@@ -21,5 +21,5 @@ import java.util.Map;
 
 public interface HttpDataProvider {
 
-    List<Map<String, Object>> getAll();
+  List<Map<String, Object>> getAll();
 }

@@ -47,209 +47,207 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-/**
- * A {@link io.vertx.core.Verticle} instance for our embedded web server.
- */
+/** A {@link io.vertx.core.Verticle} instance for our embedded web server. */
 public class WebServerVerticle extends AbstractVerticle {
-    private static final Logger logger = LoggerFactory.getLogger(WebServerVerticle.class);
+  private static final Logger logger = LoggerFactory.getLogger(WebServerVerticle.class);
 
-    private final Set<RestResource> restResources;
-    private final ApplicationConfiguration applicationConfiguration;
-    private HttpServer httpServer;
-    private JolokiaServer jolokiaServer;
+  private final Set<RestResource> restResources;
+  private final ApplicationConfiguration applicationConfiguration;
+  private HttpServer httpServer;
+  private JolokiaServer jolokiaServer;
 
-    @Inject
-    public WebServerVerticle(
-            Set<RestResource> restResources, ApplicationConfiguration applicationConfiguration) {
-        this.restResources = restResources;
-        this.applicationConfiguration = applicationConfiguration;
-    }
+  @Inject
+  public WebServerVerticle(
+      Set<RestResource> restResources, ApplicationConfiguration applicationConfiguration) {
+    this.restResources = restResources;
+    this.applicationConfiguration = applicationConfiguration;
+  }
 
-    @Override
-    public void start(Future<Void> future) {
-        this.httpServer = vertx.createHttpServer(createOptions());
+  @Override
+  public void start(Future<Void> future) {
+    this.httpServer = vertx.createHttpServer(createOptions());
 
-        Router router = router();
+    Router router = router();
 
-        httpServer.requestHandler(router::accept);
-        httpServer.listen(
-                result -> {
-                    if (result.succeeded()) {
-                        if (applicationConfiguration.isJolokiaEnabled()) {
-                            startJolokia();
-                        }
-                        future.complete();
-                    } else {
-                        future.fail(result.cause());
-                    }
-                });
-    }
-
-    @Override
-    public void stop(Future<Void> future) {
-        if (jolokiaServer != null) {
-            try {
-                jolokiaServer.stop();
-            } catch (Exception ex) {
-                // nop-op: noisy and redundant
+    httpServer.requestHandler(router::accept);
+    httpServer.listen(
+        result -> {
+          if (result.succeeded()) {
+            if (applicationConfiguration.isJolokiaEnabled()) {
+              startJolokia();
             }
-        }
-
-        if (httpServer == null) {
             future.complete();
-            return;
-        }
-        httpServer.close(future.completer());
+          } else {
+            future.fail(result.cause());
+          }
+        });
+  }
+
+  @Override
+  public void stop(Future<Void> future) {
+    if (jolokiaServer != null) {
+      try {
+        jolokiaServer.stop();
+      } catch (Exception ex) {
+        // nop-op: noisy and redundant
+      }
     }
 
-    private void startJolokia() {
-        try {
-            logger.info("Starting Jolokia agent on port: {}", applicationConfiguration.getJolokiaPort());
-            Map<String, String> config = Maps.newHashMap();
-            config.put("port", "" + applicationConfiguration.getJolokiaPort());
-            config.put("debug", "" + applicationConfiguration.isJolokiaDebugEnabled());
-            jolokiaServer = new JolokiaServer(new JolokiaServerConfig(config), true);
-            jolokiaServer.start();
-        } catch (Exception ex) {
-            logger.warn("Failed to start Jolokia agent!", ex);
-        }
+    if (httpServer == null) {
+      future.complete();
+      return;
     }
+    httpServer.close(future.completer());
+  }
 
-    private Router router() {
-        Router router = Router.router(vertx);
+  private void startJolokia() {
+    try {
+      logger.info("Starting Jolokia agent on port: {}", applicationConfiguration.getJolokiaPort());
+      Map<String, String> config = Maps.newHashMap();
+      config.put("port", "" + applicationConfiguration.getJolokiaPort());
+      config.put("debug", "" + applicationConfiguration.isJolokiaDebugEnabled());
+      jolokiaServer = new JolokiaServer(new JolokiaServerConfig(config), true);
+      jolokiaServer.start();
+    } catch (Exception ex) {
+      logger.warn("Failed to start Jolokia agent!", ex);
+    }
+  }
 
-        // assign the global error handler
-        router.route().failureHandler(GlobalExceptionHandler::error);
+  private Router router() {
+    Router router = Router.router(vertx);
 
-        router.route().handler(CookieHandler.create());
+    // assign the global error handler
+    router.route().failureHandler(GlobalExceptionHandler::error);
 
-        router.route().handler(FaviconHandler.create("webroot/images/favicon.ico"));
+    router.route().handler(CookieHandler.create());
 
-        router.route().handler(ResponseTimeHandler.create());
+    router.route().handler(FaviconHandler.create("webroot/images/favicon.ico"));
 
-        router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
+    router.route().handler(ResponseTimeHandler.create());
 
-        router.route().handler(BodyHandler.create());
+    router.route().handler(SessionHandler.create(LocalSessionStore.create(vertx)));
 
-        router
-                .route()
-                .handler(
-                        context -> {
-                            if (!applicationConfiguration.isAuthenticationEnabled()) {
+    router.route().handler(BodyHandler.create());
+
+    router
+        .route()
+        .handler(
+            context -> {
+              if (!applicationConfiguration.isAuthenticationEnabled()) {
                 Session session = context.session();
-                                if (!WebServerUtils.isLoggedIn(
-                                        session, applicationConfiguration.getCannedUserName())) {
-                                    WebServerUtils.assignUserToSession(
-                                            session, applicationConfiguration.getCannedUserName());
-                                }
-                            }
-
-                            WebServerUtils.jsonContentType(context.response());
-
-                            context.next();
-                        });
-
-        // static resources
-        staticHandler(router);
-
-        // dynamic resources
-        dynamicPages(router);
-
-        // reroute requests to the root url onwards to the entry page
-        router
-                .route("/")
-                .handler(event -> event.reroute(WebServerUtils.withApplicationName("about.hbs")));
-
-        // event bus
-        router.route(WebServerUtils.withApplicationName("eventbus/*")).handler(eventBusHandler());
-
-        // REST api
-        for (RestResource restResource : restResources) {
-            logger.info("Registering resource: {}", restResource.getClass().getSimpleName());
-            restResource.configure(vertx, httpServer, router);
-        }
-
-        return logRoutes(router);
-    }
-
-    private SockJSHandler eventBusHandler() {
-        SockJSHandler handler = SockJSHandler.create(vertx);
-        BridgeOptions options = new BridgeOptions();
-        // open access
-        PermittedOptions permitted = new PermittedOptions();
-        options.addOutboundPermitted(permitted);
-        handler.bridge(options);
-        return handler;
-    }
-
-    private void staticHandler(Router router) {
-        StaticHandler staticHandler = StaticHandler.create();
-        staticHandler.setCachingEnabled(applicationConfiguration.isViewStaticAssetsCacheEnabled());
-        staticHandler.setIndexPage(WebServerUtils.withApplicationName("about.hbs"));
-        router.route("/assets/*").handler(staticHandler);
-    }
-
-    private void dynamicPages(Router router) {
-        HandlebarsTemplateEngine hbsEngine = new ClasspathAwareHandlebarsTemplateEngine();
-
-        hbsEngine.setMaxCacheSize(applicationConfiguration.getViewTemplateCacheSize());
-
-        TemplateHandler templateHandler = TemplateHandler.create(hbsEngine);
-
-        if (applicationConfiguration.isAuthenticationEnabled()) {
-            router.get(WebServerUtils.withApplicationName("dataset/*")).handler(this::fromSession);
-            router.get(WebServerUtils.withApplicationName("management/*")).handler(this::fromSession);
-        }
-
-        router
-                .getWithRegex(".+\\.hbs")
-                .handler(
-                        context -> {
-                            final Session session = context.session();
-                            WebServerUtils.assignUserToRoutingContext(context);
-                            context.next();
-                        });
-
-        router.getWithRegex(".+\\.hbs").handler(templateHandler);
-    }
-
-    private void fromSession(RoutingContext routingContext) {
-        String userName = WebServerUtils.getCurrentUserName(routingContext.session());
-        if (userName == null) {
-            throw new AccessDeniedException();
-        }
-        routingContext.next();
-    }
-
-    @SuppressWarnings("unchecked")
-    private Router logRoutes(Router router) {
-        try {
-            for (Route route : router.getRoutes()) {
-                // path is public but methods are not, we use reflection to make that accessible
-                @SuppressWarnings("JavaReflectionMemberAccess")
-                Field f = route.getClass().getDeclaredField("methods");
-                f.setAccessible(true);
-                Set<HttpMethod> methods = (Set<HttpMethod>) f.get(route);
-                if (isNotBlank(route.getPath())) {
-                    methods.forEach(httpMethod -> logger.info("Route: [{}] {}", httpMethod, route.getPath()));
+                if (!WebServerUtils.isLoggedIn(
+                    session, applicationConfiguration.getCannedUserName())) {
+                  WebServerUtils.assignUserToSession(
+                      session, applicationConfiguration.getCannedUserName());
                 }
-            }
-        } catch (Exception ex) {
-            logger.info("Could not list a route due to: {}!", ex.getMessage());
+              }
+
+              WebServerUtils.jsonContentType(context.response());
+
+              context.next();
+            });
+
+    // static resources
+    staticHandler(router);
+
+    // dynamic resources
+    dynamicPages(router);
+
+    // reroute requests to the root url onwards to the entry page
+    router
+        .route("/")
+        .handler(event -> event.reroute(WebServerUtils.withApplicationName("about.hbs")));
+
+    // event bus
+    router.route(WebServerUtils.withApplicationName("eventbus/*")).handler(eventBusHandler());
+
+    // REST api
+    for (RestResource restResource : restResources) {
+      logger.info("Registering resource: {}", restResource.getClass().getSimpleName());
+      restResource.configure(vertx, httpServer, router);
+    }
+
+    return logRoutes(router);
+  }
+
+  private SockJSHandler eventBusHandler() {
+    SockJSHandler handler = SockJSHandler.create(vertx);
+    BridgeOptions options = new BridgeOptions();
+    // open access
+    PermittedOptions permitted = new PermittedOptions();
+    options.addOutboundPermitted(permitted);
+    handler.bridge(options);
+    return handler;
+  }
+
+  private void staticHandler(Router router) {
+    StaticHandler staticHandler = StaticHandler.create();
+    staticHandler.setCachingEnabled(applicationConfiguration.isViewStaticAssetsCacheEnabled());
+    staticHandler.setIndexPage(WebServerUtils.withApplicationName("about.hbs"));
+    router.route("/assets/*").handler(staticHandler);
+  }
+
+  private void dynamicPages(Router router) {
+    HandlebarsTemplateEngine hbsEngine = new ClasspathAwareHandlebarsTemplateEngine();
+
+    hbsEngine.setMaxCacheSize(applicationConfiguration.getViewTemplateCacheSize());
+
+    TemplateHandler templateHandler = TemplateHandler.create(hbsEngine);
+
+    if (applicationConfiguration.isAuthenticationEnabled()) {
+      router.get(WebServerUtils.withApplicationName("dataset/*")).handler(this::fromSession);
+      router.get(WebServerUtils.withApplicationName("management/*")).handler(this::fromSession);
+    }
+
+    router
+        .getWithRegex(".+\\.hbs")
+        .handler(
+            context -> {
+              final Session session = context.session();
+              WebServerUtils.assignUserToRoutingContext(context);
+              context.next();
+            });
+
+    router.getWithRegex(".+\\.hbs").handler(templateHandler);
+  }
+
+  private void fromSession(RoutingContext routingContext) {
+    String userName = WebServerUtils.getCurrentUserName(routingContext.session());
+    if (userName == null) {
+      throw new AccessDeniedException();
+    }
+    routingContext.next();
+  }
+
+  @SuppressWarnings("unchecked")
+  private Router logRoutes(Router router) {
+    try {
+      for (Route route : router.getRoutes()) {
+        // path is public but methods are not, we use reflection to make that accessible
+        @SuppressWarnings("JavaReflectionMemberAccess")
+        Field f = route.getClass().getDeclaredField("methods");
+        f.setAccessible(true);
+        Set<HttpMethod> methods = (Set<HttpMethod>) f.get(route);
+        if (isNotBlank(route.getPath())) {
+          methods.forEach(httpMethod -> logger.info("Route: [{}] {}", httpMethod, route.getPath()));
         }
-
-        return router;
+      }
+    } catch (Exception ex) {
+      logger.info("Could not list a route due to: {}!", ex.getMessage());
     }
 
-    private HttpServerOptions createOptions() {
-        Integer port = applicationConfiguration.getHttpPort();
-        logger.info("Starting HTTP server on port: {}", port);
+    return router;
+  }
 
-        HttpServerOptions options = new HttpServerOptions();
+  private HttpServerOptions createOptions() {
+    Integer port = applicationConfiguration.getHttpPort();
+    logger.info("Starting HTTP server on port: {}", port);
 
-        options.setLogActivity(true);
-        options.setHost("localhost");
-        options.setPort(port);
-        return options;
-    }
+    HttpServerOptions options = new HttpServerOptions();
+
+    options.setLogActivity(true);
+    options.setHost("localhost");
+    options.setPort(port);
+    return options;
+  }
 }

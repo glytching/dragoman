@@ -34,52 +34,50 @@ import static org.mockito.Mockito.*;
 
 public class IsMongoConnectedTest {
 
-    @Mock
-    private MongoProvider mongoProvider;
-    @Mock
-    private MongoClient mongoClient;
+  @Mock private MongoProvider mongoProvider;
+  @Mock private MongoClient mongoClient;
 
-    private String host;
-    private int port;
+  private String host;
+  private int port;
 
-    private IsMongoConnected isMongoConnected;
+  private IsMongoConnected isMongoConnected;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
 
-        isMongoConnected = new IsMongoConnected(mongoProvider);
+    isMongoConnected = new IsMongoConnected(mongoProvider);
 
-        host = "ahost";
-        port = 1234;
-        when(mongoProvider.provide()).thenReturn(mongoClient);
-        when(mongoClient.getSettings()).thenReturn(mongoSettings(host, port));
-    }
+    host = "ahost";
+    port = 1234;
+    when(mongoProvider.provide()).thenReturn(mongoClient);
+    when(mongoClient.getSettings()).thenReturn(mongoSettings(host, port));
+  }
 
-    @Test
-    public void isHealthyIfWeCanTalkToMongo() throws Exception {
-        HealthCheck.Result result = isMongoConnected.check();
+  @Test
+  public void isHealthyIfWeCanTalkToMongo() throws Exception {
+    HealthCheck.Result result = isMongoConnected.check();
 
-        assertThat(result.isHealthy(), is(true));
-        assertThat(result.getMessage(), is("Connected to MongoDB at " + host + ":" + port));
+    assertThat(result.isHealthy(), is(true));
+    assertThat(result.getMessage(), is("Connected to MongoDB at " + host + ":" + port));
 
-        verify(mongoClient, times(1)).getDatabase(anyString());
-    }
+    verify(mongoClient, times(1)).getDatabase(anyString());
+  }
 
-    @Test
-    public void isUnhealthyIfWeCannotTalkToMongo() throws Exception {
-        when(mongoClient.getDatabase(anyString())).thenThrow(new RuntimeException());
+  @Test
+  public void isUnhealthyIfWeCannotTalkToMongo() throws Exception {
+    when(mongoClient.getDatabase(anyString())).thenThrow(new RuntimeException());
 
-        HealthCheck.Result result = isMongoConnected.check();
+    HealthCheck.Result result = isMongoConnected.check();
 
-        assertThat(result.isHealthy(), is(false));
-        assertThat(result.getMessage(), is("Cannot connect to MongoDB at " + host + ":" + port));
-    }
+    assertThat(result.isHealthy(), is(false));
+    assertThat(result.getMessage(), is("Cannot connect to MongoDB at " + host + ":" + port));
+  }
 
-    private MongoClientSettings mongoSettings(String host, int port) {
-        return MongoClientSettings.builder()
-                .clusterSettings(
-                        ClusterSettings.builder().hosts(newArrayList(new ServerAddress(host, port))).build())
-                .build();
-    }
+  private MongoClientSettings mongoSettings(String host, int port) {
+    return MongoClientSettings.builder()
+        .clusterSettings(
+            ClusterSettings.builder().hosts(newArrayList(new ServerAddress(host, port))).build())
+        .build();
+  }
 }

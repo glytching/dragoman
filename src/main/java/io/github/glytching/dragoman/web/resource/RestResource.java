@@ -20,17 +20,15 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 
-/**
- * Describes the common responsibilities of any REST endpoint.
- */
+/** Describes the common responsibilities of any REST endpoint. */
 public interface RestResource {
 
-    /**
-     * Configure the given {@code router} for this REST endpoint.
-     *
-     * @param vertx the current Vert.x instance
-     * @param httpServer the Vert.x HTTP server instance
-     * @param router the Vert.x HTTP router
-     */
-    void configure(Vertx vertx, HttpServer httpServer, Router router);
+  /**
+   * Configure the given {@code router} for this REST endpoint.
+   *
+   * @param vertx the current Vert.x instance
+   * @param httpServer the Vert.x HTTP server instance
+   * @param router the Vert.x HTTP router
+   */
+  void configure(Vertx vertx, HttpServer httpServer, Router router);
 }

@@ -24,11 +24,11 @@ import static org.hamcrest.Matchers.is;
 
 public class SubscriptionStreamEventTest {
 
-    @Test
-    public void canGetEventType() {
-        SubscriptionStreamEvent<String> streamEvent = new SubscriptionStreamEvent<>("aKey", "aPayload");
+  @Test
+  public void canGetEventType() {
+    SubscriptionStreamEvent<String> streamEvent = new SubscriptionStreamEvent<>("aKey", "aPayload");
 
-        assertThat(streamEvent.isTerminal(), is(false));
-        assertThat(streamEvent.is(STREAM_EVENT), is(true));
-    }
+    assertThat(streamEvent.isTerminal(), is(false));
+    assertThat(streamEvent.is(STREAM_EVENT), is(true));
+  }
 }

@@ -31,67 +31,67 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoSelectClauseListenerTest {
 
-    private final SelectClauseParser sqlParser = new SelectClauseParser();
+  private final SelectClauseParser sqlParser = new SelectClauseParser();
 
-    @Test
-    public void testSingleProjection() {
-        BsonDocument bsonDocument = parse("a,b");
+  @Test
+  public void testSingleProjection() {
+    BsonDocument bsonDocument = parse("a,b");
 
-        assertThat(bsonDocument.size(), is(3));
-        assertThat(bsonDocument, hasEntry("_id", new BsonInt32(0)));
-        assertThat(bsonDocument, hasEntry("a", new BsonInt32(1)));
-        assertThat(bsonDocument, hasEntry("b", new BsonInt32(1)));
-    }
+    assertThat(bsonDocument.size(), is(3));
+    assertThat(bsonDocument, hasEntry("_id", new BsonInt32(0)));
+    assertThat(bsonDocument, hasEntry("a", new BsonInt32(1)));
+    assertThat(bsonDocument, hasEntry("b", new BsonInt32(1)));
+  }
 
-    @Test
-    public void testMultipleProjections() {
-        BsonDocument bsonDocument = parse("a.b, c.d.e, f, g");
+  @Test
+  public void testMultipleProjections() {
+    BsonDocument bsonDocument = parse("a.b, c.d.e, f, g");
 
-        assertThat(bsonDocument.size(), is(5));
-        assertThat(bsonDocument, hasEntry("_id", new BsonInt32(0)));
-        assertThat(bsonDocument, hasEntry("a.b", new BsonInt32(1)));
-        assertThat(bsonDocument, hasEntry("c.d.e", new BsonInt32(1)));
-        assertThat(bsonDocument, hasEntry("f", new BsonInt32(1)));
-        assertThat(bsonDocument, hasEntry("g", new BsonInt32(1)));
-    }
+    assertThat(bsonDocument.size(), is(5));
+    assertThat(bsonDocument, hasEntry("_id", new BsonInt32(0)));
+    assertThat(bsonDocument, hasEntry("a.b", new BsonInt32(1)));
+    assertThat(bsonDocument, hasEntry("c.d.e", new BsonInt32(1)));
+    assertThat(bsonDocument, hasEntry("f", new BsonInt32(1)));
+    assertThat(bsonDocument, hasEntry("g", new BsonInt32(1)));
+  }
 
-    @Test
-    public void testStarProjection() {
-        BsonDocument bsonDocument = parse("*");
+  @Test
+  public void testStarProjection() {
+    BsonDocument bsonDocument = parse("*");
 
-        assertThat(bsonDocument.size(), is(1));
-        assertThat(bsonDocument, hasEntry("_id", new BsonInt32(0)));
-    }
+    assertThat(bsonDocument.size(), is(1));
+    assertThat(bsonDocument, hasEntry("_id", new BsonInt32(0)));
+  }
 
-    @Test
-    public void testEmptyProjection() {
-        BsonDocument bsonDocument = parse("");
+  @Test
+  public void testEmptyProjection() {
+    BsonDocument bsonDocument = parse("");
 
-        assertThat(bsonDocument.size(), is(1));
-        assertThat(bsonDocument, hasEntry("_id", new BsonInt32(0)));
-    }
+    assertThat(bsonDocument.size(), is(1));
+    assertThat(bsonDocument, hasEntry("_id", new BsonInt32(0)));
+  }
 
-    @Test
-    public void testNullProjection() {
-        BsonDocument bsonDocument = parse(null);
+  @Test
+  public void testNullProjection() {
+    BsonDocument bsonDocument = parse(null);
 
-        assertThat(bsonDocument.size(), is(1));
-        assertThat(bsonDocument, hasEntry("_id", new BsonInt32(0)));
-    }
+    assertThat(bsonDocument.size(), is(1));
+    assertThat(bsonDocument, hasEntry("_id", new BsonInt32(0)));
+  }
 
-    @Test
-    public void testInvalidProjection() {
-        SqlParserException actual =
-                assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a, "));
-        assertThat(
-                actual.getMessage(),
-                containsString("Line: 1, Position: 3: no viable alternative at input '<EOF>'"));
-    }
+  @Test
+  public void testInvalidProjection() {
+    SqlParserException actual =
+        assertThrows(SqlParserException.class, () -> sqlParser.get(Bson.class, "a, "));
+    assertThat(
+        actual.getMessage(),
+        containsString("Line: 1, Position: 3: no viable alternative at input '<EOF>'"));
+  }
 
-    private BsonDocument parse(String select) {
-        Bson bson = sqlParser.get(Bson.class, select);
+  private BsonDocument parse(String select) {
+    Bson bson = sqlParser.get(Bson.class, select);
 
-        return bson.toBsonDocument(
-                BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
-    }
+    return bson.toBsonDocument(
+        BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
+  }
 }

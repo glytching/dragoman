@@ -16,13 +16,11 @@
  */
 package io.github.glytching.dragoman.store.http.repository;
 
-/**
- * A no-op implementation of {@link ResponsePostProcessor}.
- */
+/** A no-op implementation of {@link ResponsePostProcessor}. */
 public class NoOpResponsePostProcessor implements ResponsePostProcessor {
 
-    @Override
-    public String postProcess(String content) {
-        return content;
+  @Override
+  public String postProcess(String content) {
+    return content;
   }
 }

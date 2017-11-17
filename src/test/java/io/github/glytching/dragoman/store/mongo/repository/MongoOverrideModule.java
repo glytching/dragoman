@@ -22,8 +22,8 @@ import org.mockito.Mockito;
 
 public class MongoOverrideModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        bind(MongoProvider.class).toInstance(Mockito.mock(MongoProvider.class));
-    }
+  @Override
+  protected void configure() {
+    bind(MongoProvider.class).toInstance(Mockito.mock(MongoProvider.class));
+  }
 }

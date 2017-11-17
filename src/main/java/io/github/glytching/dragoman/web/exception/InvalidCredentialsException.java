@@ -16,12 +16,10 @@
  */
 package io.github.glytching.dragoman.web.exception;
 
-/**
- * Extends {@link RuntimeException} to provide a specific exception for a HTTP {@code 401}.
- */
+/** Extends {@link RuntimeException} to provide a specific exception for a HTTP {@code 401}. */
 public class InvalidCredentialsException extends RuntimeException {
 
-    public InvalidCredentialsException() {
-        super("Invalid credentials!");
-    }
+  public InvalidCredentialsException() {
+    super("Invalid credentials!");
+  }
 }

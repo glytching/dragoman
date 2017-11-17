@@ -30,45 +30,45 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WhereClauseParserTest {
 
-    private final WhereClauseParser parser = new WhereClauseParser();
+  private final WhereClauseParser parser = new WhereClauseParser();
 
-    @Test
-    public void testParseToBson() {
-        Bson bson = parser.get(Bson.class, "a = 1");
+  @Test
+  public void testParseToBson() {
+    Bson bson = parser.get(Bson.class, "a = 1");
 
-        BsonDocument bsonDocument = toBsonDocument(bson);
-        assertThat(bsonDocument.size(), is(1));
-        assertThat(bsonDocument, hasEntry("a", new BsonInt32(1)));
-    }
+    BsonDocument bsonDocument = toBsonDocument(bson);
+    assertThat(bsonDocument.size(), is(1));
+    assertThat(bsonDocument, hasEntry("a", new BsonInt32(1)));
+  }
 
-    @Test
-    public void testParseToString() {
-        String script = parser.get(String.class, "a = 1");
+  @Test
+  public void testParseToString() {
+    String script = parser.get(String.class, "a = 1");
 
-        String expected =
-                "package io.github.glytching.dragoman.ql.listener.groovy\n"
-                        + "class GroovyFilter implements Filter {\n"
-                        + "    @Override\n"
-                        + "    boolean filter(Object incoming) {\n"
-                        + "        boolean isSame = incoming?.a==1\n"
-                        + "        return isSame\n"
-                        + "    }\n"
-                        + "}\n";
-        assertThat(script, is(expected));
-    }
+    String expected =
+        "package io.github.glytching.dragoman.ql.listener.groovy\n"
+            + "class GroovyFilter implements Filter {\n"
+            + "    @Override\n"
+            + "    boolean filter(Object incoming) {\n"
+            + "        boolean isSame = incoming?.a==1\n"
+            + "        return isSame\n"
+            + "    }\n"
+            + "}\n";
+    assertThat(script, is(expected));
+  }
 
-    @Test
-    public void cannotParseToAnUnsupportedType() {
-        IllegalArgumentException actual =
-                assertThrows(IllegalArgumentException.class, () -> parser.get(Object.class, "a, b"));
-        assertThat(
-                actual.getMessage(),
-                containsString("Type: 'Object' is not supported, the supported types are: [String, Bson]"));
-    }
+  @Test
+  public void cannotParseToAnUnsupportedType() {
+    IllegalArgumentException actual =
+        assertThrows(IllegalArgumentException.class, () -> parser.get(Object.class, "a, b"));
+    assertThat(
+        actual.getMessage(),
+        containsString("Type: 'Object' is not supported, the supported types are: [String, Bson]"));
+  }
 
-    private BsonDocument toBsonDocument(Bson bson) {
-        return bson.toBsonDocument(
-                BsonDocument.class,
-                CodecRegistries.fromProviders(new BsonValueCodecProvider(), new ValueCodecProvider()));
-    }
+  private BsonDocument toBsonDocument(Bson bson) {
+    return bson.toBsonDocument(
+        BsonDocument.class,
+        CodecRegistries.fromProviders(new BsonValueCodecProvider(), new ValueCodecProvider()));
+  }
 }

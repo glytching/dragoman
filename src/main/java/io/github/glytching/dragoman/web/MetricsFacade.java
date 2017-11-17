@@ -38,79 +38,77 @@ import java.util.stream.Collectors;
  * </ul>
  */
 public class MetricsFacade {
-    private static final Logger logger = LoggerFactory.getLogger(MetricsFacade.class);
-    private static final Logger metricsLogger = LoggerFactory.getLogger("metrics-logger");
+  private static final Logger logger = LoggerFactory.getLogger(MetricsFacade.class);
+  private static final Logger metricsLogger = LoggerFactory.getLogger("metrics-logger");
 
-    private final HttpServer httpServer;
-    private final MetricsService metricsService;
+  private final HttpServer httpServer;
+  private final MetricsService metricsService;
 
-    public MetricsFacade(Vertx vertx, HttpServer httpServer, int publicationPeriodInMillis) {
-        this.httpServer = httpServer;
-        this.metricsService = MetricsService.create(vertx);
+  public MetricsFacade(Vertx vertx, HttpServer httpServer, int publicationPeriodInMillis) {
+    this.httpServer = httpServer;
+    this.metricsService = MetricsService.create(vertx);
 
-        logger.info("Scheduling metrics publication every {}ms", publicationPeriodInMillis);
+    logger.info("Scheduling metrics publication every {}ms", publicationPeriodInMillis);
 
-        // ensure that the metrics publication does *not* happen on an event loop thread
-        vertx.setPeriodic(
-                publicationPeriodInMillis,
-                event ->
-                        vertx.executeBlocking(
-                                event1 -> {
-                                    JsonObject metrics = metricsService.getMetricsSnapshot(httpServer);
-                                    if (metrics != null) {
-                                        metricsLogger.info(metrics.encode());
-                                    }
-                                    event1.complete();
-                                },
-                                (Handler<AsyncResult<Void>>)
-                                        event12 -> {
-                                            // no-op
-                                        }));
-    }
+    // ensure that the metrics publication does *not* happen on an event loop thread
+    vertx.setPeriodic(
+        publicationPeriodInMillis,
+        event ->
+            vertx.executeBlocking(
+                event1 -> {
+                  JsonObject metrics = metricsService.getMetricsSnapshot(httpServer);
+                  if (metrics != null) {
+                    metricsLogger.info(metrics.encode());
+                  }
+                  event1.complete();
+                },
+                (Handler<AsyncResult<Void>>)
+                    event12 -> {
+                      // no-op
+                    }));
+  }
 
-    /**
-     * Get the current snapshot including <b>all</b> Vert.x metrics data.
-     *
-     * @return the current metrics snapshot in JSON format
-     */
-    public JsonObject getAll() {
-        return metricsService.getMetricsSnapshot(httpServer);
-    }
+  /**
+   * Get the current snapshot including <b>all</b> Vert.x metrics data.
+   *
+   * @return the current metrics snapshot in JSON format
+   */
+  public JsonObject getAll() {
+    return metricsService.getMetricsSnapshot(httpServer);
+  }
 
-    /**
-     * Get the current snapshot for the given {@code name} from Vert.x metrics data.
-     *
-     * @param name the name of a metric
-     *
-     * @return the current metrics snapshot for the given metric name, in JSON format
-     */
-    public JsonObject getByName(String name) {
-        return metricsService.getMetricsSnapshot(httpServer).getJsonObject(name);
-    }
+  /**
+   * Get the current snapshot for the given {@code name} from Vert.x metrics data.
+   *
+   * @param name the name of a metric
+   * @return the current metrics snapshot for the given metric name, in JSON format
+   */
+  public JsonObject getByName(String name) {
+    return metricsService.getMetricsSnapshot(httpServer).getJsonObject(name);
+  }
 
-    /**
-     * Get the current snapshot for the metrics which match the {@code regex} from Vert.x metrics
-     * data.
-     *
-     * @param regex a regex to be used when filtering Vert.x metrics data
-     *
-     * @return the current metrics snapshots for any metrics which match the given regex, in JSON
-     * format
-     */
-    public JsonObject getByFilter(String regex) {
-        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+  /**
+   * Get the current snapshot for the metrics which match the {@code regex} from Vert.x metrics
+   * data.
+   *
+   * @param regex a regex to be used when filtering Vert.x metrics data
+   * @return the current metrics snapshots for any metrics which match the given regex, in JSON
+   *     format
+   */
+  public JsonObject getByFilter(String regex) {
+    final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 
-        // read all metrics
-        Map<String, Object> filtered =
-                getAll()
-                        .getMap()
-                        .entrySet()
-                        // stream them and filter by applying the regex to the metrics key
-                        .stream()
-                        .filter(item -> pattern.matcher(item.getKey()).find())
-                        // collect the results into a map
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    // read all metrics
+    Map<String, Object> filtered =
+        getAll()
+            .getMap()
+            .entrySet()
+            // stream them and filter by applying the regex to the metrics key
+            .stream()
+            .filter(item -> pattern.matcher(item.getKey()).find())
+            // collect the results into a map
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return new JsonObject(filtered);
-    }
+    return new JsonObject(filtered);
+  }
 }

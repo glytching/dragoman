@@ -49,244 +49,242 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class MongoRepositoryTest extends AbstractMongoDBTest {
-    private static final Logger logger = LoggerFactory.getLogger(MongoRepositoryTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(MongoRepositoryTest.class);
 
-    @Inject
-    private MongoRepository repository;
-    @Inject
-    private MongoProvider mongoProvider;
+  @Inject private MongoRepository repository;
+  @Inject private MongoProvider mongoProvider;
 
-    private Document bill;
-    private Document martin;
-    private MongoStorageCoordinates storageCoordinates;
-    private Dataset dataset;
+  private Document bill;
+  private Document martin;
+  private MongoStorageCoordinates storageCoordinates;
+  private Dataset dataset;
 
-    @BeforeEach
-    public void setUp() {
-        Injector injector =
-                Guice.createInjector(
-                        Modules.override(new MongoModule(), new ConfigurationModule())
-                                .with(new MongoOverrideModule()));
-        injector.injectMembers(this);
+  @BeforeEach
+  public void setUp() {
+    Injector injector =
+        Guice.createInjector(
+            Modules.override(new MongoModule(), new ConfigurationModule())
+                .with(new MongoOverrideModule()));
+    injector.injectMembers(this);
 
-        bill =
-                new Document("name", "Bill")
-                        .append("type", "Human")
-                        .append("age", 35)
-                        .append("biped", true)
-                        .append("shoeSize", 9)
-                        .append("rating", 1.2)
-                        .append("comments", "likes pianos")
-                        .append("expirationDate", toDate(LocalDate.parse("2017-10-27").plusYears(10)))
-                        .append("createdAt", toDate(LocalDateTime.now()));
+    bill =
+        new Document("name", "Bill")
+            .append("type", "Human")
+            .append("age", 35)
+            .append("biped", true)
+            .append("shoeSize", 9)
+            .append("rating", 1.2)
+            .append("comments", "likes pianos")
+            .append("expirationDate", toDate(LocalDate.parse("2017-10-27").plusYears(10)))
+            .append("createdAt", toDate(LocalDateTime.now()));
 
-        martin =
-                new Document("name", "Martin")
-                        .append("type", "Martian")
-                        .append("age", 1156)
-                        .append("biped", false)
-                        .append("shoeSize", 4.5)
-                        .append("rating", null)
-                        .append("comments", "interplanetary travel")
-                        .append("expirationDate", toDate(LocalDate.parse("2017-10-27").plusYears(100)))
-                        .append("createdAt", toDate(LocalDateTime.now()));
+    martin =
+        new Document("name", "Martin")
+            .append("type", "Martian")
+            .append("age", 1156)
+            .append("biped", false)
+            .append("shoeSize", 4.5)
+            .append("rating", null)
+            .append("comments", "interplanetary travel")
+            .append("expirationDate", toDate(LocalDate.parse("2017-10-27").plusYears(100)))
+            .append("createdAt", toDate(LocalDateTime.now()));
 
-        storageCoordinates = seed(bill, martin);
+    storageCoordinates = seed(bill, martin);
 
-        dataset = mock(Dataset.class);
-        when(dataset.getSource())
-                .thenReturn(
-                        storageCoordinates.getDatabaseName() + ":" + storageCoordinates.getCollectionName());
+    dataset = mock(Dataset.class);
+    when(dataset.getSource())
+        .thenReturn(
+            storageCoordinates.getDatabaseName() + ":" + storageCoordinates.getCollectionName());
 
-        when(mongoProvider.provide()).thenReturn(getMongoClient());
-    }
+    when(mongoProvider.provide()).thenReturn(getMongoClient());
+  }
 
-    @AfterEach
-    public void tearDown() {
-        StopWatch stopWatch = StopWatch.start();
-        getMongoClient()
-                .getDatabase(storageCoordinates.getDatabaseName())
-                .drop()
-                .subscribe(
-                        success -> logger.info("Dropped database: {}", storageCoordinates.getDatabaseName()));
-        logger.info("Dropped test data in {}ms", stopWatch.stop());
-    }
+  @AfterEach
+  public void tearDown() {
+    StopWatch stopWatch = StopWatch.start();
+    getMongoClient()
+        .getDatabase(storageCoordinates.getDatabaseName())
+        .drop()
+        .subscribe(
+            success -> logger.info("Dropped database: {}", storageCoordinates.getDatabaseName()));
+    logger.info("Dropped test data in {}ms", stopWatch.stop());
+  }
 
-    @Test
-    public void appliesToAnythingOtherThanAHttpSource() {
-        Dataset dataset = anyDataset();
+  @Test
+  public void appliesToAnythingOtherThanAHttpSource() {
+    Dataset dataset = anyDataset();
 
-        dataset.setSource("http://foo:1234");
-        assertThat(repository.appliesTo(dataset), is(false));
+    dataset.setSource("http://foo:1234");
+    assertThat(repository.appliesTo(dataset), is(false));
 
-        dataset.setSource("a:b");
-        assertThat(repository.appliesTo(dataset), is(true));
-    }
+    dataset.setSource("a:b");
+    assertThat(repository.appliesTo(dataset), is(true));
+  }
 
-    @Test
-    public void withEqualsAndNotEquals() {
-        String expression = "name = 'Bill' and name != 'Bob'";
+  @Test
+  public void withEqualsAndNotEquals() {
+    String expression = "name = 'Bill' and name != 'Bob'";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
 
-        assertThat(documents.size(), is(1));
-        assertThat(documents.get(0), is(bill));
-    }
+    assertThat(documents.size(), is(1));
+    assertThat(documents.get(0), is(bill));
+  }
 
-    @Test
-    public void withSelect() {
-        String expression = "name = 'Bill' and name != 'Bob'";
+  @Test
+  public void withSelect() {
+    String expression = "name = 'Bill' and name != 'Bob'";
 
-        List<Document> documents = toList(repository.find(dataset, "name, age", expression, "", -1));
+    List<Document> documents = toList(repository.find(dataset, "name, age", expression, "", -1));
 
-        assertThat(documents.size(), is(1));
-        assertThat(
-                documents.get(0),
-                is(new Document().append("name", bill.get("name")).append("age", bill.get("age"))));
-    }
+    assertThat(documents.size(), is(1));
+    assertThat(
+        documents.get(0),
+        is(new Document().append("name", bill.get("name")).append("age", bill.get("age"))));
+  }
 
-    @Test
-    public void withOrderBy() {
-        String expression = "name is not null";
+  @Test
+  public void withOrderBy() {
+    String expression = "name is not null";
 
-        List<Document> documents =
-                toList(repository.find(dataset, "*", expression, "age desc, expirationDate desc", -1));
+    List<Document> documents =
+        toList(repository.find(dataset, "*", expression, "age desc, expirationDate desc", -1));
 
-        assertThat(documents.size(), is(2));
-        assertThat(documents.get(0), is(martin));
-        assertThat(documents.get(1), is(bill));
-    }
+    assertThat(documents.size(), is(2));
+    assertThat(documents.get(0), is(martin));
+    assertThat(documents.get(1), is(bill));
+  }
 
-    @Test
-    public void withMaxResults() {
-        String expression = "name is not null";
+  @Test
+  public void withMaxResults() {
+    String expression = "name is not null";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "name asc", 1));
+    List<Document> documents = toList(repository.find(dataset, "", expression, "name asc", 1));
 
-        assertThat(documents.size(), is(1));
-        assertThat(documents.get(0), is(bill));
-    }
+    assertThat(documents.size(), is(1));
+    assertThat(documents.get(0), is(bill));
+  }
 
-    @Test
-    public void withGreaterThanAndLessThan() {
-        String expression = "age > 1000 and shoeSize < 5";
+  @Test
+  public void withGreaterThanAndLessThan() {
+    String expression = "age > 1000 and shoeSize < 5";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(1));
-        assertThat(documents.get(0), is(martin));
-    }
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(1));
+    assertThat(documents.get(0), is(martin));
+  }
 
-    @Test
-    public void withGreaterThanOrEqualToAndLessThanOrEqualTo() {
-        String expression = "age <= 35 and shoeSize <= 9";
+  @Test
+  public void withGreaterThanOrEqualToAndLessThanOrEqualTo() {
+    String expression = "age <= 35 and shoeSize <= 9";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(1));
-        assertThat(documents.get(0), is(bill));
-    }
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(1));
+    assertThat(documents.get(0), is(bill));
+  }
 
-    @Test
-    public void withInStrings() {
-        String expression = "name in ('Bill', 'Martin')";
+  @Test
+  public void withInStrings() {
+    String expression = "name in ('Bill', 'Martin')";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(2));
-        assertThat(documents, hasItem(bill));
-        assertThat(documents, hasItem(martin));
-    }
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(2));
+    assertThat(documents, hasItem(bill));
+    assertThat(documents, hasItem(martin));
+  }
 
-    @Test
-    public void withInNumerics() {
-        String expression = "age in (35, 1156)";
+  @Test
+  public void withInNumerics() {
+    String expression = "age in (35, 1156)";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(2));
-        assertThat(documents, hasItem(bill));
-        assertThat(documents, hasItem(martin));
-    }
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(2));
+    assertThat(documents, hasItem(bill));
+    assertThat(documents, hasItem(martin));
+  }
 
-    @Test
-    public void withNotIn() {
-        String expression = "age not in (35, 53)";
+  @Test
+  public void withNotIn() {
+    String expression = "age not in (35, 53)";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(1));
-        assertThat(documents, hasItem(martin));
-    }
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(1));
+    assertThat(documents, hasItem(martin));
+  }
 
-    @Test
-    public void withBetween() {
-        String expression = "age between 30 and 40";
+  @Test
+  public void withBetween() {
+    String expression = "age between 30 and 40";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(1));
-        assertThat(documents, hasItem(bill));
-    }
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(1));
+    assertThat(documents, hasItem(bill));
+  }
 
-    @Test
-    public void withNull() {
-        String expression = "rating is null";
+  @Test
+  public void withNull() {
+    String expression = "rating is null";
 
-        List<Document> documents =
-                repository.find(dataset, "", expression, "", -1).toList().toBlocking().single();
-        assertThat(documents.size(), is(1));
-        assertThat(documents, hasItem(martin));
-    }
+    List<Document> documents =
+        repository.find(dataset, "", expression, "", -1).toList().toBlocking().single();
+    assertThat(documents.size(), is(1));
+    assertThat(documents, hasItem(martin));
+  }
 
-    @Test
-    public void withNotNull() {
-        String expression = "rating is not null";
+  @Test
+  public void withNotNull() {
+    String expression = "rating is not null";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(1));
-        assertThat(documents, hasItem(bill));
-    }
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(1));
+    assertThat(documents, hasItem(bill));
+  }
 
-    @Test
-    public void withLikeAndNotLike() {
-        String expression = "type like '%uman%' and name like 'Bil%' and name not like '%ob'";
+  @Test
+  public void withLikeAndNotLike() {
+    String expression = "type like '%uman%' and name like 'Bil%' and name not like '%ob'";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(1));
-        assertThat(documents, hasItem(bill));
-    }
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(1));
+    assertThat(documents, hasItem(bill));
+  }
 
-    @Test
-    public void withBoolean() {
-        String expression = "biped = true";
+  @Test
+  public void withBoolean() {
+    String expression = "biped = true";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(1));
-        assertThat(documents, hasItem(bill));
-    }
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(1));
+    assertThat(documents, hasItem(bill));
+  }
 
-    @Test
-    public void withDateLiteral() {
-        String expression = "expirationDate = '2027-10-27'";
+  @Test
+  public void withDateLiteral() {
+    String expression = "expirationDate = '2027-10-27'";
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(1));
-        assertThat(documents, hasItem(bill));
-    }
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(1));
+    assertThat(documents, hasItem(bill));
+  }
 
-    @Test
-    public void withDateTimeLiteral() {
-        String expression =
-                format("createdAt < '%s'", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()));
+  @Test
+  public void withDateTimeLiteral() {
+    String expression =
+        format("createdAt < '%s'", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()));
 
-        List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(2));
-        assertThat(documents, hasItem(bill));
-        assertThat(documents, hasItem(martin));
+    List<Document> documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(2));
+    assertThat(documents, hasItem(bill));
+    assertThat(documents, hasItem(martin));
 
-        expression =
-                format("createdAt > '%s'", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()));
+    expression =
+        format("createdAt > '%s'", DateTimeFormatter.ISO_DATE_TIME.format(LocalDateTime.now()));
 
-        documents = toList(repository.find(dataset, "", expression, "", -1));
-        assertThat(documents.size(), is(0));
-    }
+    documents = toList(repository.find(dataset, "", expression, "", -1));
+    assertThat(documents.size(), is(0));
+  }
 
-    private List<Document> toList(Observable<Document> observable) {
-        return observable.toList().toBlocking().single();
-    }
+  private List<Document> toList(Observable<Document> observable) {
+    return observable.toList().toBlocking().single();
+  }
 }

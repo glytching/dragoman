@@ -46,133 +46,130 @@ import static org.mockito.Mockito.when;
 @ExtendWith(RandomBeansExtension.class)
 public class MongoDatasetDaoTest extends AbstractMongoDBTest {
 
-    @Inject
-    private DatasetDao datasetDao;
-    @Inject
-    private MongoProvider mongoProvider;
-    @Random
-    private Dataset dataset;
+  @Inject private DatasetDao datasetDao;
+  @Inject private MongoProvider mongoProvider;
+  @Random private Dataset dataset;
 
-    @BeforeEach
-    public void setUp() {
-        Injector injector =
-                Guice.createInjector(
-                        Modules.override(new DatasetModule(), new ConfigurationModule())
-                                .with(new MongoOverrideModule()));
-        injector.injectMembers(this);
+  @BeforeEach
+  public void setUp() {
+    Injector injector =
+        Guice.createInjector(
+            Modules.override(new DatasetModule(), new ConfigurationModule())
+                .with(new MongoOverrideModule()));
+    injector.injectMembers(this);
 
-        when(mongoProvider.provide()).thenReturn(getMongoClient());
+    when(mongoProvider.provide()).thenReturn(getMongoClient());
+  }
+
+  @Test
+  public void canCreate() {
+    Dataset actual = write(dataset);
+
+    assertThat(actual, is(dataset));
+  }
+
+  @Test
+  public void existsIfThereIsADatasetForTheGivenId() {
+    Dataset actual = write(dataset);
+
+    assertThat(datasetDao.exists(actual.getId()), is(true));
+  }
+
+  @Test
+  public void doesNotExistsIfThereIsNoDatasetForTheGivenId() {
+    assertThat(datasetDao.exists(aString()), is(false));
+  }
+
+  @Test
+  public void canUpdate() {
+    // write it
+    Dataset written = write(dataset);
+
+    String datasetId = written.getId();
+
+    // update it
+    String source = "foo";
+    dataset.setSource(source);
+
+    Dataset updated = write(dataset);
+
+    assertThat(updated.getSource(), is(source));
+    assertThat(updated, is(dataset));
+    assertThat(updated.getId(), is(datasetId));
+  }
+
+  @Test
+  public void canDelete() {
+    write(dataset);
+
+    long deleteCount = datasetDao.delete(dataset.getId());
+
+    assertThat(deleteCount, is(1L));
+    assertThat(exists(dataset), is(false));
+  }
+
+  @Test
+  public void willReturnZeroIfAskedToDeleteADatasetWhichDoesNotExist() {
+    assertThat(datasetDao.delete(aString()), is(0L));
+  }
+
+  @Test
+  public void canGet() {
+    Dataset written = write(dataset);
+
+    assertThat(datasetDao.get(written.getId()), is(dataset));
+  }
+
+  @Test
+  public void willReturnNullIfAskedToGetADatasetWhichDoesNotExist() {
+    assertThat(datasetDao.get(aString()), nullValue());
+  }
+
+  @Test
+  public void canGetAll() {
+    String user = "aUser";
+    Dataset one = anyDataset(user);
+    Dataset two = anyDataset(user);
+
+    // write them
+    write(one, two, dataset);
+
+    Observable<Dataset> all = datasetDao.getAll(one.getOwner());
+
+    List<Dataset> datasets = all.toList().toBlocking().single();
+
+    assertThat(datasets, hasSize(2));
+    assertThat(datasets, hasItem(one));
+    assertThat(datasets, hasItem(two));
+  }
+
+  @Test
+  public void canGetAllWhenNoneExist() {
+    Observable<Dataset> all = datasetDao.getAll(aString());
+
+    List<Dataset> datasets = all.toList().toBlocking().single();
+
+    assertThat(datasets, hasSize(0));
+  }
+
+  private boolean exists(Dataset dataset) {
+    return datasetDao.exists(dataset.getId());
+  }
+
+  private void write(Dataset... datasets) {
+    for (Dataset dataset : datasets) {
+      write(dataset);
     }
+  }
 
-    @Test
-    public void canCreate() {
-        Dataset actual = write(dataset);
+  private Dataset write(Dataset dataset) {
+    Dataset written = datasetDao.write(dataset);
 
-        assertThat(actual, is(dataset));
-    }
+    assertThat(written, notNullValue());
 
-    @Test
-    public void existsIfThereIsADatasetForTheGivenId() {
-        Dataset actual = write(dataset);
+    // fail early if the write has not done what we expect it to do ...
+    assertThat(format("Failed to write dataset: %s", dataset), exists(written), is(true));
 
-        assertThat(datasetDao.exists(actual.getId()), is(true));
-    }
-
-    @Test
-    public void doesNotExistsIfThereIsNoDatasetForTheGivenId() {
-        assertThat(datasetDao.exists(aString()), is(false));
-    }
-
-    @Test
-    public void canUpdate() {
-        // write it
-        Dataset written = write(dataset);
-
-        String datasetId = written.getId();
-
-        // update it
-        String source = "foo";
-        dataset.setSource(source);
-
-        Dataset updated = write(dataset);
-
-        assertThat(updated.getSource(), is(source));
-        assertThat(updated, is(dataset));
-        assertThat(updated.getId(), is(datasetId));
-    }
-
-    @Test
-    public void canDelete() {
-        write(dataset);
-
-        long deleteCount = datasetDao.delete(dataset.getId());
-
-        assertThat(deleteCount, is(1L));
-        assertThat(exists(dataset), is(false));
-    }
-
-    @Test
-    public void willReturnZeroIfAskedToDeleteADatasetWhichDoesNotExist() {
-        assertThat(datasetDao.delete(aString()), is(0L));
-    }
-
-    @Test
-    public void canGet() {
-        Dataset written = write(dataset);
-
-        assertThat(datasetDao.get(written.getId()), is(dataset));
-    }
-
-    @Test
-    public void willReturnNullIfAskedToGetADatasetWhichDoesNotExist() {
-        assertThat(datasetDao.get(aString()), nullValue());
-    }
-
-    @Test
-    public void canGetAll() {
-        String user = "aUser";
-        Dataset one = anyDataset(user);
-        Dataset two = anyDataset(user);
-
-        // write them
-        write(one, two, dataset);
-
-        Observable<Dataset> all = datasetDao.getAll(one.getOwner());
-
-        List<Dataset> datasets = all.toList().toBlocking().single();
-
-        assertThat(datasets, hasSize(2));
-        assertThat(datasets, hasItem(one));
-        assertThat(datasets, hasItem(two));
-    }
-
-    @Test
-    public void canGetAllWhenNoneExist() {
-        Observable<Dataset> all = datasetDao.getAll(aString());
-
-        List<Dataset> datasets = all.toList().toBlocking().single();
-
-        assertThat(datasets, hasSize(0));
-    }
-
-    private boolean exists(Dataset dataset) {
-        return datasetDao.exists(dataset.getId());
-    }
-
-    private void write(Dataset... datasets) {
-        for (Dataset dataset : datasets) {
-            write(dataset);
-        }
-    }
-
-    private Dataset write(Dataset dataset) {
-        Dataset written = datasetDao.write(dataset);
-
-        assertThat(written, notNullValue());
-
-        // fail early if the write has not done what we expect it to do ...
-        assertThat(format("Failed to write dataset: %s", dataset), exists(written), is(true));
-
-        return datasetDao.get(written.getId());
-    }
+    return datasetDao.get(written.getId());
+  }
 }

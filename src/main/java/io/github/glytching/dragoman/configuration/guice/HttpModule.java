@@ -24,9 +24,9 @@ import io.github.glytching.dragoman.http.okhttp.OkHttpClient;
 
 public class HttpModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        bind(HttpClientAdapter.class).to(HttpClientAdapterImpl.class);
-        bind(HttpClient.class).to(OkHttpClient.class);
-    }
+  @Override
+  protected void configure() {
+    bind(HttpClientAdapter.class).to(HttpClientAdapterImpl.class);
+    bind(HttpClient.class).to(OkHttpClient.class);
+  }
 }

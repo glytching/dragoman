@@ -22,46 +22,43 @@ package io.github.glytching.dragoman.authentication;
  */
 public interface AuthenticationDao {
 
-    /**
-     * Does an entry exist for the given {@code userName}?
-     *
-     * @param userName the name of a (proposed) user
-     *
-     * @return true if an entry exists in the authentication store for the given {@code userName},
-     * false otherwise
-     */
-    boolean exists(String userName);
+  /**
+   * Does an entry exist for the given {@code userName}?
+   *
+   * @param userName the name of a (proposed) user
+   * @return true if an entry exists in the authentication store for the given {@code userName},
+   *     false otherwise
+   */
+  boolean exists(String userName);
 
-    /**
-     * Does the given combination of {@code userName} and {@code password} match an entry in the
-     * authentication store?
-     *
-     * @param userName the name of a user
-     * @param password the password for the {@code userName}
-     *
-     * @return true if an entry exists in the authentication store for the given combination of {@code
-     * userName} and {@code password}, false otherwise
-     */
-    boolean isValid(String userName, String password);
+  /**
+   * Does the given combination of {@code userName} and {@code password} match an entry in the
+   * authentication store?
+   *
+   * @param userName the name of a user
+   * @param password the password for the {@code userName}
+   * @return true if an entry exists in the authentication store for the given combination of {@code
+   *     userName} and {@code password}, false otherwise
+   */
+  boolean isValid(String userName, String password);
 
-    /**
-     * Retrieve the {@link User} record from the authentication store for the given combination of
-     * {@code userName} and {@code password}.
-     *
-     * @param userName the name of a user
-     * @param password the password for the {@code userName}
-     *
-     * @return the {@link User} record if an entry exists in the authentication store for the given
-     * combination of {@code userName} and {@code password}, null otherwise
-     */
-    User getUser(String userName, String password);
+  /**
+   * Retrieve the {@link User} record from the authentication store for the given combination of
+   * {@code userName} and {@code password}.
+   *
+   * @param userName the name of a user
+   * @param password the password for the {@code userName}
+   * @return the {@link User} record if an entry exists in the authentication store for the given
+   *     combination of {@code userName} and {@code password}, null otherwise
+   */
+  User getUser(String userName, String password);
 
-    /**
-     * Create a {@link User} record in the authentication store for the given combination of {@code
-     * userName} and {@code password}.
-     *
-     * @param userName the name of a user
-     * @param password the password for the {@code userName}
-     */
-    void createUser(String userName, String password);
+  /**
+   * Create a {@link User} record in the authentication store for the given combination of {@code
+   * userName} and {@code password}.
+   *
+   * @param userName the name of a user
+   * @param password the password for the {@code userName}
+   */
+  void createUser(String userName, String password);
 }

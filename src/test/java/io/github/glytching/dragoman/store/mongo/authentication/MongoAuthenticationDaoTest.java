@@ -42,96 +42,93 @@ import static org.mockito.Mockito.when;
 
 public class MongoAuthenticationDaoTest extends AbstractMongoDBTest {
 
-    @Inject
-    private AuthenticationDao authenticationDao;
-    @Inject
-    private MongoProvider mongoProvider;
-    @Inject
-    private PasswordUtil passwordUtil;
+  @Inject private AuthenticationDao authenticationDao;
+  @Inject private MongoProvider mongoProvider;
+  @Inject private PasswordUtil passwordUtil;
 
-    @BeforeEach
-    public void setUp() {
-        Injector injector =
-                Guice.createInjector(
-                        Modules.override(new AuthenticationModule(), new ConfigurationModule())
-                                .with(new MongoOverrideModule()));
-        injector.injectMembers(this);
+  @BeforeEach
+  public void setUp() {
+    Injector injector =
+        Guice.createInjector(
+            Modules.override(new AuthenticationModule(), new ConfigurationModule())
+                .with(new MongoOverrideModule()));
+    injector.injectMembers(this);
 
-        when(mongoProvider.provide()).thenReturn(getMongoClient());
+    when(mongoProvider.provide()).thenReturn(getMongoClient());
+  }
+
+  @Test
+  public void canCreateAndGetAUser() {
+    String name = aString();
+    String password = "aPassword";
+
+    authenticationDao.createUser(name, password);
+
+    User user = authenticationDao.getUser(name, password);
+
+    assertThat(user.getName(), is(name));
+    assertThat(user.getHashedPassword(), is(passwordUtil.toHash(password)));
+  }
+
+  @Test
+  public void willReturnNullIfTheRequestedUserDoesNotExist() {
+    String name = aString();
+    String password = "aPassword";
+
+    User user = authenticationDao.getUser(name, password);
+
+    assertThat(user, nullValue());
+  }
+
+  @Test
+  public void existsIfTheAuthenticationStoreContainsARecordForTheGivenUserName() {
+    String name = aString();
+    String password = "aPassword";
+
+    authenticationDao.createUser(name, password);
+
+    assertThat(authenticationDao.exists(name), is(true));
+  }
+
+  @Test
+  public void doesNotExistIfTheAuthenticationStoreDoesNotContainARecordForTheGivenUserName() {
+    String name = aString();
+
+    assertThat(authenticationDao.exists(name), is(false));
+  }
+
+  @Test
+  public void isValidIfUsernameAndPasswordMatch() {
+    String name = aString();
+    String password = "aPassword";
+
+    authenticationDao.createUser(name, password);
+
+    assertThat(authenticationDao.isValid(name, password), is(true));
+  }
+
+  @Test
+  public void isInvalidIfUsernameAndPasswordDoNotMatch() {
+    String name = aString();
+    String password = "aPassword";
+
+    authenticationDao.createUser(name, password);
+
+    assertThat(authenticationDao.isValid(name, "..."), is(false));
+  }
+
+  @Test
+  public void cannotCreateAUserIfTheUserNameIsAlreadyTaken() {
+    String name = aString();
+    String password = "aPassword";
+
+    authenticationDao.createUser(name, password);
+
+    try {
+      authenticationDao.createUser(name, password);
+      fail("Expected user creation to fail because the given user already exists!");
+    } catch (RuntimeException ex) {
+      assertThat(ex.getMessage(), is(format("A user already exists for: %s!", name)));
     }
-
-    @Test
-    public void canCreateAndGetAUser() {
-        String name = aString();
-        String password = "aPassword";
-
-        authenticationDao.createUser(name, password);
-
-        User user = authenticationDao.getUser(name, password);
-
-        assertThat(user.getName(), is(name));
-        assertThat(user.getHashedPassword(), is(passwordUtil.toHash(password)));
-    }
-
-    @Test
-    public void willReturnNullIfTheRequestedUserDoesNotExist() {
-        String name = aString();
-        String password = "aPassword";
-
-        User user = authenticationDao.getUser(name, password);
-
-        assertThat(user, nullValue());
-    }
-
-    @Test
-    public void existsIfTheAuthenticationStoreContainsARecordForTheGivenUserName() {
-        String name = aString();
-        String password = "aPassword";
-
-        authenticationDao.createUser(name, password);
-
-        assertThat(authenticationDao.exists(name), is(true));
-    }
-
-    @Test
-    public void doesNotExistIfTheAuthenticationStoreDoesNotContainARecordForTheGivenUserName() {
-        String name = aString();
-
-        assertThat(authenticationDao.exists(name), is(false));
-    }
-
-    @Test
-    public void isValidIfUsernameAndPasswordMatch() {
-        String name = aString();
-        String password = "aPassword";
-
-        authenticationDao.createUser(name, password);
-
-        assertThat(authenticationDao.isValid(name, password), is(true));
-    }
-
-    @Test
-    public void isInvalidIfUsernameAndPasswordDoNotMatch() {
-        String name = aString();
-        String password = "aPassword";
-
-        authenticationDao.createUser(name, password);
-
-        assertThat(authenticationDao.isValid(name, "..."), is(false));
-    }
-
-    @Test
-    public void cannotCreateAUserIfTheUserNameIsAlreadyTaken() {
-        String name = aString();
-        String password = "aPassword";
-
-        authenticationDao.createUser(name, password);
-
-        try {
-            authenticationDao.createUser(name, password);
-            fail("Expected user creation to fail because the given user already exists!");
-        } catch (RuntimeException ex) {
-            assertThat(ex.getMessage(), is(format("A user already exists for: %s!", name)));
-        }
-    }
+  }
 }

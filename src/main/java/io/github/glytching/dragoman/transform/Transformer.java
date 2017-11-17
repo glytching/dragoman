@@ -27,23 +27,21 @@ package io.github.glytching.dragoman.transform;
  */
 public interface Transformer<F> {
 
-    /**
-     * Transforms the given {@code from} into an instance of {@code F}.
-     *
-     * @param from
-     *
-     * @return
-     */
-    F transform(Object from);
+  /**
+   * Transforms the given {@code from} into an instance of {@code F}.
+   *
+   * @param from
+   * @return
+   */
+  F transform(Object from);
 
-    /**
-     * Transforms the given {@code from} into something of type {@code clazz}.
-     *
-     * @param clazz the target type
-     * @param from the object to be transformed
-     * @param <T> the target type
-     *
-     * @return an instance of {@code T} representing {@code from}
-     */
-    <T> T transform(Class<T> clazz, F from);
+  /**
+   * Transforms the given {@code from} into something of type {@code clazz}.
+   *
+   * @param clazz the target type
+   * @param from the object to be transformed
+   * @param <T> the target type
+   * @return an instance of {@code T} representing {@code from}
+   */
+  <T> T transform(Class<T> clazz, F from);
 }

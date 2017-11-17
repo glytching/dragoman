@@ -35,146 +35,145 @@ import static org.mockito.Mockito.*;
 
 public class OkHttpClientTest {
 
-    private final String url = "http://host:1234/some/end/point";
-    private final String payload = "aPayload";
-    private final String json = "{\"a\": \"b\"}";
-    @Mock
-    private okhttp3.OkHttpClient _httpClient;
-    private io.github.glytching.dragoman.http.okhttp.OkHttpClient okHttpClient;
+  private final String url = "http://host:1234/some/end/point";
+  private final String payload = "aPayload";
+  private final String json = "{\"a\": \"b\"}";
+  @Mock private okhttp3.OkHttpClient _httpClient;
+  private io.github.glytching.dragoman.http.okhttp.OkHttpClient okHttpClient;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        okHttpClient = new io.github.glytching.dragoman.http.okhttp.OkHttpClient(_httpClient);
-    }
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+    okHttpClient = new io.github.glytching.dragoman.http.okhttp.OkHttpClient(_httpClient);
+  }
 
-    @Test
-    public void canGet() throws IOException {
-        Request request = new Request.Builder().url(url).build();
+  @Test
+  public void canGet() throws IOException {
+    Request request = new Request.Builder().url(url).build();
 
-        Response response = aSuccessfulResponse(request, payload);
+    Response response = aSuccessfulResponse(request, payload);
 
-        expectOkHttpClientRequest(response);
+    expectOkHttpClientRequest(response);
 
-        HttpResponse httpResponse = okHttpClient.get(url);
+    HttpResponse httpResponse = okHttpClient.get(url);
 
-        assertThatResponseIsCorrect(httpResponse, response, true, payload);
+    assertThatResponseIsCorrect(httpResponse, response, true, payload);
 
-        assertThatCorrectRequestIsSubmitted(_httpClient, url, "GET");
-    }
+    assertThatCorrectRequestIsSubmitted(_httpClient, url, "GET");
+  }
 
-    @Test
-    public void canDelete() throws IOException {
-        Request request = new Request.Builder().url(url).delete().build();
+  @Test
+  public void canDelete() throws IOException {
+    Request request = new Request.Builder().url(url).delete().build();
 
-        Response response = aSuccessfulResponse(request, payload);
+    Response response = aSuccessfulResponse(request, payload);
 
-        expectOkHttpClientRequest(response);
+    expectOkHttpClientRequest(response);
 
-        HttpResponse httpResponse = okHttpClient.delete(url);
+    HttpResponse httpResponse = okHttpClient.delete(url);
 
-        assertThatResponseIsCorrect(httpResponse, response, true, payload);
+    assertThatResponseIsCorrect(httpResponse, response, true, payload);
 
-        assertThatCorrectRequestIsSubmitted(_httpClient, url, "DELETE");
-    }
+    assertThatCorrectRequestIsSubmitted(_httpClient, url, "DELETE");
+  }
 
-    @Test
-    public void canPost() throws IOException {
-        Request request =
-                new Request.Builder()
-                        .url(url)
-                        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json))
-                        .build();
+  @Test
+  public void canPost() throws IOException {
+    Request request =
+        new Request.Builder()
+            .url(url)
+            .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json))
+            .build();
 
-        Response response = aSuccessfulResponse(request, payload);
+    Response response = aSuccessfulResponse(request, payload);
 
-        expectOkHttpClientRequest(response);
+    expectOkHttpClientRequest(response);
 
-        HttpResponse httpResponse = okHttpClient.post(url, json);
+    HttpResponse httpResponse = okHttpClient.post(url, json);
 
-        assertThatResponseIsCorrect(httpResponse, response, true, payload);
+    assertThatResponseIsCorrect(httpResponse, response, true, payload);
 
-        assertThatCorrectRequestIsSubmitted(_httpClient, url, "POST");
-    }
+    assertThatCorrectRequestIsSubmitted(_httpClient, url, "POST");
+  }
 
-    @Test
-    public void canPut() throws IOException {
-        Request request =
-                new Request.Builder()
-                        .url(url)
-                        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json))
-                        .build();
+  @Test
+  public void canPut() throws IOException {
+    Request request =
+        new Request.Builder()
+            .url(url)
+            .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json))
+            .build();
 
-        Response response = aSuccessfulResponse(request, payload);
+    Response response = aSuccessfulResponse(request, payload);
 
-        expectOkHttpClientRequest(response);
+    expectOkHttpClientRequest(response);
 
-        HttpResponse httpResponse = okHttpClient.put(url, json);
+    HttpResponse httpResponse = okHttpClient.put(url, json);
 
-        assertThatResponseIsCorrect(httpResponse, response, true, payload);
+    assertThatResponseIsCorrect(httpResponse, response, true, payload);
 
-        assertThatCorrectRequestIsSubmitted(_httpClient, url, "PUT");
-    }
+    assertThatCorrectRequestIsSubmitted(_httpClient, url, "PUT");
+  }
 
-    @Test
-    public void canHandleFailure() throws IOException {
-        IOException exception = new IOException("boom!");
+  @Test
+  public void canHandleFailure() throws IOException {
+    IOException exception = new IOException("boom!");
 
-        HttpClientException actual =
-                assertThrows(
-                        HttpClientException.class,
-                        () -> {
-                            Call call = mock(Call.class);
-                            when(_httpClient.newCall(any(Request.class))).thenReturn(call);
-                            when(call.execute()).thenThrow(exception);
+    HttpClientException actual =
+        assertThrows(
+            HttpClientException.class,
+            () -> {
+              Call call = mock(Call.class);
+              when(_httpClient.newCall(any(Request.class))).thenReturn(call);
+              when(call.execute()).thenThrow(exception);
 
-                            okHttpClient.get(url);
-                        });
-        assertThat(
-                actual.getMessage(),
-                containsString("Failed to read from: " + url + ", caused by: " + exception.getMessage()));
-    }
+              okHttpClient.get(url);
+            });
+    assertThat(
+        actual.getMessage(),
+        containsString("Failed to read from: " + url + ", caused by: " + exception.getMessage()));
+  }
 
-    private void expectOkHttpClientRequest(Response response) throws IOException {
-        Call call = mock(Call.class);
+  private void expectOkHttpClientRequest(Response response) throws IOException {
+    Call call = mock(Call.class);
 
-        // ok http's Request does not play ball with eq() so we allow anything through here and
-        // then assert that the expected Request was submitted in a later verification call
-        when(_httpClient.newCall(any(Request.class))).thenReturn(call);
+    // ok http's Request does not play ball with eq() so we allow anything through here and
+    // then assert that the expected Request was submitted in a later verification call
+    when(_httpClient.newCall(any(Request.class))).thenReturn(call);
 
-        when(call.execute()).thenReturn(response);
-    }
+    when(call.execute()).thenReturn(response);
+  }
 
-    @SuppressWarnings("SameParameterValue")
-    private void assertThatResponseIsCorrect(
-            HttpResponse actual, Response expected, boolean successful, String payload) {
-        assertThat(actual.isSuccessful(), is(successful));
-        assertThat(actual.getStatusCode(), is(expected.code()));
-        assertThat(actual.getStatusMessage(), is(expected.message()));
-        assertThat(actual.getHeaders(), is(expected.headers().toMultimap()));
-        assertThat(actual.getUrl(), is(url));
-        assertThat(actual.getPayload(), is(payload));
-    }
+  @SuppressWarnings("SameParameterValue")
+  private void assertThatResponseIsCorrect(
+      HttpResponse actual, Response expected, boolean successful, String payload) {
+    assertThat(actual.isSuccessful(), is(successful));
+    assertThat(actual.getStatusCode(), is(expected.code()));
+    assertThat(actual.getStatusMessage(), is(expected.message()));
+    assertThat(actual.getHeaders(), is(expected.headers().toMultimap()));
+    assertThat(actual.getUrl(), is(url));
+    assertThat(actual.getPayload(), is(payload));
+  }
 
-    private void assertThatCorrectRequestIsSubmitted(
-            okhttp3.OkHttpClient httpClient, String url, String method) {
-        ArgumentCaptor<Request> argumentCaptor = ArgumentCaptor.forClass(Request.class);
+  private void assertThatCorrectRequestIsSubmitted(
+      okhttp3.OkHttpClient httpClient, String url, String method) {
+    ArgumentCaptor<Request> argumentCaptor = ArgumentCaptor.forClass(Request.class);
 
-        verify(httpClient, times(1)).newCall(argumentCaptor.capture());
+    verify(httpClient, times(1)).newCall(argumentCaptor.capture());
 
-        Request actualRequest = argumentCaptor.getValue();
-        assertThat(actualRequest.method(), is(method));
-        assertThat(actualRequest.url(), is(HttpUrl.parse(url)));
-    }
+    Request actualRequest = argumentCaptor.getValue();
+    assertThat(actualRequest.method(), is(method));
+    assertThat(actualRequest.url(), is(HttpUrl.parse(url)));
+  }
 
-    private Response aSuccessfulResponse(Request request, String payload) {
-        return new Response.Builder()
-                .code(200)
-                .protocol(Protocol.HTTP_1_0)
-                .message("aMessage")
-                .request(request)
-                .header("a", "b")
-                .body(ResponseBody.create(MediaType.parse("application/json; charset=utf-8"), payload))
-                .build();
-    }
+  private Response aSuccessfulResponse(Request request, String payload) {
+    return new Response.Builder()
+        .code(200)
+        .protocol(Protocol.HTTP_1_0)
+        .message("aMessage")
+        .request(request)
+        .header("a", "b")
+        .body(ResponseBody.create(MediaType.parse("application/json; charset=utf-8"), payload))
+        .build();
+  }
 }

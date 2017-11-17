@@ -34,26 +34,26 @@ import java.util.Set;
  */
 public class HealthCheckResource implements RestResource {
 
-    private final HealthCheckRegistry healthCheckRegistry;
+  private final HealthCheckRegistry healthCheckRegistry;
 
-    @Inject
-    public HealthCheckResource(Set<HealthCheck> healthChecks) {
-        this.healthCheckRegistry = new HealthCheckRegistry();
-        for (HealthCheck healthCheck : healthChecks) {
-            healthCheckRegistry.register(healthCheck.getClass().getSimpleName(), healthCheck);
-        }
+  @Inject
+  public HealthCheckResource(Set<HealthCheck> healthChecks) {
+    this.healthCheckRegistry = new HealthCheckRegistry();
+    for (HealthCheck healthCheck : healthChecks) {
+      healthCheckRegistry.register(healthCheck.getClass().getSimpleName(), healthCheck);
     }
+  }
 
-    @Override
-    public void configure(Vertx vertx, HttpServer httpServer, Router router) {
-        // using blockingHandler since we cannot be sure that all health cheks are non-blocking
-        router
-                .get(WebServerUtils.withApplicationName("healthcheck"))
-                .blockingHandler(
-                        routingContext -> {
-                            Map<String, HealthCheck.Result> results = healthCheckRegistry.runHealthChecks();
+  @Override
+  public void configure(Vertx vertx, HttpServer httpServer, Router router) {
+    // using blockingHandler since we cannot be sure that all health cheks are non-blocking
+    router
+        .get(WebServerUtils.withApplicationName("healthcheck"))
+        .blockingHandler(
+            routingContext -> {
+              Map<String, HealthCheck.Result> results = healthCheckRegistry.runHealthChecks();
 
-                            routingContext.response().end(Json.encodePrettily(results));
-                        });
-    }
+              routingContext.response().end(Json.encodePrettily(results));
+            });
+  }
 }

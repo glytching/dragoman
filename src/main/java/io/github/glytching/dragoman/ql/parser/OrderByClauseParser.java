@@ -36,42 +36,41 @@ import static java.lang.String.format;
  */
 public class OrderByClauseParser extends BaseParser {
 
-    /**
-     * Get a deserialised form of the given {@code expression}, deserialised into the type {@code T}.
-     * See {@link #getListener(Class)} to understand what target types are supported.
-     *
-     * @param clazz the target type e.g. Bson if you want to apply the {@code expression} to a MongoDB
-     * store
-     * @param expression the order by expression
-     * @param <T>
-     *
-     * @return a deserialised form of the given {@code expression}, deserialised into the type {@code
-     * T}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T get(Class<T> clazz, String expression) {
-        AbstractOrderByClauseListener<T> listener = getListener(clazz);
+  /**
+   * Get a deserialised form of the given {@code expression}, deserialised into the type {@code T}.
+   * See {@link #getListener(Class)} to understand what target types are supported.
+   *
+   * @param clazz the target type e.g. Bson if you want to apply the {@code expression} to a MongoDB
+   *     store
+   * @param expression the order by expression
+   * @param <T>
+   * @return a deserialised form of the given {@code expression}, deserialised into the type {@code
+   *     T}
+   */
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T> T get(Class<T> clazz, String expression) {
+    AbstractOrderByClauseListener<T> listener = getListener(clazz);
 
-        parse(expression, listener);
+    parse(expression, listener);
 
-        return listener.get();
+    return listener.get();
+  }
+
+  @Override
+  protected ParserRuleContext getParserContext(SQLParser parser) {
+    // this is the entry point for an order by clause
+    return parser.sort_specifier_list();
+  }
+
+  private <T> AbstractOrderByClauseListener getListener(Class<T> clazz) {
+    if (Bson.class == clazz) {
+      return new MongoOrderByClauseListener();
+    } else {
+      throw new IllegalArgumentException(
+          format(
+              "Type: '%s' is not supported, the supported types are: [%s]",
+              clazz.getSimpleName(), Bson.class.getSimpleName()));
     }
-
-    @Override
-    protected ParserRuleContext getParserContext(SQLParser parser) {
-        // this is the entry point for an order by clause
-        return parser.sort_specifier_list();
-    }
-
-    private <T> AbstractOrderByClauseListener getListener(Class<T> clazz) {
-        if (Bson.class == clazz) {
-            return new MongoOrderByClauseListener();
-        } else {
-            throw new IllegalArgumentException(
-                    format(
-                            "Type: '%s' is not supported, the supported types are: [%s]",
-                            clazz.getSimpleName(), Bson.class.getSimpleName()));
-        }
-    }
+  }
 }

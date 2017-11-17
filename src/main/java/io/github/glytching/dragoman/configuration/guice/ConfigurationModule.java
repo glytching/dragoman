@@ -30,27 +30,26 @@ import javax.inject.Singleton;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class ConfigurationModule extends AbstractModule {
-    private static final Logger logger = LoggerFactory.getLogger(ConfigurationModule.class);
+  private static final Logger logger = LoggerFactory.getLogger(ConfigurationModule.class);
 
-    @Override
-    protected void configure() {
+  @Override
+  protected void configure() {}
+
+  @Provides
+  @Singleton
+  public ApplicationConfiguration provideApplicationConfiguration() {
+    String env = System.getProperty("env", "");
+
+    if (isNotBlank(env)) {
+      logger.info("Configuring system for env={}", env);
     }
 
-    @Provides
-    @Singleton
-    public ApplicationConfiguration provideApplicationConfiguration() {
-        String env = System.getProperty("env", "");
-
-        if (isNotBlank(env)) {
-            logger.info("Configuring system for env={}", env);
-        }
-
-        return new ConstrettoApplicationConfiguration(
-                new ConstrettoBuilder()
-                        .addCurrentTag(env)
-                        .createPropertiesStore()
-                        .addResource(new ClassPathResource("application.properties"))
-                        .done()
-                        .getConfiguration());
-    }
+    return new ConstrettoApplicationConfiguration(
+        new ConstrettoBuilder()
+            .addCurrentTag(env)
+            .createPropertiesStore()
+            .addResource(new ClassPathResource("application.properties"))
+            .done()
+            .getConfiguration());
+  }
 }

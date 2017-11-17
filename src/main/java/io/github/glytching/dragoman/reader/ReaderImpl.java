@@ -30,19 +30,19 @@ import javax.inject.Inject;
  */
 public class ReaderImpl implements Reader {
 
-    private final RepositoryRouter repositoryRouter;
+  private final RepositoryRouter repositoryRouter;
 
-    @Inject
-    public ReaderImpl(RepositoryRouter repositoryRouter) {
-        this.repositoryRouter = repositoryRouter;
-    }
+  @Inject
+  public ReaderImpl(RepositoryRouter repositoryRouter) {
+    this.repositoryRouter = repositoryRouter;
+  }
 
-    @Override
-    public Observable<DataEnvelope> read(
-            Dataset dataset, String select, String where, String orderBy, Integer maxResults) {
-        return repositoryRouter
-                .get(dataset)
-                .find(dataset, select, where, orderBy, maxResults)
-                .map(incoming -> new DataEnvelope(dataset.getSource(), incoming));
-    }
+  @Override
+  public Observable<DataEnvelope> read(
+      Dataset dataset, String select, String where, String orderBy, Integer maxResults) {
+    return repositoryRouter
+        .get(dataset)
+        .find(dataset, select, where, orderBy, maxResults)
+        .map(incoming -> new DataEnvelope(dataset.getSource(), incoming));
+  }
 }

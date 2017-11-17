@@ -37,82 +37,80 @@ import javax.inject.Inject;
 
 import static java.lang.String.format;
 
-/**
- * An implementation of {@link AuthenticationDao} for a MongoDB authentication store.
- */
+/** An implementation of {@link AuthenticationDao} for a MongoDB authentication store. */
 public class MongoAuthenticationDao implements AuthenticationDao {
 
-    private final MongoProvider mongoProvider;
-    private final DocumentTransformer documentTransformer;
-    private final PasswordUtil passwordUtil;
-    private final MongoStorageCoordinates storageCoordinates;
+  private final MongoProvider mongoProvider;
+  private final DocumentTransformer documentTransformer;
+  private final PasswordUtil passwordUtil;
+  private final MongoStorageCoordinates storageCoordinates;
 
-    @Inject
-    public MongoAuthenticationDao(
-            MongoProvider mongoProvider,
-            DocumentTransformer documentTransformer,
-            PasswordUtil passwordUtil,
-            ApplicationConfiguration configuration) {
-        this.mongoProvider = mongoProvider;
-        this.documentTransformer = documentTransformer;
-        this.passwordUtil = passwordUtil;
-        this.storageCoordinates =
-                new MongoStorageCoordinates(
-                        configuration.getDatabaseName(), configuration.getUserStorageName());
+  @Inject
+  public MongoAuthenticationDao(
+      MongoProvider mongoProvider,
+      DocumentTransformer documentTransformer,
+      PasswordUtil passwordUtil,
+      ApplicationConfiguration configuration) {
+    this.mongoProvider = mongoProvider;
+    this.documentTransformer = documentTransformer;
+    this.passwordUtil = passwordUtil;
+    this.storageCoordinates =
+        new MongoStorageCoordinates(
+            configuration.getDatabaseName(), configuration.getUserStorageName());
+  }
+
+  @Override
+  public boolean exists(String userName) {
+    Observable<Long> count =
+        getCollection().count(Filters.eq("name", userName), new CountOptions().limit(1));
+    return count.toBlocking().single() > 0;
+  }
+
+  @Override
+  public boolean isValid(String userName, String password) {
+    Observable<Long> count =
+        getCollection()
+            .count(filter(userName, passwordUtil.toHash(password)), new CountOptions().limit(1));
+    return count.toBlocking().single() > 0;
+  }
+
+  @Override
+  public User getUser(String userName, String password) {
+    FindObservable<Document> findObservable =
+        getCollection().find(filter(userName, passwordUtil.toHash(password))).limit(1);
+
+    return findObservable.first().map(toUser()).toBlocking().singleOrDefault(null);
+  }
+
+  @Override
+  public void createUser(String userName, String password) {
+    if (exists(userName)) {
+      throw new RuntimeException(format("A user already exists for: %s!", userName));
+    } else {
+      Observable<Success> successObservable =
+          getCollection()
+              .insertOne(
+                  documentTransformer.transform(new User(userName, passwordUtil.toHash(password))));
+
+      Success success = successObservable.toBlocking().single();
+      if (success != Success.SUCCESS) {
+        throw new RuntimeException(format("Failed to create user for: %s!", userName));
+      }
     }
+  }
 
-    @Override
-    public boolean exists(String userName) {
-        Observable<Long> count =
-                getCollection().count(Filters.eq("name", userName), new CountOptions().limit(1));
-        return count.toBlocking().single() > 0;
-    }
+  private Bson filter(String name, String hashedPassword) {
+    return Filters.and(Filters.eq("name", name), Filters.eq("hashedPassword", hashedPassword));
+  }
 
-    @Override
-    public boolean isValid(String userName, String password) {
-        Observable<Long> count =
-                getCollection()
-                        .count(filter(userName, passwordUtil.toHash(password)), new CountOptions().limit(1));
-        return count.toBlocking().single() > 0;
-    }
+  private Func1<Document, User> toUser() {
+    return document -> documentTransformer.transform(User.class, document);
+  }
 
-    @Override
-    public User getUser(String userName, String password) {
-        FindObservable<Document> findObservable =
-                getCollection().find(filter(userName, passwordUtil.toHash(password))).limit(1);
-
-        return findObservable.first().map(toUser()).toBlocking().singleOrDefault(null);
-    }
-
-    @Override
-    public void createUser(String userName, String password) {
-        if (exists(userName)) {
-            throw new RuntimeException(format("A user already exists for: %s!", userName));
-        } else {
-            Observable<Success> successObservable =
-                    getCollection()
-                            .insertOne(
-                                    documentTransformer.transform(new User(userName, passwordUtil.toHash(password))));
-
-            Success success = successObservable.toBlocking().single();
-            if (success != Success.SUCCESS) {
-                throw new RuntimeException(format("Failed to create user for: %s!", userName));
-            }
-        }
-    }
-
-    private Bson filter(String name, String hashedPassword) {
-        return Filters.and(Filters.eq("name", name), Filters.eq("hashedPassword", hashedPassword));
-    }
-
-    private Func1<Document, User> toUser() {
-        return document -> documentTransformer.transform(User.class, document);
-    }
-
-    private MongoCollection<Document> getCollection() {
-        return mongoProvider
-                .provide()
-                .getDatabase(storageCoordinates.getDatabaseName())
-                .getCollection(storageCoordinates.getCollectionName());
-    }
+  private MongoCollection<Document> getCollection() {
+    return mongoProvider
+        .provide()
+        .getDatabase(storageCoordinates.getDatabaseName())
+        .getCollection(storageCoordinates.getCollectionName());
+  }
 }

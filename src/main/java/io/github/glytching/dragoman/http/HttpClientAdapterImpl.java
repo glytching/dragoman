@@ -32,29 +32,29 @@ import static java.lang.String.format;
  */
 public class HttpClientAdapterImpl implements HttpClientAdapter {
 
-    private final HttpClient httpClient;
-    private final JsonTransformer jsonTransformer;
+  private final HttpClient httpClient;
+  private final JsonTransformer jsonTransformer;
 
-    @Inject
-    public HttpClientAdapterImpl(HttpClient httpClient, JsonTransformer jsonTransformer) {
-        this.httpClient = httpClient;
-        this.jsonTransformer = jsonTransformer;
+  @Inject
+  public HttpClientAdapterImpl(HttpClient httpClient, JsonTransformer jsonTransformer) {
+    this.httpClient = httpClient;
+    this.jsonTransformer = jsonTransformer;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public Observable<Map<String, Object>> read(
+      String url, ResponsePostProcessor responsePostProcessor) {
+    HttpResponse response = httpClient.get(url);
+
+    if (!response.isSuccessful()) {
+      throw new HttpClientException(
+          format("Failed to read response from: %s, got: %s", url, response));
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public Observable<Map<String, Object>> read(
-            String url, ResponsePostProcessor responsePostProcessor) {
-        HttpResponse response = httpClient.get(url);
+    String content = responsePostProcessor.postProcess(response.getPayload());
 
-        if (!response.isSuccessful()) {
-            throw new HttpClientException(
-                    format("Failed to read response from: %s, got: %s", url, response));
-        }
-
-        String content = responsePostProcessor.postProcess(response.getPayload());
-
-        List<Map<String, Object>> transformed = jsonTransformer.transform(List.class, content);
-        return Observable.from(transformed);
-    }
+    List<Map<String, Object>> transformed = jsonTransformer.transform(List.class, content);
+    return Observable.from(transformed);
+  }
 }

@@ -30,34 +30,34 @@ import java.util.stream.Collectors;
  */
 public class IsMongoConnected extends HealthCheck {
 
-    private final MongoProvider mongoProvider;
+  private final MongoProvider mongoProvider;
 
-    @Inject
-    public IsMongoConnected(MongoProvider mongoProvider) {
-        this.mongoProvider = mongoProvider;
+  @Inject
+  public IsMongoConnected(MongoProvider mongoProvider) {
+    this.mongoProvider = mongoProvider;
+  }
+
+  /**
+   * Check that we can talk to the configured MongoDB instance.
+   *
+   * @return a {@link Result} with details of whether this check was successful or not
+   * @throws Exception not thrown, any failure to perform the check results in a failed {@link
+   *     Result}
+   */
+  @Override
+  protected Result check() throws Exception {
+    MongoClient mongoClient = mongoProvider.provide();
+
+    List<ServerAddress> serverAddresses = mongoClient.getSettings().getClusterSettings().getHosts();
+    String address =
+        serverAddresses.stream().map(ServerAddress::toString).collect(Collectors.joining(","));
+
+    try {
+      // any read will suffice to prove connectivity
+      mongoClient.getDatabase("xyz");
+      return Result.healthy("Connected to MongoDB at " + address);
+    } catch (Exception ex) {
+      return Result.unhealthy("Cannot connect to MongoDB at " + address);
     }
-
-    /**
-     * Check that we can talk to the configured MongoDB instance.
-     *
-     * @return a {@link Result} with details of whether this check was successful or not
-     * @throws Exception not thrown, any failure to perform the check results in a failed {@link
-     * Result}
-     */
-    @Override
-    protected Result check() throws Exception {
-        MongoClient mongoClient = mongoProvider.provide();
-
-        List<ServerAddress> serverAddresses = mongoClient.getSettings().getClusterSettings().getHosts();
-        String address =
-                serverAddresses.stream().map(ServerAddress::toString).collect(Collectors.joining(","));
-
-        try {
-            // any read will suffice to prove connectivity
-            mongoClient.getDatabase("xyz");
-            return Result.healthy("Connected to MongoDB at " + address);
-        } catch (Exception ex) {
-            return Result.unhealthy("Cannot connect to MongoDB at " + address);
-        }
-    }
+  }
 }

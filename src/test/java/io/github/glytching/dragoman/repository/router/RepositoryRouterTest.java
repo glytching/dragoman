@@ -37,39 +37,36 @@ import static org.mockito.Mockito.when;
 @ExtendWith(RandomBeansExtension.class)
 public class RepositoryRouterTest {
 
-    @Mock
-    private Repository<Map<String, Object>> repositoryA;
-    @Mock
-    private Repository<Map<String, Object>> repositoryB;
-    @Random
-    private Dataset dataset;
+  @Mock private Repository<Map<String, Object>> repositoryA;
+  @Mock private Repository<Map<String, Object>> repositoryB;
+  @Random private Dataset dataset;
 
-    private RepositoryRouter router;
+  private RepositoryRouter router;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
 
-        router = new RepositoryRouterImpl(Sets.newHashSet(repositoryA, repositoryB));
-    }
+    router = new RepositoryRouterImpl(Sets.newHashSet(repositoryA, repositoryB));
+  }
 
-    @Test
-    public void canRouteADatasetToARepository() {
-        when(repositoryA.appliesTo(dataset)).thenReturn(true);
-        when(repositoryB.appliesTo(dataset)).thenReturn(false);
+  @Test
+  public void canRouteADatasetToARepository() {
+    when(repositoryA.appliesTo(dataset)).thenReturn(true);
+    when(repositoryB.appliesTo(dataset)).thenReturn(false);
 
-        Repository<Map<String, Object>> actual = router.get(dataset);
+    Repository<Map<String, Object>> actual = router.get(dataset);
 
-        assertThat(actual, is(repositoryA));
-    }
+    assertThat(actual, is(repositoryA));
+  }
 
-    @Test
-    public void willFailIfNoRepositoryExistsForTheGivenDataset() {
-        when(repositoryA.appliesTo(dataset)).thenReturn(false);
-        when(repositoryB.appliesTo(dataset)).thenReturn(false);
+  @Test
+  public void willFailIfNoRepositoryExistsForTheGivenDataset() {
+    when(repositoryA.appliesTo(dataset)).thenReturn(false);
+    when(repositoryB.appliesTo(dataset)).thenReturn(false);
 
-        NoRepositoryAvailableException actual =
-                assertThrows(NoRepositoryAvailableException.class, () -> router.get(dataset));
-        assertThat(actual.getMessage(), is("No repository exists for dataset: " + dataset.getId()));
-    }
+    NoRepositoryAvailableException actual =
+        assertThrows(NoRepositoryAvailableException.class, () -> router.get(dataset));
+    assertThat(actual.getMessage(), is("No repository exists for dataset: " + dataset.getId()));
+  }
 }

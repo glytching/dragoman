@@ -38,41 +38,41 @@ import java.util.Optional;
  */
 public abstract class AbstractSelectClauseListener<T> extends LoggingListener {
 
-    // final state
-    private final List<Projection> projections;
-    // intermediate state
-    private Optional<Projection> currentProjection;
+  // final state
+  private final List<Projection> projections;
+  // intermediate state
+  private Optional<Projection> currentProjection;
 
-    public AbstractSelectClauseListener() {
-        this.projections = Lists.newArrayList();
-        this.currentProjection = Optional.empty();
+  public AbstractSelectClauseListener() {
+    this.projections = Lists.newArrayList();
+    this.currentProjection = Optional.empty();
+  }
+
+  @Override
+  public void enterIdentifier(SQLParser.IdentifierContext ctx) {
+    super.enterIdentifier(ctx);
+    if (currentProjection.isPresent()) {
+      currentProjection.get().appendNamePart(ctx.start.getText());
+    } else {
+      currentProjection = Optional.of(new Projection(ctx.start.getText()));
     }
+  }
 
-    @Override
-    public void enterIdentifier(SQLParser.IdentifierContext ctx) {
-        super.enterIdentifier(ctx);
-        if (currentProjection.isPresent()) {
-            currentProjection.get().appendNamePart(ctx.start.getText());
-        } else {
-            currentProjection = Optional.of(new Projection(ctx.start.getText()));
-        }
-    }
+  @Override
+  public void enterColumn_reference(SQLParser.Column_referenceContext ctx) {
+    super.enterColumn_reference(ctx);
+    currentProjection = Optional.empty();
+  }
 
-    @Override
-    public void enterColumn_reference(SQLParser.Column_referenceContext ctx) {
-        super.enterColumn_reference(ctx);
-        currentProjection = Optional.empty();
-    }
+  @Override
+  public void exitColumn_reference(SQLParser.Column_referenceContext ctx) {
+    super.exitColumn_reference(ctx);
+    projections.add(currentProjection.get());
+  }
 
-    @Override
-    public void exitColumn_reference(SQLParser.Column_referenceContext ctx) {
-        super.exitColumn_reference(ctx);
-        projections.add(currentProjection.get());
-    }
+  protected List<Projection> getProjections() {
+    return Collections.unmodifiableList(projections);
+  }
 
-    protected List<Projection> getProjections() {
-        return Collections.unmodifiableList(projections);
-    }
-
-    public abstract T get();
+  public abstract T get();
 }

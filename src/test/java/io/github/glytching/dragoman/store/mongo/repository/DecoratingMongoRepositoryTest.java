@@ -41,54 +41,50 @@ import static org.mockito.Mockito.when;
 @ExtendWith(RandomBeansExtension.class)
 public class DecoratingMongoRepositoryTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final String select = "aSelect";
-    private final String where = "aWhere";
-    private final String orderBy = "nOrderBy";
-    private final int maxResults = 50;
-    @Mock
-    private MongoRepository delegate;
-    @Random
-    private Dataset dataset;
-    @Random
-    private Document one;
-    @Random
-    private Document two;
-    private DocumentTransformer documentTransformer;
-    private DecoratingMongoRepository repository;
+  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final String select = "aSelect";
+  private final String where = "aWhere";
+  private final String orderBy = "nOrderBy";
+  private final int maxResults = 50;
+  @Mock private MongoRepository delegate;
+  @Random private Dataset dataset;
+  @Random private Document one;
+  @Random private Document two;
+  private DocumentTransformer documentTransformer;
+  private DecoratingMongoRepository repository;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
 
-        documentTransformer = new DocumentTransformer(objectMapper);
+    documentTransformer = new DocumentTransformer(objectMapper);
 
-        repository = new DecoratingMongoRepository(delegate, documentTransformer);
-    }
+    repository = new DecoratingMongoRepository(delegate, documentTransformer);
+  }
 
-    @Test
-    public void appliesToWhateverTheDelegateAppliesTo() {
-        when(delegate.appliesTo(dataset)).thenReturn(true);
-        assertThat(repository.appliesTo(dataset), is(true));
+  @Test
+  public void appliesToWhateverTheDelegateAppliesTo() {
+    when(delegate.appliesTo(dataset)).thenReturn(true);
+    assertThat(repository.appliesTo(dataset), is(true));
 
-        when(delegate.appliesTo(dataset)).thenReturn(false);
-        assertThat(repository.appliesTo(dataset), is(false));
-    }
+    when(delegate.appliesTo(dataset)).thenReturn(false);
+    assertThat(repository.appliesTo(dataset), is(false));
+  }
 
-    @Test
-    public void willDelegateThenTransformTheResponse() {
-        when(delegate.find(dataset, select, where, orderBy, maxResults))
-                .thenReturn(Observable.just(one, two));
+  @Test
+  public void willDelegateThenTransformTheResponse() {
+    when(delegate.find(dataset, select, where, orderBy, maxResults))
+        .thenReturn(Observable.just(one, two));
 
-        List<Map<String, Object>> results =
-                toList(repository.find(dataset, select, where, orderBy, maxResults));
+    List<Map<String, Object>> results =
+        toList(repository.find(dataset, select, where, orderBy, maxResults));
 
-        assertThat(results.size(), is(2));
-        assertThat(results, hasItem(documentTransformer.transform(one)));
-        assertThat(results, hasItem(documentTransformer.transform(two)));
-    }
+    assertThat(results.size(), is(2));
+    assertThat(results, hasItem(documentTransformer.transform(one)));
+    assertThat(results, hasItem(documentTransformer.transform(two)));
+  }
 
-    private List<Map<String, Object>> toList(Observable<Map<String, Object>> observable) {
-        return observable.toList().toBlocking().single();
-    }
+  private List<Map<String, Object>> toList(Observable<Map<String, Object>> observable) {
+    return observable.toList().toBlocking().single();
+  }
 }

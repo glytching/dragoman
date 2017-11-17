@@ -30,43 +30,43 @@ import static io.github.glytching.dragoman.util.NetworkUtils.getFreePort;
 import static org.mockito.Mockito.mock;
 
 public abstract class AbstractHttpTestCase {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractHttpTestCase.class);
-    protected static int port;
-    protected static HttpDataProvider httpDataProvider;
-    private static Vertx vertx;
+  private static final Logger logger = LoggerFactory.getLogger(AbstractHttpTestCase.class);
+  protected static int port;
+  protected static HttpDataProvider httpDataProvider;
+  private static Vertx vertx;
 
-    @BeforeAll
-    public static void start() {
-        port = getFreePort();
+  @BeforeAll
+  public static void start() {
+    port = getFreePort();
 
-        httpDataProvider = mock(HttpDataProvider.class);
-        logger.info("Starting embedded HTTP server on port: {}", port);
-        vertx = Vertx.vertx();
-        DeploymentOptions options =
-                new DeploymentOptions().setConfig(new JsonObject().put("http.port", port)).setInstances(1);
+    httpDataProvider = mock(HttpDataProvider.class);
+    logger.info("Starting embedded HTTP server on port: {}", port);
+    vertx = Vertx.vertx();
+    DeploymentOptions options =
+        new DeploymentOptions().setConfig(new JsonObject().put("http.port", port)).setInstances(1);
 
-        CountDownLatch latch = new CountDownLatch(1);
-        vertx.deployVerticle(
-                new HttpServerSimulatorVerticle(httpDataProvider),
-                options,
-                result -> {
-                    logger.info("Started embedded HTTP server with result: {}", result);
-                    latch.countDown();
+    CountDownLatch latch = new CountDownLatch(1);
+    vertx.deployVerticle(
+        new HttpServerSimulatorVerticle(httpDataProvider),
+        options,
+        result -> {
+          logger.info("Started embedded HTTP server with result: {}", result);
+          latch.countDown();
         });
 
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            logger.warn("Failed to wait for the embedded HTTP server to start!");
-        }
+    try {
+      latch.await();
+    } catch (InterruptedException e) {
+      logger.warn("Failed to wait for the embedded HTTP server to start!");
     }
+  }
 
-    @AfterAll
-    public static void stop() {
-        logger.info("Stopping embedded HTTP server");
-    }
+  @AfterAll
+  public static void stop() {
+    logger.info("Stopping embedded HTTP server");
+  }
 
-    protected String getUrl() {
-        return String.format("http://localhost:%s%s", port, HttpServerSimulatorVerticle.QUERY_ADDRESS);
-    }
+  protected String getUrl() {
+    return String.format("http://localhost:%s%s", port, HttpServerSimulatorVerticle.QUERY_ADDRESS);
+  }
 }

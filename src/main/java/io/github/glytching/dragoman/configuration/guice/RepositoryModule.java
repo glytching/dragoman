@@ -26,12 +26,12 @@ import io.github.glytching.dragoman.store.mongo.repository.DecoratingMongoReposi
 
 public class RepositoryModule extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        Multibinder<Repository> multibinder = Multibinder.newSetBinder(binder(), Repository.class);
-        multibinder.addBinding().to(HttpRepository.class);
-        multibinder.addBinding().to(DecoratingMongoRepository.class);
+  @Override
+  protected void configure() {
+    Multibinder<Repository> multibinder = Multibinder.newSetBinder(binder(), Repository.class);
+    multibinder.addBinding().to(HttpRepository.class);
+    multibinder.addBinding().to(DecoratingMongoRepository.class);
 
-        bind(RepositoryRouter.class).to(RepositoryRouterImpl.class);
-    }
+    bind(RepositoryRouter.class).to(RepositoryRouterImpl.class);
+  }
 }

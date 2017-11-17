@@ -30,60 +30,60 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AsOfTest {
 
-    private AsOfFormatter asOfFormatter;
-    private LocalDateTime lastRead;
+  private AsOfFormatter asOfFormatter;
+  private LocalDateTime lastRead;
 
-    @BeforeEach
-    public void setUp() {
-        asOfFormatter = new AsOfFormatter();
+  @BeforeEach
+  public void setUp() {
+    asOfFormatter = new AsOfFormatter();
 
-        lastRead = LocalDateTime.now(ZoneId.of("UTC"));
-    }
+    lastRead = LocalDateTime.now(ZoneId.of("UTC"));
+  }
 
-    @Test
-    public void willFormatTheAsOfClauseUsingTheGivenDateTimeLiteral() {
-        String asOfFieldPattern = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-        AsOf asOf = new AsOf("updatedAt", asOfFieldPattern, lastRead, asOfFormatter);
+  @Test
+  public void willFormatTheAsOfClauseUsingTheGivenDateTimeLiteral() {
+    String asOfFieldPattern = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    AsOf asOf = new AsOf("updatedAt", asOfFieldPattern, lastRead, asOfFormatter);
 
-        String actual = asOf.applyAsOf("x > 1");
+    String actual = asOf.applyAsOf("x > 1");
 
-        assertThat(
-                actual,
-                is(
-                        "x > 1 and updatedAt > '"
-                                + DateTimeFormatter.ofPattern(asOfFieldPattern).format(lastRead)
-                                + "'"));
-    }
+    assertThat(
+        actual,
+        is(
+            "x > 1 and updatedAt > '"
+                + DateTimeFormatter.ofPattern(asOfFieldPattern).format(lastRead)
+                + "'"));
+  }
 
-    @Test
-    public void willFormatTheAsOfClauseUsingTheEpochMillisIfANumericPatternIsSupplied() {
-        AsOf asOf = new AsOf("updatedAt", "L", lastRead, asOfFormatter);
+  @Test
+  public void willFormatTheAsOfClauseUsingTheEpochMillisIfANumericPatternIsSupplied() {
+    AsOf asOf = new AsOf("updatedAt", "L", lastRead, asOfFormatter);
 
-        String actual = asOf.applyAsOf("x > 1");
+    String actual = asOf.applyAsOf("x > 1");
 
-        assertThat(
-                actual, is("x > 1 and updatedAt > " + lastRead.toInstant(ZoneOffset.UTC).toEpochMilli()));
-    }
+    assertThat(
+        actual, is("x > 1 and updatedAt > " + lastRead.toInstant(ZoneOffset.UTC).toEpochMilli()));
+  }
 
-    @Test
-    public void willFormatTheAsOfClauseUsingTheDefaultDateTimeLiteralIfNoPatternIsSupplied() {
-        AsOf asOf = new AsOf("updatedAt", "", lastRead, asOfFormatter);
+  @Test
+  public void willFormatTheAsOfClauseUsingTheDefaultDateTimeLiteralIfNoPatternIsSupplied() {
+    AsOf asOf = new AsOf("updatedAt", "", lastRead, asOfFormatter);
 
-        String actual = asOf.applyAsOf("x > 1");
+    String actual = asOf.applyAsOf("x > 1");
 
-        assertThat(
-                actual,
-                is(
-                        "x > 1 and updatedAt > '"
-                                + DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(lastRead)
-                                + "'"));
-    }
+    assertThat(
+        actual,
+        is(
+            "x > 1 and updatedAt > '"
+                + DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").format(lastRead)
+                + "'"));
+  }
 
-    @Test
-    public void willFailIfGivenAnUnsupportedPattern() {
-        RuntimeException actual =
-                assertThrows(
-                        RuntimeException.class, () -> new AsOf("updatedAt", "foo", lastRead, asOfFormatter));
-        assertThat(actual.getMessage(), is("Cannot format AsOf for an unsupported pattern: foo!"));
-    }
+  @Test
+  public void willFailIfGivenAnUnsupportedPattern() {
+    RuntimeException actual =
+        assertThrows(
+            RuntimeException.class, () -> new AsOf("updatedAt", "foo", lastRead, asOfFormatter));
+    assertThat(actual.getMessage(), is("Cannot format AsOf for an unsupported pattern: foo!"));
+  }
 }

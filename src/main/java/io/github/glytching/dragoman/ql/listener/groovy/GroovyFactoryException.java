@@ -6,7 +6,7 @@ package io.github.glytching.dragoman.ql.listener.groovy;
  */
 public class GroovyFactoryException extends RuntimeException {
 
-    public GroovyFactoryException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public GroovyFactoryException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

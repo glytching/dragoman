@@ -23,12 +23,12 @@ import static org.hamcrest.Matchers.is;
 
 public class SubscriptionStreamFailedEventTest {
 
-    @Test
-    public void canGetEventType() {
-        SubscriptionStreamFailedEvent streamEvent = new SubscriptionStreamFailedEvent("aKey", "boom!");
+  @Test
+  public void canGetEventType() {
+    SubscriptionStreamFailedEvent streamEvent = new SubscriptionStreamFailedEvent("aKey", "boom!");
 
-        assertThat(streamEvent.isTerminal(), is(true));
-        assertThat(
-                streamEvent.is(SubscriptionEvent.SubscriptionEventType.STREAM_FAILED_EVENT), is(true));
-    }
+    assertThat(streamEvent.isTerminal(), is(true));
+    assertThat(
+        streamEvent.is(SubscriptionEvent.SubscriptionEventType.STREAM_FAILED_EVENT), is(true));
+  }
 }

@@ -29,29 +29,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OrderByClauseParserTest {
 
-    private final OrderByClauseParser parser = new OrderByClauseParser();
+  private final OrderByClauseParser parser = new OrderByClauseParser();
 
-    @Test
-    public void testParseToBson() {
-        Bson bson = parser.get(Bson.class, "a, b");
+  @Test
+  public void testParseToBson() {
+    Bson bson = parser.get(Bson.class, "a, b");
 
-        BsonDocument bsonDocument = toBsonDocument(bson);
-        assertThat(bsonDocument.size(), is(2));
-        assertThat(bsonDocument, hasEntry("a", new BsonInt32(-1)));
-        assertThat(bsonDocument, hasEntry("b", new BsonInt32(-1)));
-    }
+    BsonDocument bsonDocument = toBsonDocument(bson);
+    assertThat(bsonDocument.size(), is(2));
+    assertThat(bsonDocument, hasEntry("a", new BsonInt32(-1)));
+    assertThat(bsonDocument, hasEntry("b", new BsonInt32(-1)));
+  }
 
-    @Test
-    public void cannotParseToAnUnsupportedType() {
-        IllegalArgumentException actual =
-                assertThrows(IllegalArgumentException.class, () -> parser.get(String.class, "a, b"));
-        assertThat(
-                actual.getMessage(),
-                containsString("Type: 'String' is not supported, the supported types are: [Bson]"));
-    }
+  @Test
+  public void cannotParseToAnUnsupportedType() {
+    IllegalArgumentException actual =
+        assertThrows(IllegalArgumentException.class, () -> parser.get(String.class, "a, b"));
+    assertThat(
+        actual.getMessage(),
+        containsString("Type: 'String' is not supported, the supported types are: [Bson]"));
+  }
 
-    private BsonDocument toBsonDocument(Bson bson) {
-        return bson.toBsonDocument(
-                BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
-    }
+  private BsonDocument toBsonDocument(Bson bson) {
+    return bson.toBsonDocument(
+        BsonDocument.class, CodecRegistries.fromProviders(new BsonValueCodecProvider()));
+  }
 }

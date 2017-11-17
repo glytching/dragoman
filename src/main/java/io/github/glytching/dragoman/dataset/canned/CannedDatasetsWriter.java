@@ -23,10 +23,10 @@ package io.github.glytching.dragoman.dataset.canned;
  */
 public interface CannedDatasetsWriter {
 
-    /**
-     * Write to the configured dataset store.
-     *
-     * @return the number of datasets written
-     */
-    int write();
+  /**
+   * Write to the configured dataset store.
+   *
+   * @return the number of datasets written
+   */
+  int write();
 }

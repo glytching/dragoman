@@ -23,80 +23,79 @@ package io.github.glytching.dragoman.configuration;
  */
 public interface ApplicationConfiguration {
 
-    /**
-     * A property which is defined with this value will be replaced by a generated 'free port' value
-     * on loading. Once the {@link ApplicationConfiguration} has been laoded each subsequent call for
-     * that property will return the same value. This is useful when the application nees to assign
-     * assign a free port on startup and then use that value for the life of the application.
-     */
-    int RANDOM_PORT_SYMBOLIC = -1;
+  /**
+   * A property which is defined with this value will be replaced by a generated 'free port' value
+   * on loading. Once the {@link ApplicationConfiguration} has been laoded each subsequent call for
+   * that property will return the same value. This is useful when the application nees to assign
+   * assign a free port on startup and then use that value for the life of the application.
+   */
+  int RANDOM_PORT_SYMBOLIC = -1;
 
-    int getHttpPort();
+  int getHttpPort();
 
-    String getMongoHost();
+  String getMongoHost();
 
-    int getMongoPort();
+  int getMongoPort();
 
-    int getMongoServerSelectionTimeout();
+  int getMongoServerSelectionTimeout();
 
-    int getMongoSocketConnectionTimeout();
+  int getMongoSocketConnectionTimeout();
 
-    int getMongoReadTimeout();
+  int getMongoReadTimeout();
 
-    int getConnectionPoolMinSize();
+  int getConnectionPoolMinSize();
 
-    int getConnectionPoolMaxSize();
+  int getConnectionPoolMaxSize();
 
-    int getConnectionPoolMaxWaitTime();
+  int getConnectionPoolMaxWaitTime();
 
-    String getCannedUserName();
+  String getCannedUserName();
 
-    String getDatabaseName();
+  String getDatabaseName();
 
-    String getDatasetStorageName();
+  String getDatasetStorageName();
 
-    String getUserStorageName();
+  String getUserStorageName();
 
-    boolean isMetricsEnabled();
+  boolean isMetricsEnabled();
 
-    boolean isJmxEnabled();
+  boolean isJmxEnabled();
 
-    String getJmxDomainName();
+  String getJmxDomainName();
 
-    boolean isJolokiaEnabled();
+  boolean isJolokiaEnabled();
 
-    int getJolokiaPort();
+  int getJolokiaPort();
 
-    boolean isJolokiaDebugEnabled();
+  boolean isJolokiaDebugEnabled();
 
-    int getViewTemplateCacheSize();
+  int getViewTemplateCacheSize();
 
-    boolean isViewStaticAssetsCacheEnabled();
+  boolean isViewStaticAssetsCacheEnabled();
 
-    long getMaxEventLoopExecutionTime();
+  long getMaxEventLoopExecutionTime();
 
-    long getMaxWorkerExecutionTime();
+  long getMaxWorkerExecutionTime();
 
-    int getWorkerPoolSize();
+  int getWorkerPoolSize();
 
-    boolean isAuthenticationEnabled();
+  boolean isAuthenticationEnabled();
 
-    boolean isMongoEmbedded();
+  boolean isMongoEmbedded();
 
-    int getMetricsPublicationPeriod();
+  int getMetricsPublicationPeriod();
 
-    String getCannedDatasetsDirectory();
+  String getCannedDatasetsDirectory();
 
-    /**
-     * The non specific form of 'property getter'. Typically, the specific getters (e.g. {@link
-     * #isMongoEmbedded()}, {@link #getHttpPort()} etc) are facades over this method.
-     *
-     * @param clazz the expected type of the property value
-     * @param propertyName the name of the property to be retrieved
-     * @param <T>
-     *
-     * @return the value of the given {@code propertyName} coerced to the type {@code T} or an
-     * exception if no such property exists.
-     */
-    <T> T getPropertyValue(Class<T> clazz, String propertyName);
+  /**
+   * The non specific form of 'property getter'. Typically, the specific getters (e.g. {@link
+   * #isMongoEmbedded()}, {@link #getHttpPort()} etc) are facades over this method.
+   *
+   * @param clazz the expected type of the property value
+   * @param propertyName the name of the property to be retrieved
+   * @param <T>
+   * @return the value of the given {@code propertyName} coerced to the type {@code T} or an
+   *     exception if no such property exists.
+   */
+  <T> T getPropertyValue(Class<T> clazz, String propertyName);
 }
