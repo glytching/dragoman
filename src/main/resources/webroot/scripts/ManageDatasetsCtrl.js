@@ -175,7 +175,6 @@ dragoman.controller('ManageDatasetsCtrl', ['$scope', '$http', '$location', funct
 		eventBus.onopen = function(){
             console.log("Subscribing for: " + datasetId);
 			eventBus.registerHandler(datasetId, function(response) {
-                    console.log("Unshifting response: " + JSON.stringify(response));
                 if (response.eventType === 'STREAM_EVENT') {
                     $scope.datasetContents.unshift(response.payload);
                 } else if (response.eventType === 'STREAM_FAILED_EVENT') {

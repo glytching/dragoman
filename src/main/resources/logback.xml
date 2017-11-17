@@ -80,7 +80,7 @@
         </else>
     </if>
 
-    <logger name="org.glytching.dragoman.ql.listener.logging.LoggingListener" level="INFO"/>
+    <logger name="io.github.glytching.dragoman.ql.listener.logging.LoggingListener" level="INFO"/>
     <logger name="io.vertx" level="WARN"/>
     <logger name="io.netty" level="WARN"/>
     <logger name="org.mongodb" level="WARN"/>
