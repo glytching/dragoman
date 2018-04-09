@@ -82,7 +82,7 @@
         <flapdoodle.version>2.0.0</flapdoodle.version>
         <constretto.version>2.2.3</constretto.version>
         <janino.version>3.0.7</janino.version>
-        <junit.extensions.version>1.0.0</junit.extensions.version>
+        <junit.extensions.version>2.1.0</junit.extensions.version>
     </properties>
 
     <build>
