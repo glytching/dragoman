@@ -70,14 +70,11 @@ public class DragomanModule extends AbstractModule {
   public DeploymentOptions provideDeploymentOptions(
       ApplicationConfiguration applicationConfiguration) {
     // Vert.x is a non-blocking event-loop based framework; it does not follow the approach of 1
-    // connection -> 1
-    // thread instead since each request is handled in a request-calback-response fashion the event
-    // loop is (or
-    // should be) ~immediately available to handle the next request so want to accept the default
-    // since this
-    // indicates conformance with the Vert.x approach or to put it another way we want non
-    // conformance to be made
-    // obvious so that we can fix it rather than for it to be hidden behind tweaked thread pools
+    // connection -> 1 thread instead since each request is handled in a request-calback-response
+    // fashion the event loop is (or should be) ~immediately available to handle the next request so
+    // want to accept the default since this indicates conformance with the Vert.x approach or to
+    // put it another way we want non conformance to be made obvious so that we can fix it rather
+    // than for it to be hidden behind tweaked thread pools
     // Note: since Guice is creating the verticles for us we cannot set instances > 1, this _may_ be
     // reconsidered later ...
     return new DeploymentOptions().setWorkerPoolName("vertx-worker").setInstances(1);

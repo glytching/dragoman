@@ -24,9 +24,15 @@ import io.vertx.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.awt.Desktop.Action;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 /**
  * The master {@link Verticle} for this application. This ensures that all other verticles are
@@ -60,6 +66,7 @@ public class DragomanVerticle extends AbstractVerticle {
 
   @Override
   public void start(Future<Void> future) {
+
     CompositeFuture.all(deployEmbeddedMongo(), deployWebServer())
         .setHandler(future.<CompositeFuture>map(c -> null).completer());
   }
@@ -92,6 +99,11 @@ public class DragomanVerticle extends AbstractVerticle {
               logger.info("Deployed EmbeddedMongoVerticle verticle with id: {}", deploymentId);
               deploymentIds.add(deploymentId);
               future.complete();
+
+              // we're running the embedded system so let's launch a browser to point the user
+              // directly at the dynamically assigned HTTP port rather than forcing them to find the
+              // HTTP port in the logs
+              launchBrowser();
             }
           });
     } else {
@@ -133,5 +145,23 @@ public class DragomanVerticle extends AbstractVerticle {
           }
         });
     return future;
+  }
+
+  private void launchBrowser() {
+    try {
+      // launch a browser on the dynamically assigned HTTP port
+      // this is a crude launch mechanism but it will only ever be engaged when running in
+      // 'embedded' mode so it typically only applies to a developer running on their own dev
+      // machine
+      if (Desktop.getDesktop().isSupported(Action.BROWSE)) {
+        Desktop.getDesktop()
+            .browse(
+                URI.create(
+                    format("http://localhost:%s/dragoman/about.hbs", configuration.getHttpPort())));
+      }
+    } catch (IOException ex) {
+      // this is a nice-to-have so if it doesn't work just log the failure and move on
+      logger.info("Failed to launch browser due to[{}]!", ex.getMessage());
+    }
   }
 }

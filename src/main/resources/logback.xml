@@ -69,6 +69,15 @@
         </then>
         <else>
             <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+                <!-- this filter will accept all log events having the logger name "classname" -->
+                <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+                    <evaluator>
+                        <!-- the embedded mongo logger is quite verbose so let's hide its INFO messages from the console -->
+                        <expression>return logger.equals("embedded-mongo") &amp;&amp; level &lt; WARN;</expression>
+                    </evaluator>
+                    <OnMismatch>NEUTRAL</OnMismatch>
+                    <OnMatch>DENY</OnMatch>
+                </filter>
                 <encoder>
                     <pattern>%d{ISO8601}|[%thread]|%level|%logger{36}|%msg%n</pattern>
                 </encoder>
@@ -81,6 +90,7 @@
     </if>
 
     <logger name="io.github.glytching.dragoman.ql.listener.logging.LoggingListener" level="INFO"/>
+    <logger name="io.vertx.core.http.impl" level="ERROR"/>
     <logger name="io.vertx" level="WARN"/>
     <logger name="io.netty" level="WARN"/>
     <logger name="org.mongodb" level="WARN"/>

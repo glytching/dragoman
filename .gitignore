@@ -4,3 +4,4 @@ target/
 *.iml
 todo.md
 hawtio-app-1.5.5.jar
+.java-version
