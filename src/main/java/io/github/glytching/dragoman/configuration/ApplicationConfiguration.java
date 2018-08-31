@@ -87,6 +87,8 @@ public interface ApplicationConfiguration {
 
   String getCannedDatasetsDirectory();
 
+  boolean isLaunchBrowser();
+
   /**
    * The non specific form of 'property getter'. Typically, the specific getters (e.g. {@link
    * #isMongoEmbedded()}, {@link #getHttpPort()} etc) are facades over this method.

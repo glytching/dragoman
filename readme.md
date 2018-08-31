@@ -1,6 +1,8 @@
 Dragoman
 ======
 
+[![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=master)](https://travis-ci.org/glytching/dragoman) [![Coverage Status](https://coveralls.io/repos/github/glytching/dragoman/badge.svg?branch=master)](https://coveralls.io/github/glytching/dragoman?branch=master)
+
 > an interpreter (of sorts)
 
 Provides a facade which allows the user to ...
@@ -22,10 +24,6 @@ Although this app is functional it is primarily a sandbox, a place for trying ou
 
 Building Dragoman
 -------
-
-| Branch  | Status | Coverage |
-| --------| ------ | -------- |
-| Master  | [![Master Build Status](https://travis-ci.org/glytching/dragoman.svg?branch=master)](https://travis-ci.org/glytching/dragoman)  | [![Coverage Status](https://coveralls.io/repos/github/glytching/dragoman/badge.svg?branch=master)](https://coveralls.io/github/glytching/dragoman?branch=master) |
 
 To build Dragoman locally:
 
@@ -86,10 +84,7 @@ When the server is running the web application will be available at:
 Where:
 
 * `<host>` is the host on which the server is running
-* `<port>` is defined by the `http.port` value in [application.properties](src/main/resources/application.properties). By default, this is `31000` but if the server is running in embedded mode then this port will be assigned from the free port range. To see what port has been assigned look for a log message like this:
-
-> o.g.dragoman.web.WebServerVerticle|Starting HTTP server on port: ... 
-
+* `<port>` is defined by the `http.port` value in [application.properties](src/main/resources/application.properties). By default, this is `31000` but if the server is running in embedded mode then this port will be assigned from the free port range. To see what port has been assigned look for a log message like this: `o.g.dragoman.web.WebServerVerticle|Starting HTTP server on port: ...`. Note: when running in `embedded` mode the startup routine will attempt to launch a browser on the dynamically assigned HTTP port so you shouldn't have to trawl the logs for the HTTP port.
 ###### Browser Compatibility
 
 The web app has been tested and verified for the following browsers:

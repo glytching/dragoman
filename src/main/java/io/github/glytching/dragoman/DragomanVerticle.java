@@ -99,11 +99,6 @@ public class DragomanVerticle extends AbstractVerticle {
               logger.info("Deployed EmbeddedMongoVerticle verticle with id: {}", deploymentId);
               deploymentIds.add(deploymentId);
               future.complete();
-
-              // we're running the embedded system so let's launch a browser to point the user
-              // directly at the dynamically assigned HTTP port rather than forcing them to find the
-              // HTTP port in the logs
-              launchBrowser();
             }
           });
     } else {
@@ -126,6 +121,10 @@ public class DragomanVerticle extends AbstractVerticle {
             logger.info("Deployed WebServerVerticle verticle with id: {}", deploymentId);
             deploymentIds.add(deploymentId);
             future.complete();
+
+            if (configuration.isLaunchBrowser()) {
+              launchBrowser();
+            }
           }
         });
     return future;
@@ -149,10 +148,8 @@ public class DragomanVerticle extends AbstractVerticle {
 
   private void launchBrowser() {
     try {
-      // launch a browser on the dynamically assigned HTTP port
-      // this is a crude launch mechanism but it will only ever be engaged when running in
-      // 'embedded' mode so it typically only applies to a developer running on their own dev
-      // machine
+      // this is a crude launch mechanism but it will typically only ever be engaged when a
+      // developer is running on their own dev machine so it's a case of 'best efforts'
       if (Desktop.getDesktop().isSupported(Action.BROWSE)) {
         Desktop.getDesktop()
             .browse(

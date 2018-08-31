@@ -204,7 +204,12 @@ public class ConstrettoApplicationConfiguration implements ApplicationConfigurat
     return get(() -> constretto.evaluateToString("canned.datasets.directory"));
   }
 
-  @Override
+    @Override
+    public boolean isLaunchBrowser() {
+        return get(() -> constretto.evaluateToBoolean("launch.browser"));
+    }
+
+    @Override
   public <T> T getPropertyValue(Class<T> clazz, String propertyName) {
     return get(() -> constretto.evaluateTo(clazz, propertyName));
   }
