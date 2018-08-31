@@ -1,8 +1,9 @@
 language: java
 
 # to try to workaround this issue: https://github.com/travis-ci/travis-ci/issues/6593
-sudo: required
-dist: precise
+# sudo: required
+# dist: precise
+os: osx
 
 script: mvn verify jacoco:report coveralls:report -DrepoToken=dplZ1J1AfjFK3hHAj0OV8IRneKprs4Glb -Dtest=\!MongoPopulatorTool
 
