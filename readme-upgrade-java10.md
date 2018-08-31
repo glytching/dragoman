@@ -1,12 +1,3 @@
-Upgrading to Java 10 can take three forms:
-
-1. Run the application on Java 10 - no changes necessary
-1. Compile the application with Java 10. This makes Java 10 features avaialble to the application but it requires some changes:
-  * Tell Maven to build with Java 10 and to target Java 10 output
-  * Upgrade some internal dependencies to Java 10 compatible versions
-1. Modularize the application to use Java 10's module system
-
-
 Prerequisites
 ----
 
@@ -68,6 +59,11 @@ If using Intellij, upgrade to 2018.1+ and reconfigure the `dragoman` project to 
 Compile the Application With Java 10
 ----
 
+This makes Java 10 features avaialble to the application but it requires some changes:
+
+* Tell Maven to build with Java 10 and to target Java 10 output
+* Upgrade some internal dependencies to Java 10 compatible versions
+
 ### Required Changes to `dragoman`
 
 * Change `maven.compiler.source` to `1.10`
@@ -107,7 +103,57 @@ Compile the Application With Java 10
 Modularize the Application
 ----
 
-### Changes to `dragoman`
+This uses Java 10's module system.
 
-> TODO complete this!
+Add a file named `module-info.java` to `src/main/java` with the following content:
+
+```
+module io.github.glytching {
+    requires antlr4;
+    requires bson;
+    requires guava;
+    requires vertx.core;
+    requires vertx.web;
+    requires vertx.dropwizard.metrics;
+    requires slf4j.api;
+    requires rxjava;
+    requires org.apache.commons.lang3;
+    requires javax.inject;
+    requires mongodb.driver.rx;
+    requires jackson.databind;
+    requires guice;
+    requires guice.multibindings;
+    requires jolokia.jvm;
+    requires de.flapdoodle.embed.mongo;
+    requires de.flapdoodle.embed.process;
+    requires mongodb.driver.core;
+    requires mongodb.driver.async;
+    requires netty.codec;
+    requires netty.handler;
+    requires metrics.core;
+    requires metrics.healthchecks;
+    requires okhttp;
+    requires commons.validator;
+    requires handlebars;
+    requires constretto.api;
+    requires constretto.core;
+    requires org.apache.commons.io;
+}
+```
+
+Compile the project and you'll encounter the 'split package' issue (two members of the same package coming from different modules):
+
+```
+[ERROR] the unnamed module reads package org.constretto from both constretto.api and constretto.core
+[ERROR] the unnamed module reads package org.constretto.model from both constretto.api and constretto.core
+[ERROR] module constretto.api reads package org.constretto from both constretto.api and constretto.core
+[ERROR] module constretto.api reads package org.constretto.model from both constretto.api and constretto.core
+[ERROR] module handlebars reads package org.constretto from both constretto.api and constretto.core
+[ERROR] module handlebars reads package org.constretto.model from both constretto.api and constretto.core
+```
+
+Stop, because ...
+
+* The libraries used by this project which manifest the 'split package' issue are not in our control
+* This project isn't a strong candidate for modularisation. This might change if the webapp is separated from the library.
 
