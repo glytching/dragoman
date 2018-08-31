@@ -84,7 +84,9 @@
         <flapdoodle.version>2.1.1</flapdoodle.version>
         <constretto.version>2.2.3</constretto.version>
         <janino.version>3.0.7</janino.version>
-        <junit.extensions.version>2.2.0</junit.extensions.version>
+        <junit.extensions.version>2.3.0</junit.extensions.version>
+
+        <testExclusionPattern></testExclusionPattern>
     </properties>
 
     <build>
@@ -179,7 +181,7 @@
                 <version>${maven.surefire.plugin.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/MongoPopulatorTool.java</exclude>
+                        <exclude>${testExclusionPattern}</exclude>
                     </excludes>
                 </configuration>
                 <dependencies>
@@ -524,4 +526,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>travis</id>
+            <properties>
+                <!-- exclude Mongo, erm, 'tests' when running on Travis (because they rely on a local MongoDB server) -->
+                <testExclusionPattern>**/MongoAuthenticationDaoTest*,**/MongoCannedDatasetsWriterTest*,**/MongoDatasetDaoTest*,**/MongoRepositoryTest*,**/MongoPopulatorTool*</testExclusionPattern>
+            </properties>
+        </profile>
+    </profiles>
 </project>
