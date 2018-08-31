@@ -68,11 +68,11 @@ If using Intellij, upgrade to 2018.1+ and reconfigure the `dragoman` project to 
 Compile the Application With Java 10
 ----
 
-### Changes to `dragoman`
+### Required Changes to `dragoman`
 
 * Change `maven.compiler.source` to `1.10`
 * Change `maven.compiler.target` to `1.10`
-* Upgrade Maven Compiler Plugin
+* Upgrade Maven Compiler Plugin:
     ```
     <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -98,6 +98,11 @@ Compile the Application With Java 10
     jdk:
       - oraclejdk10
     ```
+
+### Optional Changes to `dragoman`
+
+* Upgrade `de.flapdoodle.embed.mongo` to `2.1.1`, see [this issue](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo/issues/241)
+* Update `GroovyFactory` to replace the deprecated `clazz.newInstance()` with `clazz.getConstructor().newInstance()`
 
 Modularize the Application
 ----

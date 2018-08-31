@@ -108,7 +108,7 @@ public class GroovyFactory {
                 Class<?> clazz = groovyClassLoader.parseClass(groovyCodeSource);
                 Object obj;
                 try {
-                  obj = clazz.newInstance();
+                    obj = clazz.getConstructor().newInstance();
                 } catch (InstantiationException | IllegalAccessException e) {
                   logger.warn(e.getMessage(), e);
                   throw new GroovyFactoryException(
