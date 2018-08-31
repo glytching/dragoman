@@ -93,6 +93,11 @@ Compile the Application With Java 10
     ```
 * Upgrade Mockito for compatability with Java 10: change `mockito.version` to `2.21.0`
 * Upgrade Jacoco for compatability with Java 10: change `maven.jacoco.plugin.version` to `0.8.1`
+* Tell Travis CI to build with Java 10, in `.travis.yml`:
+    ```
+    jdk:
+      - oraclejdk10
+    ```
 
 Modularize the Application
 ----
