@@ -8,7 +8,7 @@ script: mvn verify jacoco:report coveralls:report -DrepoToken=dplZ1J1AfjFK3hHAj0
 bundler_args: --retry 6
 
 jdk:
-  - oraclejdk10
+  - oraclejdk11
 
 #deploy:
 #  provider: pages
