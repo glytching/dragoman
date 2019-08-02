@@ -3,6 +3,8 @@ language: java
 # to try to workaround this issue: https://github.com/travis-ci/travis-ci/issues/6593
 sudo: true
 
+# TODO: get this working with java11 and the need for forkCount=1 in the surefire plugin
+#script: mvn verify jacoco:report coveralls:report -DrepoToken=dplZ1J1AfjFK3hHAj0OV8IRneKprs4Glb -Ptravis
 script: mvn verify -Ptravis
 
 bundler_args: --retry 6
