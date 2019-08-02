@@ -95,21 +95,23 @@ public abstract class AbstractMongoDBTest {
 
   @AfterAll
   public static void stop() {
-    StopWatch stopWatch = StopWatch.startForSplits();
-    try {
-      logger.info("Stopping embedded mongod");
-      mongod.stop();
-      long stopMongodElapsedTime = stopWatch.split();
-      mongodExe.stop();
-      long stopMongoExeElapsedTime = stopWatch.split();
-      logger.info(
-          "Stopped embedded Mongo in {}ms (stopMongodElapsedTime={}ms, stopMongoExeElapsedTime={}ms)",
-          stopWatch.stop(),
-          stopMongodElapsedTime,
-          stopMongoExeElapsedTime);
-    } catch (Exception ex) {
-      logger.warn("Failed to stop embedded mongod!", ex);
-    }
+      if (mongod != null) {
+          StopWatch stopWatch = StopWatch.startForSplits();
+          try {
+              logger.info("Stopping embedded mongod");
+              mongod.stop();
+              long stopMongodElapsedTime = stopWatch.split();
+              mongodExe.stop();
+              long stopMongoExeElapsedTime = stopWatch.split();
+              logger.info(
+                      "Stopped embedded Mongo in {}ms (stopMongodElapsedTime={}ms, stopMongoExeElapsedTime={}ms)",
+                      stopWatch.stop(),
+                      stopMongodElapsedTime,
+                      stopMongoExeElapsedTime);
+          } catch (Exception ex) {
+              logger.warn("Failed to stop embedded mongod!", ex);
+          }
+      }
   }
 
   protected MongoClient getMongoClient() {
