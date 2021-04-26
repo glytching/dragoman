@@ -72,7 +72,7 @@
         <rxmongo.version>1.5.0</rxmongo.version>
         <commons.lang.version>3.6</commons.lang.version>
         <commons.validator.version>1.6</commons.validator.version>
-        <commons.io.version>2.6</commons.io.version>
+        <commons.io.version>2.7</commons.io.version>
         <groovy.version>2.4.12</groovy.version>
         <janino.version>3.0.7</janino.version>
         <junit.jupiter.version>5.4.2</junit.jupiter.version>
