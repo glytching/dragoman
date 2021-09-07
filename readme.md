@@ -1,7 +1,7 @@
 Dragoman
 ======
 
-[![Build Status](https://circleci.com/gh/glytching/sandbox.svg?style=svg)](https://circleci.com/gh/glytching/sandbox) [![Coverage Status](https://coveralls.io/repos/github/glytching/dragoman/badge.svg?branch=master)](https://coveralls.io/github/glytching/dragoman?branch=master)
+[![Build Status](https://circleci.com/gh/glytching/dragoman.svg?style=svg)](https://circleci.com/gh/glytching/dragoman) [![Coverage Status](https://coveralls.io/repos/github/glytching/dragoman/badge.svg?branch=master)](https://coveralls.io/github/glytching/dragoman?branch=master)
 
 > an interpreter (of sorts)
 
