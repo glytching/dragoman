@@ -59,7 +59,7 @@
         <maven.jacoco.plugin.version>0.8.4</maven.jacoco.plugin.version>
 
         <antlr.version>4.5</antlr.version>
-        <logback.version>1.2.3</logback.version>
+        <logback.version>1.2.9</logback.version>
         <jackson.version>2.9.8</jackson.version>
         <guava.version>30.0-jre</guava.version>
         <guice.version>4.1.0</guice.version>
